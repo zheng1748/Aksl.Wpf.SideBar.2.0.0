@@ -208,7 +208,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                 {
                     if (_selectedHamburgerMenuSideBarItem is not null)
                     {
-                       // LoadViewAsync(_selectedHamburgerMenuSideBarItem.MenuItem).Await();
                     }
                 }
             }
