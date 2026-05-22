@@ -185,7 +185,8 @@
         </Style>
     </UserControl.Resources>
 
-    <ListView x:Name="hamburgerMenuSideBarListView" 
+    <ListView x:Name="hamburgerMenuSideBarListView"
+              Background="{StaticResource PrimaryThemeBrush}"
               ItemsSource="{Binding Source={StaticResource hamburgerMenuSideBarSource}}"
               ItemTemplate="{Binding Source={StaticResource hamburgerMenuSideBarDataTemplate}}"
               ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"

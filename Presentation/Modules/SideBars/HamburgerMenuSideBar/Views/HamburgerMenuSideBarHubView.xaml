@@ -8,7 +8,8 @@
              xmlns:a="clr-namespace:Aksl.Modules.HamburgerMenuSideBar"
              xmlns:sv="clr-namespace:Aksl.Modules.HamburgerMenuSideBar"
              mc:Ignorable="d"
-             x:Name="HamburgerMenuSideBarHubBarContainer"
+             x:Name="HamburgerMenuSideBarHubBarer"
+             xmlns:materialDesign="clr-namespace:Aksl.Toolkit.Controls;assembly=Aksl.Toolkit.Controls"
              xmlns:akslControls="clr-namespace:Aksl.Toolkit.Controls;assembly=Aksl.Toolkit.Controls"
              xmlns:behaviors="clr-namespace:Aksl.Xaml.Behaviors;assembly=Aksl.Toolkit"
              xmlns:inf="clr-namespace:Aksl.Infrastructure;assembly=Aksl.Infrastructure"
@@ -964,22 +965,38 @@
                       Width="320">
                     <Grid x:Name="InnerPane"
                           HorizontalAlignment="Left"
+                          Background="{StaticResource PrimaryThemeBrush}"
                           Width="320">
-                        <acmview:ActiveContentView x:Name="LeftPaneHamburgerMenuSideBarActiveContentView"
-                                                   DataContext="{Binding Path=LeftPaneActiveContentViewModel}"
-                                                   HorizontalAlignment="Stretch"
-                                                   VerticalAlignment="Stretch"
-                                                   Margin="0,2,2,2"
-                                                   RenderTransformOrigin="0.5,0.5">
-                            <ContentControl.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform />
-                                    <SkewTransform />
-                                    <RotateTransform />
-                                    <TranslateTransform />
-                                </TransformGroup>
-                            </ContentControl.RenderTransform>
-                        </acmview:ActiveContentView>
+                        <DockPanel>
+                            <Button DockPanel.Dock="Top"
+                                    Command="{Binding Path=MovePreviousCommand,Mode=OneWay}"
+                                    Content="{materialDesign:PackIcon Kind=ArrowLeft, Size=24}"
+                                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                    Width="{Binding Path=Content.Width,RelativeSource={RelativeSource Mode=Self}}"
+                                    Height="{Binding Path=Content.Height,RelativeSource={RelativeSource Mode=Self}}"
+                                    HorizontalAlignment="Left"
+                                    Margin="1,1,1,1"
+                                    ToolTip="Back"
+                                    Cursor="Arrow"
+                                    Visibility="{Binding Path=CanMove,Converter={StaticResource booleanToVisibilityConverter}}">
+                            </Button>
+                            <acmview:ActiveContentView x:Name="LeftPaneHamburgerMenuSideBarActiveContentView"
+                                                       DataContext="{Binding Path=LeftPaneActiveContentViewModel}"
+                                                       HorizontalAlignment="Stretch"
+                                                       VerticalAlignment="Stretch"
+                                                       Margin="0,2,2,2"
+                                                       RenderTransformOrigin="0.5,0.5">
+                                <ContentControl.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </ContentControl.RenderTransform>
+                                </acmview:ActiveContentView>
+                           
+                        </DockPanel>
                         <!--<ContentControl Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"

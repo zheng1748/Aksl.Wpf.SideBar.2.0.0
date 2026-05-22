@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Input;
 using Unity;
 
 namespace Aksl.ActiveContentManager.ViewModels
@@ -21,7 +24,7 @@ namespace Aksl.ActiveContentManager.ViewModels
         #region Constructors
         public ActiveContentViewModel()
         {
-            ActiveContentItems= new();
+            ActiveContentItems = new();
             StoreContentItems = new();
         }
         #endregion
@@ -34,12 +37,33 @@ namespace Aksl.ActiveContentManager.ViewModels
         public ActiveContentItemViewModel SelectedContentItem
         {
             get => _selectedContentItem;
-            set => SetProperty<ActiveContentItemViewModel>(ref _selectedContentItem, value);
+            set 
+            {
+                if (SetProperty<ActiveContentItemViewModel>(ref _selectedContentItem, value)) 
+                {
+                    SelectedIndex=GetIndexSelectedActiveContentItem();
+                }
+            }
+        }
+
+        private int _selectedIndex=-1;
+        public int SelectedIndex
+        {
+            get => _selectedIndex;
+            set => SetProperty<int>(ref _selectedIndex, value);
+        }
+
+        public bool CanMove
+        {
+            get
+            {
+                return ActiveContentItems is not null && ActiveContentItems.Count>1 && SelectedIndex > 0;
+            }
         }
         #endregion
 
         #region Methods
-        public void Add(ContentInformation  contentInformation,bool isActive=true)
+        public void Add(ContentInformation contentInformation, bool isActive = true)
         {
             ActiveContentItemViewModel newActiveContentItemViewModel = new(contentInformation);
 
@@ -48,7 +72,7 @@ namespace Aksl.ActiveContentManager.ViewModels
                 newActiveContentItemViewModel.ViewElement = contentInformation.ViewElement;
             }
 
-           AddCore(newActiveContentItemViewModel);
+            AddCore(newActiveContentItemViewModel);
         }
 
         private void AddCore(ActiveContentItemViewModel newActiveContentItemViewModel, bool isActive = true)
@@ -58,7 +82,7 @@ namespace Aksl.ActiveContentManager.ViewModels
                 ActiveContentItems.Add(newActiveContentItemViewModel);
             }
 
-           // AddPropertyChanged();
+            // AddPropertyChanged();
             void AddPropertyChanged()
             {
                 newActiveContentItemViewModel.PropertyChanged += (sender, e) =>
@@ -90,6 +114,7 @@ namespace Aksl.ActiveContentManager.ViewModels
                 SetActiveContentItem(newActiveContentItemViewModel);
             }
 
+            RaisePropertyChanged(nameof(CanMove));
             RaisePropertyChanged(nameof(ActiveContentItems));
         }
 
@@ -107,25 +132,28 @@ namespace Aksl.ActiveContentManager.ViewModels
             {
                 if (SelectedContentItem is null)
                 {
-                    SelectedContentItem = activeContentItemViewModel; 
-                    SelectedContentItem.IsSelected = true;
+                    activeContentItemViewModel.IsSelected = true;
+                    SelectedContentItem = activeContentItemViewModel;
+                   // SelectedContentItem.IsSelected = true;
                 }
 
                 if (SelectedContentItem is not null && activeContentItemViewModel != SelectedContentItem)
                 {
                     SelectedContentItem.IsSelected = false;
-                   // SelectedTabContentItem.ViewElementVisibility = Visibility.Collapsed;
+                    //SelectedContentItem = null;
+                    // SelectedTabContentItem.ViewElementVisibility = Visibility.Collapsed;
 
+                    activeContentItemViewModel.IsSelected = true;
                     SelectedContentItem = activeContentItemViewModel;
-                    SelectedContentItem.IsSelected = true;
-                  //  SelectedTabContentItem.ViewElementVisibility = Visibility.Visible;
+                  //  SelectedContentItem.IsSelected = true;
+                    //  SelectedTabContentItem.ViewElementVisibility = Visibility.Visible;
                 }
             }
         }
 
         public void SetContentItem(ContentInformation contentInformation)
         {
-            var activeContentItem= GetActiveContentItemByInfo(contentInformation);
+            var activeContentItem = GetActiveContentItemByInfo(contentInformation);
             if (activeContentItem is not null)
             {
                 SetActiveContentItem(activeContentItem);
@@ -186,7 +214,7 @@ namespace Aksl.ActiveContentManager.ViewModels
             {
                 if (IsExistsActivContentItems(activeContentItemViewModel.Name, activeContentItemViewModel.Title))
                 {
-                    if (SelectedContentItem == activeContentItemViewModel ||  activeContentItemViewModel.IsSelected)
+                    if (SelectedContentItem == activeContentItemViewModel || activeContentItemViewModel.IsSelected)
                     {
                         activeContentItemViewModel.IsSelected = false;
                         SelectedContentItem = null;
@@ -270,6 +298,42 @@ namespace Aksl.ActiveContentManager.ViewModels
             var storeContentItem = StoreContentItems.FirstOrDefault(stc => stc.ViewElementType == viewType);
 
             return storeContentItem?.ViewElement;
+        }
+        #endregion
+
+        #region Move Methods
+        public void ExecuteMovePrevious()
+        {
+            //var selectedIndex = GetIndexSelectedActiveContentItem();
+            var previousActiveContentItem = ActiveContentItems[SelectedIndex - 1];
+            SetActiveContentItem(previousActiveContentItem);
+        }
+
+        public bool CanMovePrevious()
+        {
+           // var selectedIndex = GetIndexSelectedActiveContentItem();
+            return SelectedIndex > 0;
+        }
+
+        public void ExecuteMoveNext()
+        {
+           // var selectedIndex = GetIndexSelectedActiveContentItem();
+            var nextActiveContentItem = ActiveContentItems[SelectedIndex + 1];
+            SetActiveContentItem(nextActiveContentItem);
+        }
+
+        public bool CanMoveNext()
+        {
+           // var selectedIndex = GetIndexSelectedActiveContentItem();
+            return SelectedIndex < ActiveContentItems.Count - 1;
+        }
+
+        public int GetIndexSelectedActiveContentItem()
+        {
+            var selectedContentInformation = SelectedContentItem.ContentInformation;
+            var selectedIndex = ActiveContentItems.ToList().FindIndex(aci => IsEqualsNameOrTitle(aci.Name, selectedContentInformation.Name) || IsEqualsNameOrTitle(aci.Title, selectedContentInformation.Title));
+
+            return selectedIndex;
         }
         #endregion
 
