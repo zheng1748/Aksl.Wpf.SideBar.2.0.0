@@ -133,11 +133,11 @@ public class NodeResolver<T> where T : ViewModels.NodeViewModel
     #endregion
 
     #region Get TopItem By MenuItem Method
-    public async Task<T> GetTopItemByMenuItemAsync(MenuItem menuItem, T virtualParent, Func<MenuItem, T, T> constructorResolver)
+    public async Task<T> GetTopItemByMenuItemAsync(MenuItem menuItem, T parent, Func<MenuItem, T, T> constructorResolver, bool isKeepParent = false)
     {
         List<MenuItem> travelMenuItems = new();
 
-        await RecursiveSubMenuItem(menuItem, virtualParent);
+        await RecursiveSubMenuItem(menuItem, parent);
 
         async Task RecursiveSubMenuItem(MenuItem currentMenuItem, T paren)
         {
@@ -176,11 +176,15 @@ public class NodeResolver<T> where T : ViewModels.NodeViewModel
 
         bool IsNexOnNotLeaf(MenuItem mi) => (mi is not null) && mi.IsNexOnNotLeaf;
 
-        var topHeaderItem = virtualParent.Children.FirstOrDefault();
+        var topHeaderItem = parent.Children.FirstOrDefault();
         if (topHeaderItem is not null)
         {
-            topHeaderItem.Parent = null;
+            if (!isKeepParent)
+            {
+                topHeaderItem.Parent = null;
+            }
         }
+
         return topHeaderItem as T;
     }
     #endregion

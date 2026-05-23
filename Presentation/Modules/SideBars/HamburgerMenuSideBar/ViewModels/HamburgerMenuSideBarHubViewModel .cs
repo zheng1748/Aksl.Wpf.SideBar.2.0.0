@@ -594,8 +594,9 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
                 var rootMenuItem = await _menuService.GetMenuAsync("All");
                 var subMenuItems = rootMenuItem.SubMenus;
-                HamburgerMenuSideBar =await HamburgerMenuSideBarHelper.CreateHamburgerMenuSideBarViewModelAsync(subMenuItems);
+                HamburgerMenuSideBar = await HamburgerMenuSideBarHelper.CreateHamburgerMenuSideBarViewModelAsync(subMenuItems);
                 AddPropertyChanged();
+
 
                 void AddPropertyChanged()
                 {
@@ -626,6 +627,64 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                         }
                     };
                 }
+
+                //List<HamburgerMenuSideBarItemViewModel> allideBarItemViewLeafs = new();
+
+                //foreach (var leafSideBarItem in HamburgerMenuSideBar.AllLeafHamburgerMenuSideBarItems)
+                //{
+
+                //    //var sublLeafMenuItems = await leafSideBarItem.GetSubMenuAsync();
+
+                //    //if (sublLeafMenuItems is not null && sublLeafMenuItems.Any())
+                //    //{
+                //    //    foreach (var smi in sublLeafMenuItems)
+                //    //    {
+                //    //        var topItem = await nodeResolver.GetTopItemByMenuItemAsync(smi, leafSideBarItem, (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, true);
+                //    //        var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem);
+                //    //        allideBarItemViewLeafs.AddRange(allTopItemLeafs);
+                //    //    }
+
+                //    //    var subHamburgerMenuSideBar = await HamburgerMenuSideBarHelper.CreateHamburgerMenuSideBarViewModelAsync(menuItems: sublLeafMenuItems, parent: leafSideBarItem, keepParent: true);
+                //    //}
+                //}
+
+                await GetAllMenuSideBarViewModels(HamburgerMenuSideBar);
+
+                async Task GetAllMenuSideBarViewModels(HamburgerMenuSideBarViewModel menuSideBar)
+                {
+                    List<HamburgerMenuSideBarViewModel> allMenuSideBars = new();
+                    NodeResolver<HamburgerMenuSideBarItemViewModel> nodeResolver = new();
+
+                    await RecursiveSubMenuItemViewModel(menuSideBar);
+
+                    async Task RecursiveSubMenuItemViewModel(HamburgerMenuSideBarViewModel currentMenuSideBar)
+                    {
+                        foreach (var leafSideBarItem in currentMenuSideBar.AllLeafHamburgerMenuSideBarItems)
+                        {
+                            var sublLeafMenuItems = await leafSideBarItem.GetSubMenuAsync();
+
+                            if (sublLeafMenuItems is not null && sublLeafMenuItems.Any())
+                            {
+                                List<HamburgerMenuSideBarItemViewModel> allideBarItemLeafs = new();
+
+                                foreach (var smi in sublLeafMenuItems)
+                                {
+                                    var topItem = await nodeResolver.GetTopItemByMenuItemAsync(menuItem: smi, parent: leafSideBarItem, constructorResolver: (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, isKeepParent: true);
+                                    var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem);
+                                    allideBarItemLeafs.AddRange(allTopItemLeafs);
+                                }
+
+                                var subHamburgerMenuSideBar = new HamburgerMenuSideBarViewModel
+                                {
+                                    AllLeafHamburgerMenuSideBarItems = new ObservableCollection<HamburgerMenuSideBarItemViewModel>(allideBarItemLeafs)
+                                };
+
+                                await RecursiveSubMenuItemViewModel(subHamburgerMenuSideBar);
+                            }
+                        }
+                    }
+                }
+          
 
                 //var hamburgerMenuBarItemViewModels = await CreateHamburgerMenuBarItemViewModelsAsync();
                 //HamburgerMenuSideBar.AllLeafHamburgerMenuSideBarItems = new ObservableCollection<HamburgerMenuSideBarItemViewModel>(hamburgerMenuBarItemViewModels);

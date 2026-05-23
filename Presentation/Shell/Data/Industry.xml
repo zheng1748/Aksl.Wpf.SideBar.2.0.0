@@ -25,7 +25,7 @@
 			  IconKind="ThermometerAlert"
 			  ModuleName=""
 			  ViewName=""
-		 IsNextNavigation="False"
+		      IsNextNavigation="False"
 			  NavigationName="Pipelines">
 	</MenuItem>
 	<MenuItem Id="1"

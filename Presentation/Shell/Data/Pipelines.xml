@@ -4,7 +4,7 @@
 		  Title="Root"
 		  Level="0">
 	<MenuItem Id="2"
-			  Name="PipelineTry"
+			  Name="Pipeliner"
 			  Title="流水管道测试"
 			  Level="3"
 			  IsCacheable="True"
@@ -33,7 +33,7 @@
 		</MenuItem>
 	</MenuItem>
 	<MenuItem Id="2"
-			  Name="CoolingPieTry"
+			  Name="CoolingPier"
 			  Title="冷却风扇测试"
 			  Level="3"
 			  IsCacheable="False"
@@ -43,7 +43,7 @@
 			  ViewName="Aksl.Modules.Pipeline.Views.CoolingPieHubView,Aksl.Modules.Pipeline">
 	</MenuItem>
 	<MenuItem Id="2"
-			  Name="PipelineSystem"
+			  Name="PipelineSystemer"
 			  Title="流水管道系统"
 			  Level="3"
 			  IconKind="LinkBox"

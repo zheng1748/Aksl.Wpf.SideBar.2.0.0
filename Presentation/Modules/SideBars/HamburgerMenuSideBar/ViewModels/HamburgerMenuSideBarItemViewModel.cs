@@ -31,6 +31,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         public NodeViewModel() 
         {
             Parent = null;
+            Name = "VirtualNode";
 
             Children = new();
         }
@@ -43,6 +44,8 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             Parent = parent;
             Parent?.Children.Add(this);
             Children = new();
+
+            Path= Parent is not null ? $"{Parent.Path}.{Name}" : Name;
         }
 
         //public NodeViewModel(string name, string title ) : this(name,title,null)
@@ -64,6 +67,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
         #region Properties
         public string Name { get; set; }
+        public string Path { get; set; }
         public string Title { get; set; }
         public int Level { get; set; }
         public virtual NodeViewModel Parent { get; set; }
@@ -169,12 +173,12 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                         //var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
                         //buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
 
-                        HamburgerMenuSideBarHelper.LoadViewToRightContentAsync(_menuItem).Await();
+                        HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
                     }
 
                     if (HasSubMenu && _isSelected)
                     {
-                        LoadViewToLeftPaneAsync().Await();
+                        AddViewToLeftPaneAsync().Await();
                     }
                 }
             }
@@ -233,9 +237,9 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             return subMenuItems is not null && subMenuItems.Any();
         }
 
-        private async Task<IEnumerable<Infrastructure.MenuItem>> GetSubMenuAsync()
+        public async Task<IEnumerable<Infrastructure.MenuItem>> GetSubMenuAsync()
         {
-            IEnumerable<Infrastructure.MenuItem> subMenuItems = default;
+            IEnumerable<Infrastructure.MenuItem> subMenuItems = new List<Infrastructure.MenuItem>();
 
             if (!string.IsNullOrEmpty(_menuItem.NavigationName))
             {
@@ -255,10 +259,10 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             return subMenuItems;
         }
 
-        private async Task LoadViewToLeftPaneAsync()
+        private async Task AddViewToLeftPaneAsync()
         {
             var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
-            string name = $" {this.Name}.{nameof(HamburgerMenuSideBarView)}";
+            string name = $" {this.Path}.{nameof(HamburgerMenuSideBarView)}";
 
             ContentInformation contentInformation = new() { Name = name, Title = name };
 

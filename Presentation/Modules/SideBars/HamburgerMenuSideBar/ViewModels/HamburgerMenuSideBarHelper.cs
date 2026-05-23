@@ -22,7 +22,40 @@ namespace Aksl.Modules.HamburgerMenuSideBar;
 public static class HamburgerMenuSideBarHelper
 {
     #region Create HamburgerMenuSideBarViewModel Method
-    public static async Task<HamburgerMenuSideBarViewModel> CreateHamburgerMenuSideBarViewModelAsync(IEnumerable<Infrastructure.MenuItem> menuItems)
+    public static async Task<HamburgerMenuSideBarViewModel> CreateHamburgerMenuSideBarViewModelAsync(IEnumerable<Infrastructure.MenuItem> menuItems, HamburgerMenuSideBarItemViewModel parent =null,bool keepParent = false)
+    {
+        HamburgerMenuSideBarViewModel hamburgerMenuSideBar = new();
+        Func<MenuItem, HamburgerMenuSideBarItemViewModel, HamburgerMenuSideBarItemViewModel> constructorResolver =((m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); });
+
+        if (menuItems is not null && menuItems.Any())
+        {
+            List<HamburgerMenuSideBarItemViewModel> allSideBarItemLeafs = new();
+
+            foreach (var mi in menuItems)
+            {
+                //var allMenuItemLeafs = await nodeResolver.GetMenuItemLeafsAsync(smi, (m) => { return new HamburgerMenuSideBarItemViewModel(m, null);});
+                //allLeafs.AddRange(allMenuItemLeafs);
+
+                //var allTopMenuItemsLeafs = await nodeResolver.GetTopMenuItemLeafsAsync(smi, new HamburgerMenuSideBarItemViewModel(),(m,p) => { return new HamburgerMenuSideBarItemViewModel(m, p); });
+                //allLeafs.AddRange(allTopMenuItemsLeafs);
+
+                //var topItem = await nodeResolver.GetTopItemByMenuItemAsync(mi, new HamburgerMenuSideBarItemViewModel(), (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, keepParent);
+                HamburgerMenuSideBarItemViewModel virtualParent = parent ?? new();
+                NodeResolver<HamburgerMenuSideBarItemViewModel> nodeResolver = new();
+                var topItem = await nodeResolver.GetTopItemByMenuItemAsync(mi, virtualParent, constructorResolver, keepParent);
+                var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem);
+                allSideBarItemLeafs.AddRange(allTopItemLeafs);
+            }
+
+            hamburgerMenuSideBar.AllLeafHamburgerMenuSideBarItems = new ObservableCollection<HamburgerMenuSideBarItemViewModel>(allSideBarItemLeafs);
+        }
+
+        return hamburgerMenuSideBar;
+    }
+    #endregion
+
+    #region Create HamburgerMenuSideBarViewModel Method
+    public static async Task<HamburgerMenuSideBarViewModel> CreateHamburgerMenuSideBarViewModelAsync(IEnumerable<Infrastructure.MenuItem> menuItems, Func<MenuItem, HamburgerMenuSideBarItemViewModel> constructorResolver)
     {
         HamburgerMenuSideBarViewModel hamburgerMenuSideBar = new();
 
@@ -52,7 +85,7 @@ public static class HamburgerMenuSideBarHelper
     }
     #endregion
 
-    #region GetS ubMenu Method
+    #region Get SubMenu Method
     public static async Task<IEnumerable<Infrastructure.MenuItem>> GetSubMenuAsync(Infrastructure.MenuItem menuItem)
     {
         var menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
@@ -78,8 +111,41 @@ public static class HamburgerMenuSideBarHelper
     }
     #endregion
 
-    #region LoadView To RightContent Method
-    public static async Task LoadViewToRightContentAsync(MenuItem currentMenuItem)
+    #region Add Views To LeftPane Method
+    public static async Task AddViewsToLeftPaneAsync(HamburgerMenuSideBarItemViewModel topuSideBarItem)
+    {
+        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+        var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+
+        List<HamburgerMenuSideBarItemViewModel> leafsOfTopHeaderItem = new();
+
+        await RecursiveSubMenuItemViewModel(topuSideBarItem);
+
+        async Task RecursiveSubMenuItemViewModel(HamburgerMenuSideBarItemViewModel currenySubItem)
+        {
+            if (currenySubItem.HasSubMenu)
+            {
+                IEnumerable<Infrastructure.MenuItem> subMenuItems = await HamburgerMenuSideBarHelper.GetSubMenuAsync(currenySubItem.MenuItem);
+
+                if (subMenuItems is not null && subMenuItems.Any())
+                {
+                    var subBamburgerMenuSideBar = await HamburgerMenuSideBarHelper.CreateHamburgerMenuSideBarViewModelAsync(subMenuItems);
+                }
+            }
+
+            if (currenySubItem.HasChildren)
+            {
+                foreach (var children in currenySubItem.Children)
+                {
+                   // await RecursiveSubMenuItemViewModel(children as T);
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Add To RightContent Method
+    public static async Task AddViewToRightContentAsync(Infrastructure.MenuItem currentMenuItem)
     {
         var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
         var rightContentActiveContent = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
