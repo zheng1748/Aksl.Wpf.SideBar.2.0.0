@@ -34,6 +34,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             Name = "VirtualNode";
 
             Children = new();
+            Path = "Root";
         }
 
         public NodeViewModel(string name, string title, NodeViewModel parent)
@@ -173,12 +174,12 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                         //var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
                         //buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
 
-                        HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
+                        //HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
                     }
 
                     if (HasSubMenu && _isSelected)
                     {
-                        AddViewToLeftPaneAsync().Await();
+                        //AddViewToLeftPaneAsync().Await();
                     }
                 }
             }
@@ -232,9 +233,17 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
         private bool HasSubMenuInternal()
         {
-            var subMenuItems = HamburgerMenuSideBarHelper.GetSubMenuAsync(_menuItem).GetAwaiter().GetResult();
+            //var subMenuItems = HamburgerMenuSideBarHelper.GetSubMenuAsync(_menuItem).GetAwaiter().GetResult();
 
-            return subMenuItems is not null && subMenuItems.Any();
+            //return subMenuItems is not null && subMenuItems.Any();
+
+           var hasSubMenu=(!string.IsNullOrEmpty(_menuItem.NavigationName)) || (string.IsNullOrEmpty(_menuItem.NavigationName) && HasSubMenu(_menuItem) && IsExistsViewInSubMenu(_menuItem));
+
+            bool HasSubMenu(MenuItem mi) => (mi is not null) && mi.SubMenus.Any();
+
+            bool IsExistsViewInSubMenu(MenuItem mi) => (mi is not null) && mi.SubMenus.Any(sm => !string.IsNullOrEmpty(sm.ViewName));
+
+            return hasSubMenu;
         }
 
         public async Task<IEnumerable<Infrastructure.MenuItem>> GetSubMenuAsync()

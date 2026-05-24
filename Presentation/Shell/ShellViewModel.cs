@@ -86,14 +86,14 @@ namespace Aksl.Modules.Shell.ViewModels
                     Title = nameof(LoginView),
                     ViewName = "",
                     ViewElement = new LoginView(),
-                },false);
+                }, false);
 
                 shellContentActiveContentViewModel.Add(new()
                 {
                     Name = nameof(HamburgerMenuSideBarHubView),
                     Title = nameof(HamburgerMenuSideBarHubView),
                     ViewName = "",
-                    ViewElement = new HamburgerMenuSideBarHubView(),
+                    ViewElement = new HamburgerMenuSideBarHubView()
                 });
 
                 ShellContentActiveContentViewModel = shellContentActiveContentViewModel;

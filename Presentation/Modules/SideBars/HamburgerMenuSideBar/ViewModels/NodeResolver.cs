@@ -176,16 +176,19 @@ public class NodeResolver<T> where T : ViewModels.NodeViewModel
 
         bool IsNexOnNotLeaf(MenuItem mi) => (mi is not null) && mi.IsNexOnNotLeaf;
 
-        var topHeaderItem = parent.Children.FirstOrDefault();
-        if (topHeaderItem is not null)
+        if (isKeepParent)
         {
-            if (!isKeepParent)
+            return parent as T;
+        }
+        else
+        {
+            var topHeaderItem = parent.Children.FirstOrDefault();
+            if (topHeaderItem is not null)
             {
                 topHeaderItem.Parent = null;
             }
+            return topHeaderItem as T;
         }
-
-        return topHeaderItem as T;
     }
     #endregion
 

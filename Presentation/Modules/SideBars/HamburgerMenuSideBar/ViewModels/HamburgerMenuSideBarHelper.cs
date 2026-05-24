@@ -22,10 +22,10 @@ namespace Aksl.Modules.HamburgerMenuSideBar;
 public static class HamburgerMenuSideBarHelper
 {
     #region Create HamburgerMenuSideBarViewModel Method
-    public static async Task<HamburgerMenuSideBarViewModel> CreateHamburgerMenuSideBarViewModelAsync(IEnumerable<Infrastructure.MenuItem> menuItems, HamburgerMenuSideBarItemViewModel parent =null,bool keepParent = false)
+    public static async Task<HamburgerMenuSideBarViewModel> CreateHamburgerMenuSideBarViewModelAsync(IEnumerable<Infrastructure.MenuItem> menuItems)
     {
+        NodeResolver<HamburgerMenuSideBarItemViewModel> nodeResolver = new();
         HamburgerMenuSideBarViewModel hamburgerMenuSideBar = new();
-        Func<MenuItem, HamburgerMenuSideBarItemViewModel, HamburgerMenuSideBarItemViewModel> constructorResolver =((m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); });
 
         if (menuItems is not null && menuItems.Any())
         {
@@ -33,16 +33,10 @@ public static class HamburgerMenuSideBarHelper
 
             foreach (var mi in menuItems)
             {
-                //var allMenuItemLeafs = await nodeResolver.GetMenuItemLeafsAsync(smi, (m) => { return new HamburgerMenuSideBarItemViewModel(m, null);});
-                //allLeafs.AddRange(allMenuItemLeafs);
+                HamburgerMenuSideBarItemViewModel virtualParent = new();
+                Func<MenuItem, HamburgerMenuSideBarItemViewModel, HamburgerMenuSideBarItemViewModel> constructorResolver = ((m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); });
 
-                //var allTopMenuItemsLeafs = await nodeResolver.GetTopMenuItemLeafsAsync(smi, new HamburgerMenuSideBarItemViewModel(),(m,p) => { return new HamburgerMenuSideBarItemViewModel(m, p); });
-                //allLeafs.AddRange(allTopMenuItemsLeafs);
-
-                //var topItem = await nodeResolver.GetTopItemByMenuItemAsync(mi, new HamburgerMenuSideBarItemViewModel(), (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, keepParent);
-                HamburgerMenuSideBarItemViewModel virtualParent = parent ?? new();
-                NodeResolver<HamburgerMenuSideBarItemViewModel> nodeResolver = new();
-                var topItem = await nodeResolver.GetTopItemByMenuItemAsync(mi, virtualParent, constructorResolver, keepParent);
+                var topItem = await nodeResolver.GetTopItemByMenuItemAsync(mi, virtualParent, constructorResolver, false);
                 var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem);
                 allSideBarItemLeafs.AddRange(allTopItemLeafs);
             }

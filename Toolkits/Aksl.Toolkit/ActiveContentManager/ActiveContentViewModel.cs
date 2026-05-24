@@ -39,9 +39,16 @@ namespace Aksl.ActiveContentManager.ViewModels
             get => _selectedContentItem;
             set 
             {
-                if (SetProperty<ActiveContentItemViewModel>(ref _selectedContentItem, value)) 
+                if (SetProperty<ActiveContentItemViewModel>(ref _selectedContentItem, value))
                 {
-                    SelectedIndex=GetIndexSelectedActiveContentItem();
+                    if (_selectedContentItem is not null)
+                    {
+                        SelectedIndex = GetIndexSelectedActiveContentItem();
+                    }
+                    else
+                    {
+                        SelectedIndex = -1;
+                    }
                 }
             }
         }
@@ -70,12 +77,13 @@ namespace Aksl.ActiveContentManager.ViewModels
             if (contentInformation.ViewElement is not null)
             {
                 newActiveContentItemViewModel.ViewElement = contentInformation.ViewElement;
+                (newActiveContentItemViewModel.ViewElement as UIElement).Visibility = Visibility.Collapsed;
             }
 
-            AddCore(newActiveContentItemViewModel);
+            AddCore(newActiveContentItemViewModel, isActive);
         }
 
-        private void AddCore(ActiveContentItemViewModel newActiveContentItemViewModel, bool isActive = true)
+        private void AddCore(ActiveContentItemViewModel newActiveContentItemViewModel, bool isActive)
         {
             if (!IsExistsActivContentItems(newActiveContentItemViewModel.Name, newActiveContentItemViewModel.Title))
             {
@@ -113,7 +121,7 @@ namespace Aksl.ActiveContentManager.ViewModels
             {
                 SetActiveContentItem(newActiveContentItemViewModel);
             }
-
+           
             RaisePropertyChanged(nameof(CanMove));
             RaisePropertyChanged(nameof(ActiveContentItems));
         }
@@ -163,7 +171,7 @@ namespace Aksl.ActiveContentManager.ViewModels
                 var storeContentItem = GetStoreContentItemViewModelByInfo(contentInformation);
                 if (storeContentItem is not null)
                 {
-                    AddCore(storeContentItem);
+                    AddCore(storeContentItem,true);
                 }
             }
         }
@@ -255,6 +263,15 @@ namespace Aksl.ActiveContentManager.ViewModels
                 {
                     SetActiveContentItem(activeContentItem);
                 }
+            }
+        }
+
+        public void ClearActiveItem()
+        {
+            if (SelectedContentItem is not null)
+            {
+                SelectedContentItem.IsSelected = false;
+                SelectedContentItem = null;
             }
         }
 
