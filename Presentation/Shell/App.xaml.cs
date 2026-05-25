@@ -97,7 +97,7 @@ namespace Aksl.Modules.Shell
             containerRegistry.RegisterSingleton(typeof(Dialogs.Services.IDialogViewService), typeof(Dialogs.Services.DialogViewService));
 
             RegisterMenuFactoryAsync(containerRegistry).Await();
-           
+
             RegisterBuildWorkspaceViewEventAsync().Await();
         }
 
@@ -107,7 +107,7 @@ namespace Aksl.Modules.Shell
 
             try
             {
-                MenuService menuService = new (new List<string> {"pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/AllMenus.xml",
+                MenuService menuService = new(new List<string> {"pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/AllMenus.xml",
                                                                  "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Industry.xml",
                                                                  "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Pipelines.xml",
                                                                  "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Thermometers.xml",
@@ -124,7 +124,7 @@ namespace Aksl.Modules.Shell
             catch (Exception ex)
             {
                 //Debug.Print(ex.Message);
-                dialogViewService.AlertAsync(message:ex.Message,title: "Register Menu",okText:"确定").Await();
+                dialogViewService.AlertAsync(message: ex.Message, title: "Register Menu", okText: "确定").Await();
             }
         }
 
@@ -157,12 +157,12 @@ namespace Aksl.Modules.Shell
             _ = moduleCatalog.AddModule(nameof(AccountModule), typeof(AccountModule).AssemblyQualifiedName, InitializationMode.WhenAvailable);
 
             _ = moduleCatalog.AddModule(typeof(ShellModule).Name, typeof(ShellModule).AssemblyQualifiedName, InitializationMode.WhenAvailable,
-                                        dependsOn: [typeof(HamburgerMenuSideBarModule).Name,typeof(HamburgerMenuNavigationSideBarModule).Name, typeof(HamburgerMenuTreeSideBarViewModule).Name, typeof(HamburgerMenuPopupSideBarModule).Name]);
+                                        dependsOn: [typeof(HamburgerMenuSideBarModule).Name, typeof(HamburgerMenuNavigationSideBarModule).Name, typeof(HamburgerMenuTreeSideBarViewModule).Name, typeof(HamburgerMenuPopupSideBarModule).Name]);
 
             _ = moduleCatalog.AddModule(typeof(HamburgerMenuSideBarModule).Name, typeof(HamburgerMenuSideBarModule).AssemblyQualifiedName, InitializationMode.WhenAvailable);
             _ = moduleCatalog.AddModule(typeof(HamburgerMenuNavigationSideBarModule).Name, typeof(HamburgerMenuNavigationSideBarModule).AssemblyQualifiedName, InitializationMode.WhenAvailable);
             _ = moduleCatalog.AddModule(typeof(HamburgerMenuTreeSideBarViewModule).Name, typeof(HamburgerMenuTreeSideBarViewModule).AssemblyQualifiedName, InitializationMode.WhenAvailable);
-        
+
             _ = moduleCatalog.AddModule(nameof(HamburgerMenuPopupSideBarModule), typeof(HamburgerMenuPopupSideBarModule).AssemblyQualifiedName, InitializationMode.WhenAvailable);
 
             _ = moduleCatalog.AddModule(nameof(ExpandHamburgerMenuModule), typeof(ExpandHamburgerMenuModule).AssemblyQualifiedName, InitializationMode.WhenAvailable);
@@ -189,7 +189,7 @@ namespace Aksl.Modules.Shell
             return Container.Resolve<ShellView>();
         }
 
-        protected override  void InitializeShell(Window shell)
+        protected override void InitializeShell(Window shell)
         {
             base.InitializeShell(shell);
         }
