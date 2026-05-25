@@ -437,7 +437,7 @@
                 </LinearGradientBrush.GradientStops>
             </LinearGradientBrush>
         </Border.BorderBrush>-->
-        <Grid x:Name="layoutRootGrid"
+        <Grid x:Name="LayoutRootGrid"
               SnapsToDevicePixels="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="48" />
@@ -512,9 +512,10 @@
                        Margin="0,1,0,0"
                        Height="8"
                        BorderBrush="#193441" />
+            
             <acmviews:ActiveContentView x:Name="ShellContentActiveContentView"
                                         Grid.Row="2"
-                                        Margin="2"
+                                        Margin="1"
                                         DataContext="{Binding Path=ShellContentActiveContentViewModel}">
                 <ContentControl.RenderTransform>
                     <TransformGroup>

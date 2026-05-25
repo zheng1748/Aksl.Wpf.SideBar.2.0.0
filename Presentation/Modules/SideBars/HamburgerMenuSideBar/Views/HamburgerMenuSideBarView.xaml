@@ -184,14 +184,15 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-
+    <!--Background="{StaticResource PrimaryThemeBrush}"-->
     <ListView x:Name="hamburgerMenuSideBarListView"
-              Background="{StaticResource PrimaryThemeBrush}"
+            
               ItemsSource="{Binding Source={StaticResource hamburgerMenuSideBarSource}}"
               ItemTemplate="{Binding Source={StaticResource hamburgerMenuSideBarDataTemplate}}"
               ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
               SelectionMode="Single"
               SelectedIndex="{Binding Path=SelectedIndex,Mode=TwoWay}"
-              SelectedItem="{Binding Path=SelectedHamburgerMenuSideBarItem,Mode=TwoWay}">
+              SelectedItem="{Binding Path=SelectedHamburgerMenuSideBarItem,Mode=TwoWay}"
+              Margin="1,1,1,1">
     </ListView>
 </UserControl>

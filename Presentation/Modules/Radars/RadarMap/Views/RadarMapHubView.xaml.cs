@@ -13,11 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Aksl.Modules.LiveCharts.Axes.Views
+namespace Aksl.Modules.RadarMap.Views
 {
-    public partial class ColorsAndPositionView : UserControl
+    public partial class RadarMapHubView : UserControl
     {
-        public ColorsAndPositionView()
+        public RadarMapHubView()
         {
             InitializeComponent();
         }

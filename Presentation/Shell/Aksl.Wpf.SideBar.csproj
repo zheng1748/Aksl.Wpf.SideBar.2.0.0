@@ -20,6 +20,7 @@
     <None Remove="Data\Industry.xml" />
     <None Remove="Data\Others.xml" />
     <None Remove="Data\Pipelines.xml" />
+    <None Remove="Data\Radars.xml" />
     <None Remove="Data\Thermometers.xml" />
   </ItemGroup>
 
@@ -27,6 +28,12 @@
     <Content Include="Configuration\appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Data\Radars.xml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -112,6 +119,7 @@
     <ProjectReference Include="..\Modules\Navigations\MenuSub\MenuSub.csproj" />
     <ProjectReference Include="..\Modules\Navigations\TabBar\TabBar.csproj" />
     <ProjectReference Include="..\Modules\Others\OthersView\OthersView.csproj" />
+    <ProjectReference Include="..\Modules\Radars\RadarMapView.csproj" />
     <ProjectReference Include="..\Modules\SideBars\HamburgerMenuNavigationSideBar\HamburgerMenuNavigationSideBar.csproj" />
     <ProjectReference Include="..\Modules\SideBars\HamburgerMenuPopupSideBar\HamburgerMenuPopupSideBar.csproj" />
     <ProjectReference Include="..\Modules\SideBars\HamburgerMenuSideBar\HamburgerMenuSideBar.csproj" />

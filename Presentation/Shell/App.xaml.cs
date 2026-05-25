@@ -1,5 +1,6 @@
 ﻿using Aksl.ActiveContentManager.ViewModels;
 using Aksl.ActiveContentManager.Views;
+using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
 using Aksl.Infrastructure.Events;
 using Aksl.Modules.Account;
@@ -25,11 +26,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using Prism;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
+using Prism.Unity;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -100,6 +103,8 @@ namespace Aksl.Modules.Shell
 
         protected async Task RegisterMenuFactoryAsync(IContainerRegistry containerRegistry)
         {
+            var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+
             try
             {
                 MenuService menuService = new (new List<string> {"pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/AllMenus.xml",
@@ -109,6 +114,7 @@ namespace Aksl.Modules.Shell
                                                                  "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/CoolingTowers.xml",
                                                                  "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/AirCompressers.xml",
                                                                  "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Others.xml",
+                                                                 "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Radars.xml"
                                                                  });
 
                 await menuService.CreateMenusAsync();
@@ -117,7 +123,8 @@ namespace Aksl.Modules.Shell
             }
             catch (Exception ex)
             {
-                Debug.Print(ex.Message);
+                //Debug.Print(ex.Message);
+                dialogViewService.AlertAsync(message:ex.Message,title: "Register Menu",okText:"确定").Await();
             }
         }
 
@@ -173,6 +180,8 @@ namespace Aksl.Modules.Shell
             _ = moduleCatalog.AddModule(nameof(AirCompresserModule), typeof(AirCompresserModule).AssemblyQualifiedName, InitializationMode.WhenAvailable);
 
             _ = moduleCatalog.AddModule(nameof(OthersModule), typeof(OthersModule).AssemblyQualifiedName, InitializationMode.WhenAvailable);
+
+            _ = moduleCatalog.AddModule(nameof(Aksl.Modules.RadarMap.RadarMapModule), typeof(Aksl.Modules.RadarMap.RadarMapModule).AssemblyQualifiedName, InitializationMode.WhenAvailable);
         }
 
         protected override Window CreateShell()

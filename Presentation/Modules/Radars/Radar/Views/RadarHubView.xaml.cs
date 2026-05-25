@@ -13,11 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Aksl.Modules.LiveCharts.Axes.Views
+namespace Aksl.Modules.RadarMap.Views
 {
-    public partial class DateTimeScaledView : UserControl
+    public partial class RadarHubView : UserControl
     {
-        public DateTimeScaledView()
+        public RadarHubView()
         {
             InitializeComponent();
         }

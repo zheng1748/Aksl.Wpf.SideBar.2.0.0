@@ -31,6 +31,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
         #region Properties
         public ObservableCollection<HamburgerMenuSideBarItemViewModel> AllLeafHamburgerMenuSideBarItems { get; set; }
+        public HamburgerMenuSideBarItemViewModel HamburgerMenuSideBarItemEithNotSubMenu { get; set; }
         public string WorkspaceViewEventName { get; set; }
 
         private HamburgerMenuSideBarItemViewModel _selectedHamburgerMenuSideBarItem;

@@ -151,6 +151,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                return HasSubMenuInternal();
             }
         }
+
         //public HamburgerMenuSideBarItemViewModel Parent { get; set; }
         //public ObservableCollection<HamburgerMenuSideBarItemViewModel> Children => _children;
         //public bool HasTitle => !string.IsNullOrEmpty(_menuItem.Title);

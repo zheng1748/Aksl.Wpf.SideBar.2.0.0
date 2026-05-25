@@ -970,6 +970,7 @@
                         <DockPanel>
                             <Button DockPanel.Dock="Top"
                                     Command="{Binding Path=MovePreviousCommand,Mode=OneWay}"
+                                    CommandParameter="{Binding Path=DataContext.SelectedContentItem,ElementName=LeftPaneHamburgerMenuSideBarActiveContentView}"
                                     Content="{materialDesign:PackIcon Kind=ArrowLeft, Size=24}"
                                     Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                                     Width="{Binding Path=Content.Width,RelativeSource={RelativeSource Mode=Self}}"
