@@ -98,6 +98,7 @@ namespace Aksl.ActiveContentManager.ViewModels
             }
         }
 
+
         private Visibility _viewElementVisibility = Visibility.Visible;
         public Visibility ViewElementVisibility
         {
@@ -106,7 +107,10 @@ namespace Aksl.ActiveContentManager.ViewModels
             {
                 if (SetProperty<Visibility>(ref _viewElementVisibility, value))
                 {
-                    (ViewElement as UIElement).Visibility=value;
+                    if (ViewElement is not null)
+                    {
+                        (ViewElement as UIElement).Visibility = value;
+                    }
                 }
             }
         }

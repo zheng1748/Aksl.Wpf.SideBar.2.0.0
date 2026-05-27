@@ -136,7 +136,8 @@ namespace Aksl.Modules.Account.ViewModels
 
             try
             {
-                var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: "ShellContentActiveContentViewModel");
+               // var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: "ShellContentActiveContentViewModel");
+                var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
                 shellContentActiveContentViewModel.SetActiveItemByName(nameof(LoginView));
 
                 // var contentRegion = _regionManager.Regions[RegionNames.ShellContentRegion];

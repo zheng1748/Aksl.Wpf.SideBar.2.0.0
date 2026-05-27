@@ -122,7 +122,11 @@ namespace Aksl.ActiveContentManager.ViewModels
 
             if (isActive)
             {
-                SetActiveContentItem(newActiveContentItemViewModel);
+                SetActiveContentItem(newActiveContentItemViewModel); 
+            }
+            else
+            {
+                newActiveContentItemViewModel.ViewElementVisibility = Visibility.Collapsed;
             }
 
             RaisePropertyChanged(nameof(CanMove));

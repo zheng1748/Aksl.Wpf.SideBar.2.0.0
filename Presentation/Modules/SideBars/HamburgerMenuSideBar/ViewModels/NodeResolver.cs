@@ -1,16 +1,18 @@
-﻿using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Unity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Unity;
+
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
 
 namespace Aksl.Modules.HamburgerMenuSideBar;
 

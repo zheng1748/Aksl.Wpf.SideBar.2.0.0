@@ -23,7 +23,7 @@
 			  ItemType="Item"
 			  IsCacheable="True"
 			  ModuleName=""
-			  IsNextNavigation="True"
+			   IsNextNavigation="False"
 			  NavigationName="Industry">
 	</MenuItem>
 	<MenuItem Id="3"
@@ -34,7 +34,7 @@
 			  ItemType="Item"
 			  IsCacheable="True"
 			  ModuleName=""
-			  IsNextNavigation="True"
+			   IsNextNavigation="False"
 			  NavigationName="Radars">
 	</MenuItem>
 	<MenuItem Id="5"
@@ -45,7 +45,7 @@
 			  ItemType="Item"
 			  IsCacheable="True"
 			  ModuleName=""
-			  IsNextNavigation="True"
+			  IsNextNavigation="False"
 			  NavigationName="Others">
 	</MenuItem>
 </MenuItem>

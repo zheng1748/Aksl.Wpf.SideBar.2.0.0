@@ -1,4 +1,18 @@
-﻿using Aksl.ActiveContentManager;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Media;
+
+using Prism;
+using Prism.Events;
+using Prism.Ioc;
+using Prism.Mvvm;
+using Prism.Regions;
+using Prism.Unity;
+using Unity;
+
+using Aksl.ActiveContentManager;
 using Aksl.ActiveContentManager.ViewModels;
 using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
@@ -6,18 +20,6 @@ using Aksl.Infrastructure.Events;
 using Aksl.Modules.Account.Views;
 using Aksl.Modules.HamburgerMenuSideBar.Views;
 using Microsoft.Extensions.DependencyInjection;
-using Prism;
-using Prism.Events;
-using Prism.Ioc;
-using Prism.Mvvm;
-using Prism.Regions;
-using Prism.Unity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Media;
-using Unity;
 
 namespace Aksl.Modules.Shell.ViewModels
 {
@@ -78,42 +80,42 @@ namespace Aksl.Modules.Shell.ViewModels
             void RegisterShellContentActiveContent()
             {
                 _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.ShellContent);
-                var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+                ShellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
 
-                shellContentActiveContentViewModel.Add(new()
+                RegisterShellContentActiveContent();
+                void RegisterShellContentActiveContent()
                 {
-                    Name = nameof(LoginView),
-                    Title = nameof(LoginView),
-                    ViewName = "",
-                    ViewElement = new LoginView(),
-                }, false);
+                    ShellContentActiveContentViewModel.Add(new()
+                    {
+                        Name = nameof(LoginView),
+                        Title = nameof(LoginView),
+                        ViewName = "Aksl.Modules.Account.Views.LoginView,Aksl.Modules.Account",
+                        //ViewElement = new LoginView(),
+                    }, false);
 
-                shellContentActiveContentViewModel.Add(new()
+                    ShellContentActiveContentViewModel.Add(new()
+                    {
+                        Name = nameof(HamburgerMenuSideBarHubView),
+                        Title = nameof(HamburgerMenuSideBarHubView),
+                        ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarHubView,Aksl.Modules.HamburgerMenuSideBar",
+                        //ViewElement = new HamburgerMenuSideBarHubView()
+                    });
+                }
+
+                RegisterLoginActiveContent();
+                void RegisterLoginActiveContent()
                 {
-                    Name = nameof(HamburgerMenuSideBarHubView),
-                    Title = nameof(HamburgerMenuSideBarHubView),
-                    ViewName = "",
-                    ViewElement = new HamburgerMenuSideBarHubView()
-                });
+                    _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.LoginContent);
+                    LoginActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LoginContent);
 
-                ShellContentActiveContentViewModel = shellContentActiveContentViewModel;
-            }
-
-            RegisterLoginActiveContent();
-            void RegisterLoginActiveContent()
-            {
-                _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.LoginContent);
-                var loginActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LoginContent);
-
-                loginActiveContentViewModel.Add(new()
-                {
-                    Name = nameof(LoginStatusView),
-                    Title = nameof(LoginStatusView),
-                    ViewName = "",
-                    ViewElement = new LoginStatusView(),
-                });
-
-                LoginActiveContentViewModel = loginActiveContentViewModel;
+                    LoginActiveContentViewModel.Add(new()
+                    {
+                        Name = nameof(LoginStatusView),
+                        Title = nameof(LoginStatusView),
+                        ViewName = "",
+                        ViewElement = new LoginStatusView(),
+                    });
+                }
             }
         }
         #endregion
