@@ -967,20 +967,23 @@
                           HorizontalAlignment="Left"
                           Background="{StaticResource PrimaryThemeBrush}"
                           Width="320">
+                        <!--Visibility="{Binding Path=CanMove,Converter={StaticResource booleanToVisibilityConverter}}"-->
                         <DockPanel>
-                            <Button DockPanel.Dock="Top"
-                                    Command="{Binding Path=MovePreviousCommand,Mode=OneWay}"
-                                    CommandParameter="{Binding Path=DataContext.SelectedContentItem,ElementName=LeftPaneHamburgerMenuSideBarActiveContentView}"
-                                    Content="{materialDesign:PackIcon Kind=ArrowLeft, Size=24}"
-                                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                                    Width="{Binding Path=Content.Width,RelativeSource={RelativeSource Mode=Self}}"
-                                    Height="{Binding Path=Content.Height,RelativeSource={RelativeSource Mode=Self}}"
-                                    HorizontalAlignment="Left"
-                                    Margin="1,1,1,1"
-                                    ToolTip="Back"
-                                    Cursor="Arrow"
-                                    Visibility="{Binding Path=CanMove,Converter={StaticResource booleanToVisibilityConverter}}">
-                            </Button>
+                            <StackPanel DockPanel.Dock="Top"
+                                        Orientation="Horizontal" Height="24">
+                                <Button Command="{Binding Path=MovePreviousCommand,Mode=OneWay}"
+                                        CommandParameter="{Binding Path=DataContext.SelectedContentItem,ElementName=LeftPaneHamburgerMenuSideBarActiveContentView}"
+                                        Content="{materialDesign:PackIcon Kind=ArrowLeft,Size=24}"
+                                        Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                        Width="{Binding Path=Content.Width,RelativeSource={RelativeSource Mode=Self}}"
+                                        Height="{Binding Path=Content.Height,RelativeSource={RelativeSource Mode=Self}}"
+                                        HorizontalAlignment="Left"
+                                        Margin="1,1,1,1"
+                                        ToolTip="Back"
+                                        Cursor="Arrow"
+                                        IsEnabled="{Binding Path=CanMove}">
+                                </Button>
+                            </StackPanel>
                             <acmview:ActiveContentView x:Name="LeftPaneHamburgerMenuSideBarActiveContentView"
                                                        DataContext="{Binding Path=LeftPaneActiveContentViewModel}"
                                                        HorizontalAlignment="Stretch"

@@ -25,14 +25,15 @@ namespace Aksl.ActiveContentManager.ViewModels
         public ActiveContentViewModel()
         {
             ActiveContentItems = new();
-            StoreContentItems = new();
+            StoreContentItems = new(); 
+            MoveContentItems = new();
         }
         #endregion
 
         #region Properties
         public ObservableCollection<ActiveContentItemViewModel> ActiveContentItems { get; }
         public List<ActiveContentItemViewModel> StoreContentItems { get; }
-
+        public List<int> MoveContentItems { get; set; }
         private ActiveContentItemViewModel _selectedContentItem;
         public ActiveContentItemViewModel SelectedContentItem
         {
@@ -59,6 +60,8 @@ namespace Aksl.ActiveContentManager.ViewModels
             get => _selectedIndex;
             set => SetProperty<int>(ref _selectedIndex, value);
         }
+
+        public int MoveIndex { get; set; }
 
         public bool CanMove
         {
@@ -121,7 +124,7 @@ namespace Aksl.ActiveContentManager.ViewModels
             {
                 SetActiveContentItem(newActiveContentItemViewModel);
             }
-           
+
             RaisePropertyChanged(nameof(CanMove));
             RaisePropertyChanged(nameof(ActiveContentItems));
         }
@@ -266,6 +269,13 @@ namespace Aksl.ActiveContentManager.ViewModels
             }
         }
 
+        public ActiveContentItemViewModel GetActiveContentItemByName(string name)
+        {
+            var activeContentItemViewModel = ActiveContentItems.FirstOrDefault(aci => IsEqualsNameOrTitle(aci.Name, name));
+
+            return activeContentItemViewModel;
+        }
+
         public void ClearActiveItem()
         {
             if (SelectedContentItem is not null)
@@ -282,13 +292,6 @@ namespace Aksl.ActiveContentManager.ViewModels
             return activeContentItemViewModel;
         }
 
-        private ActiveContentItemViewModel GetActiveContentItemByName(string name)
-        {
-            var activeContentItemViewModel = ActiveContentItems.FirstOrDefault(aci => IsEqualsNameOrTitle(aci.Name, name));
-
-            return activeContentItemViewModel;
-        }
-
         public ActiveContentItemViewModel GetStoreContentItemViewModelByInfo(ContentInformation contentInformation)
         {
             var storeContentItem = StoreContentItems.FirstOrDefault(sci => IsEqualsNameOrTitle(sci.Name, contentInformation.Name) || IsEqualsNameOrTitle(sci.Title, contentInformation.Title));
@@ -298,7 +301,7 @@ namespace Aksl.ActiveContentManager.ViewModels
 
         public ActiveContentItemViewModel GetStoreContentItemByName(string name)
         {
-            var storeContentItem = StoreContentItems.FirstOrDefault(stc => IsEqualsNameOrTitle(stc.ViewName, name));
+            var storeContentItem = StoreContentItems.FirstOrDefault(stc => IsEqualsNameOrTitle(stc.Name, name));
 
             return storeContentItem;
         }
@@ -316,13 +319,59 @@ namespace Aksl.ActiveContentManager.ViewModels
 
             return storeContentItem?.ViewElement;
         }
+
+        public int GetIndexByName(string name)
+        {
+            var index = StoreContentItems.ToList().FindIndex(aci => IsEqualsNameOrTitle(aci.Name, name) || IsEqualsNameOrTitle(aci.Title, name));
+
+            return index;
+        }
         #endregion
 
-        #region Move Methods
+        #region Move Methods 
+        public void SetActiveItemToLast()
+        {
+            if (!HasActiveItem())
+            {
+                var lastActiveContentItem = ActiveContentItems[ActiveContentItems.Count - 1];
+                SetActiveContentItem(lastActiveContentItem);
+            }
+        }
+
+        public bool HasActiveItem()
+        {
+            return ActiveContentItems.Count > 0 && SelectedContentItem is not null;
+        }
+
+        public void SetMoveIndexOnAdd()
+        {
+            MoveContentItems.Clear();
+            for (int i = 0; i <= ActiveContentItems.Count - 1; i++)
+            {
+                MoveContentItems.Add(i);
+            }
+        }
+
+        public void SetMoveIndexOnSet()
+        {
+            if (SelectedIndex < ActiveContentItems.Count - 1)
+            {
+                MoveContentItems[ActiveContentItems.Count - 1] = SelectedIndex;
+
+                for (int i = SelectedIndex; i < ActiveContentItems.Count - 1; i++)
+                {
+                    MoveContentItems[i] = SelectedIndex + 1;
+                }
+            }
+        }
+
         public void ExecuteMovePrevious()
         {
             //var selectedIndex = GetIndexSelectedActiveContentItem();
             var previousActiveContentItem = ActiveContentItems[SelectedIndex - 1];
+
+          //  var previousIndex = ActiveContentItems.Count[MoveContentItems[i]];
+
             SetActiveContentItem(previousActiveContentItem);
         }
 

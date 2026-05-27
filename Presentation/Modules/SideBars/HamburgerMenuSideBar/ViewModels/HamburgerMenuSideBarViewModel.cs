@@ -1,16 +1,18 @@
-﻿using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Unity;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
+
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
 
 namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 {
@@ -31,7 +33,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
         #region Properties
         public ObservableCollection<HamburgerMenuSideBarItemViewModel> AllLeafHamburgerMenuSideBarItems { get; set; }
-        public HamburgerMenuSideBarItemViewModel HamburgerMenuSideBarItemEithNotSubMenu { get; set; }
+        public HamburgerMenuSideBarItemViewModel LastHamburgerMenuSideBarItemEithNotSubMenu { get; set; }
         public string WorkspaceViewEventName { get; set; }
 
         private HamburgerMenuSideBarItemViewModel _selectedHamburgerMenuSideBarItem;

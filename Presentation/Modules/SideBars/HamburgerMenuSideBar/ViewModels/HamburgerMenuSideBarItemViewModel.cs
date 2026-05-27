@@ -294,7 +294,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                 IEnumerable<Infrastructure.MenuItem> subMenuItems = await HamburgerMenuSideBarHelper.GetSubMenuAsync(_menuItem);
                 if (subMenuItems is not null && subMenuItems.Any())
                 {
-                    HamburgerMenuSideBar = await HamburgerMenuSideBarHelper.CreateHamburgerMenuSideBarViewModelAsync(subMenuItems);
+                    HamburgerMenuSideBar = await HamburgerMenuSideBarHelper.CreateTopHamburgerMenuSideBarViewModelAsync(subMenuItems);
                     //List<HamburgerMenuSideBarItemViewModel> allLeafs = new();
                     //HamburgerMenuSideBarViewModel hamburgerMenuSideBar = new();
 
