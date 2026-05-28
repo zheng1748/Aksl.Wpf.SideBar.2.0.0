@@ -152,7 +152,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                                 hmbvm.LastHamburgerMenuSideBarItemEithNotSubMenu = hmbvm.SelectedHamburgerMenuSideBarItem;
                                 SelectedHamburgerMenuSideBarItem = hmbvm.SelectedHamburgerMenuSideBarItem;
 
-                                HamburgerMenuSideBarHelper.AddViewToRightContentAsync(hmbvm.SelectedHamburgerMenuSideBarItem.MenuItem).Await();
+                               // HamburgerMenuSideBarHelper.AddViewToRightContentAsync(hmbvm.SelectedHamburgerMenuSideBarItem.MenuItem).Await();
                             }
 
                             if (IsSetActiveToLeftPaneActiveContent(hmbvm.SelectedHamburgerMenuSideBarItem))
@@ -171,7 +171,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                                 hmbvm.LastHamburgerMenuSideBarItemEithNotSubMenu = hmbvm.SelectedHamburgerMenuSideBarItem;
                                 SelectedHamburgerMenuSideBarItem = hmbvm.SelectedHamburgerMenuSideBarItem;
 
-                                HamburgerMenuSideBarHelper.AddViewToRightContentAsync(hmbvm.SelectedHamburgerMenuSideBarItem.MenuItem).Await();
+                               // HamburgerMenuSideBarHelper.AddViewToRightContentAsync(hmbvm.SelectedHamburgerMenuSideBarItem.MenuItem).Await();
                             }
 
                             if (IsSetActiveToLeftPaneActiveContent(hmbvm.SelectedHamburgerMenuSideBarItem))
@@ -819,7 +819,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                 var rootMenuItem = await _menuService.GetMenuAsync("All");
                 var subMenuItems = rootMenuItem.SubMenus;
                 TopHamburgerMenuSideBar = await HamburgerMenuSideBarHelper.CreateTopHamburgerMenuSideBarViewModelAsync(subMenuItems);
-                AddHamburgerMenuSideBarViewModelPropertyChanged(TopHamburgerMenuSideBar);
+               //AddHamburgerMenuSideBarViewModelPropertyChanged(TopHamburgerMenuSideBar);
 
                 //List<HamburgerMenuSideBarItemViewModel> allideBarItemViewLeafs = new();
 

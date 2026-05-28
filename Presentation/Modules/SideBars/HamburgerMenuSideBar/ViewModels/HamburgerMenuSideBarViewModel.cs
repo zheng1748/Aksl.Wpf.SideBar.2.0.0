@@ -39,8 +39,17 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         private HamburgerMenuSideBarItemViewModel _selectedHamburgerMenuSideBarItem;
         public HamburgerMenuSideBarItemViewModel SelectedHamburgerMenuSideBarItem
         {
-            get => _selectedHamburgerMenuSideBarItem; 
-            set => SetProperty(ref _selectedHamburgerMenuSideBarItem, value);
+            get => _selectedHamburgerMenuSideBarItem;
+            set
+            {
+                if (SetProperty(ref _selectedHamburgerMenuSideBarItem, value))
+                {
+                    if (!_selectedHamburgerMenuSideBarItem.HasSubMenu) 
+                    {
+                        LastHamburgerMenuSideBarItemEithNotSubMenu= _selectedHamburgerMenuSideBarItem;
+                    }
+                }
+            }
         }
 
         private int _selectedIndex;

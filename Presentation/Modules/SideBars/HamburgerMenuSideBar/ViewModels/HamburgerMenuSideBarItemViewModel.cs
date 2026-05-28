@@ -112,7 +112,8 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
         {
             if (SetProperty<bool>(ref _isSelected, value))
             {
-                if (!HasSubMenu && IsLeaf && _isSelected)
+                // if (!HasSubMenu && IsLeaf && _isSelected)
+                if (IsAddViewToRightContent())
                 {
                     //var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
                     //buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
@@ -120,7 +121,8 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                     HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
                 }
 
-                if (HasSubMenu && _isSelected)
+                //if (HasSubMenu && _isSelected)
+                if (IsSetActiveToLeftPaneActiveContent())
                 {
                     var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
 
@@ -133,6 +135,16 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                         HamburgerMenuSideBarHelper.AddViewsToLeftPaneAsync(this).Await();
                     }
                     //AddViewToLeftPaneAsync().Await();
+                }
+
+                bool IsAddViewToRightContent()
+                {
+                    return !HasSubMenu && IsLeaf && IsSelected;
+                }
+
+                bool IsSetActiveToLeftPaneActiveContent()
+                {
+                    return HasSubMenu && IsSelected;
                 }
             }
         }
