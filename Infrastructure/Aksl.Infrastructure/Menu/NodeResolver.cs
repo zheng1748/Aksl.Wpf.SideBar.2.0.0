@@ -7,15 +7,11 @@ using System.Threading.Tasks;
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
-using Prism.Mvvm;
 using Prism.Unity;
-using Unity;
 
-using Aksl.Infrastructure;
+namespace Aksl.Infrastructure;
 
-namespace Aksl.Modules.HamburgerMenuSideBar;
-
-public class NodeResolver<T> where T : ViewModels.NodeViewModel
+public class NodeResolver<T> where T : NodeViewModel
 {
     #region Members
     private readonly IMenuService _menuService;

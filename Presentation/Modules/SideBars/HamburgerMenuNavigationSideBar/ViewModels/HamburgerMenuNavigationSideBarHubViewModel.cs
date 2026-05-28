@@ -49,6 +49,8 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             _workspaceViewEventName = "OnBuildHamburgerMenuNavigationSideBarWorkspaceViewEvent";
             WorkspaceRegionName = RegionNames.HamburgerNavigationSideBarWorkspaceRegion;
 
+            CreateGroupedMenusViewModelAsync().Await();
+
             RegisterBuildWorkspaceViewEvents();
             RegisterHamburgerMenuBarPaneOpenEvent();
         }

@@ -12,6 +12,8 @@ using Prism.Regions;
 using Prism.Unity;
 using Unity;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Aksl.ActiveContentManager;
 using Aksl.ActiveContentManager.ViewModels;
 using Aksl.Dialogs.Services;
@@ -19,7 +21,6 @@ using Aksl.Infrastructure;
 using Aksl.Infrastructure.Events;
 using Aksl.Modules.Account.Views;
 using Aksl.Modules.HamburgerMenuSideBar.Views;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Aksl.Modules.Shell.ViewModels
 {
@@ -31,7 +32,7 @@ namespace Aksl.Modules.Shell.ViewModels
         private readonly IEventAggregator _eventAggregator;
         private readonly IRegionManager _regionManager;
         private readonly IDialogViewService _dialogViewService;
-        private object _currentView;
+       private object _currentView;
         #endregion
 
         #region Constructors
@@ -45,7 +46,7 @@ namespace Aksl.Modules.Shell.ViewModels
 
             RegisterActiveContents();
 
-            RegisterContentChangedEvents();
+            //RegisterContentChangedEvents();
         }
         #endregion
 
@@ -95,11 +96,19 @@ namespace Aksl.Modules.Shell.ViewModels
 
                     ShellContentActiveContentViewModel.Add(new()
                     {
-                        Name = nameof(HamburgerMenuSideBarHubView),
-                        Title = nameof(HamburgerMenuSideBarHubView),
+                        Name ="HamburgerMenuSideBarHubView",
+                        Title ="HamburgerMenuSideBarHubView",
                         ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarHubView,Aksl.Modules.HamburgerMenuSideBar",
                         //ViewElement = new HamburgerMenuSideBarHubView()
-                    });
+                    },true);
+
+                    ShellContentActiveContentViewModel.Add(new()
+                    {
+                        Name = "HamburgerMenuNavigationSideBarHubView",
+                        Title = "NavigationSideBarHubView",
+                        ViewName ="Aksl.Modules.HamburgerMenuNavigationSideBar.Views.HamburgerMenuNavigationSideBarHubView,Aksl.Modules.HamburgerMenuNavigationSideBar",
+                        //ViewElement = new HamburgerMenuSideBarHubView()
+                    },false);
                 }
 
                 RegisterLoginActiveContent();
