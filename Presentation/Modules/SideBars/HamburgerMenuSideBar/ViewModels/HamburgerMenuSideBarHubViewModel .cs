@@ -159,7 +159,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                             {
                                 SelectedHamburgerMenuSideBarItem = hmbvm.SelectedHamburgerMenuSideBarItem;
 
-                                LeftPaneActiveContentViewModel.SetActiveItemByName(hmbvm.SelectedHamburgerMenuSideBarItem.Path);
+                                LeftPaneActiveContentViewModel.SetSelectedItemByName(hmbvm.SelectedHamburgerMenuSideBarItem.Path);
                             }
                         }
 
@@ -178,7 +178,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                             {
                                 SelectedHamburgerMenuSideBarItem = hmbvm.SelectedHamburgerMenuSideBarItem;
 
-                                LeftPaneActiveContentViewModel.SetActiveItemByName(hmbvm.SelectedHamburgerMenuSideBarItem.Path);
+                                LeftPaneActiveContentViewModel.SetSelectedItemByName(hmbvm.SelectedHamburgerMenuSideBarItem.Path);
                             }
                         }
 
@@ -238,7 +238,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
                             if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is null)
                             {
-                                RightContentActiveContentViewModel.ClearActiveItem();
+                                RightContentActiveContentViewModel.ClearSelectedItem();
                             }
 
                             if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is not null && IsSetActiveToLeftPaneActiveContent(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem))
@@ -253,7 +253,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                                 }
                                 else
                                 {
-                                    RightContentActiveContentViewModel.ClearActiveItem();
+                                    RightContentActiveContentViewModel.ClearSelectedItem();
                                 }
                             }
 
@@ -457,21 +457,21 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                     ViewElement = new HamburgerMenuSideBarView() { DataContext = TopHamburgerMenuSideBar }
                 }, true);
 
-                var subMenuSideBas = await GetAllSubMenuSideBarViewModelsAsync(this.TopHamburgerMenuSideBar);
-                foreach (var msb in subMenuSideBas)
-                {
-                    AddHamburgerMenuSideBarViewModelPropertyChanged(msb.MenuSideBar);
+                //var subMenuSideBas = await GetAllSubMenuSideBarViewModelsAsync(this.TopHamburgerMenuSideBar);
+                //foreach (var msb in subMenuSideBas)
+                //{
+                //    AddHamburgerMenuSideBarViewModelPropertyChanged(msb.MenuSideBar);
 
-                    ContentInformation contentInfo = new()
-                    {
-                        Name = msb.Path,
-                        Title = msb.Path,
-                        ViewName = "",
-                        ViewElement = new HamburgerMenuSideBarView() { DataContext = msb.MenuSideBar }
-                    };
+                //    ContentInformation contentInfo = new()
+                //    {
+                //        Name = msb.Path,
+                //        Title = msb.Path,
+                //        ViewName = "",
+                //        ViewElement = new HamburgerMenuSideBarView() { DataContext = msb.MenuSideBar }
+                //    };
 
-                    LeftPaneActiveContentViewModel.Add(contentInfo, false);
-                }
+                //    LeftPaneActiveContentViewModel.Add(contentInfo, false);
+                //}
             }
         }
         #endregion
@@ -678,7 +678,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                 }
                 else 
                 {
-                    LeftPaneActiveContentViewModel.SetActiveItemByName(parentName);
+                    LeftPaneActiveContentViewModel.SetSelectedItemByName(parentName);
                 }
             }
         }

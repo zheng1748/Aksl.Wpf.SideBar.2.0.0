@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using Unity;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Aksl.ActiveContentManager.ViewModels
 {
@@ -80,7 +81,7 @@ namespace Aksl.ActiveContentManager.ViewModels
             if (contentInformation.ViewElement is not null)
             {
                 newActiveContentItemViewModel.ViewElement = contentInformation.ViewElement;
-                (newActiveContentItemViewModel.ViewElement as UIElement).Visibility = Visibility.Collapsed;
+                //(newActiveContentItemViewModel.ViewElement as UIElement).Visibility = Visibility.Collapsed;
             }
 
             AddCore(newActiveContentItemViewModel, isActive);
@@ -124,10 +125,10 @@ namespace Aksl.ActiveContentManager.ViewModels
             {
                 SetActiveContentItem(newActiveContentItemViewModel); 
             }
-            else
-            {
-                newActiveContentItemViewModel.ViewElementVisibility = Visibility.Collapsed;
-            }
+            //else
+            //{
+            //    newActiveContentItemViewModel.ViewElementVisibility = Visibility.Collapsed;
+            //}
 
             RaisePropertyChanged(nameof(CanMove));
             RaisePropertyChanged(nameof(ActiveContentItems));
@@ -141,7 +142,7 @@ namespace Aksl.ActiveContentManager.ViewModels
             }
         }
 
-        public void SetActiveContentItem(ActiveContentItemViewModel activeContentItemViewModel)
+        private void SetActiveContentItem(ActiveContentItemViewModel activeContentItemViewModel)
         {
             if (activeContentItemViewModel is not null && !IsEqualsContentItemViewModel(activeContentItemViewModel, SelectedContentItem))
             {
@@ -179,6 +180,23 @@ namespace Aksl.ActiveContentManager.ViewModels
                 if (storeContentItem is not null)
                 {
                     AddCore(storeContentItem,true);
+                }
+            }
+        }
+
+        public void SetContentItemByName(string name)
+        {
+            var activeContentItem = GetActiveContentItemByName(name);
+            if (activeContentItem is not null)
+            {
+                SetActiveContentItem(activeContentItem);
+            }
+            else
+            {
+                var storeContentItem = GetStoreContentItemByName(name);
+                if (storeContentItem is not null)
+                {
+                    AddCore(storeContentItem, true);
                 }
             }
         }
@@ -256,7 +274,7 @@ namespace Aksl.ActiveContentManager.ViewModels
             }
         }
 
-        public void SetActiveItemByName(string name)
+        public void SetSelectedItemByName(string name)
         {
             var activeContentItem = GetActiveContentItemByName(name);
             if (activeContentItem is not null)
@@ -275,12 +293,19 @@ namespace Aksl.ActiveContentManager.ViewModels
 
         public ActiveContentItemViewModel GetActiveContentItemByName(string name)
         {
-            var activeContentItemViewModel = ActiveContentItems.FirstOrDefault(aci => IsEqualsNameOrTitle(aci.Name, name));
+            var activeContentItemViewModel = ActiveContentItems.FirstOrDefault(aci => IsEqualsNameOrTitle(aci.Name, name) || IsEqualsNameOrTitle(aci.Title, name));
 
             return activeContentItemViewModel;
         }
 
-        public void ClearActiveItem()
+        private ActiveContentItemViewModel GetActiveContentItemByInfo(ContentInformation contentInformation)
+        {
+            var activeContentItemViewModel = ActiveContentItems.FirstOrDefault(aci => IsEqualsNameOrTitle(aci.Name, contentInformation.Name) || IsEqualsNameOrTitle(aci.Title, contentInformation.Title));
+
+            return activeContentItemViewModel;
+        }
+
+        public void ClearSelectedItem()
         {
             if (SelectedContentItem is not null)
             {
@@ -289,11 +314,25 @@ namespace Aksl.ActiveContentManager.ViewModels
             }
         }
 
-        private ActiveContentItemViewModel GetActiveContentItemByInfo(ContentInformation contentInformation)
+        public bool ContainItemByName(string name)
         {
-            var activeContentItemViewModel = ActiveContentItems.FirstOrDefault(aci => IsEqualsNameOrTitle(aci.Name, contentInformation.Name) || IsEqualsNameOrTitle(aci.Title, contentInformation.Title));
+            var isAny = ContainActiveItemByName(name) || ContainStoreItemByName(name);
 
-            return activeContentItemViewModel;
+            return isAny;
+        }
+
+        public bool ContainActiveItemByName(string name)
+        {
+            var isAny = ActiveContentItems.Any(aci => IsEqualsNameOrTitle(aci.Name, name) || IsEqualsNameOrTitle(aci.Title, name));
+
+            return isAny;
+        }
+
+        public bool ContainStoreItemByName(string name)
+        {
+            var isAny = StoreContentItems.Any(aci => IsEqualsNameOrTitle(aci.Name, name) || IsEqualsNameOrTitle(aci.Title, name));
+
+            return isAny;
         }
 
         public ActiveContentItemViewModel GetStoreContentItemViewModelByInfo(ContentInformation contentInformation)
@@ -305,7 +344,7 @@ namespace Aksl.ActiveContentManager.ViewModels
 
         public ActiveContentItemViewModel GetStoreContentItemByName(string name)
         {
-            var storeContentItem = StoreContentItems.FirstOrDefault(stc => IsEqualsNameOrTitle(stc.Name, name));
+            var storeContentItem = StoreContentItems.FirstOrDefault(stc => IsEqualsNameOrTitle(stc.Name, name) || IsEqualsNameOrTitle(stc.Title, name));
 
             return storeContentItem;
         }
@@ -406,7 +445,7 @@ namespace Aksl.ActiveContentManager.ViewModels
             return selectedIndex;
         }
         #endregion
-
+       
         #region Contain Methods
         private bool IsExistsActivContentItems(string name, string title)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Interop;
 
 using Prism;
 using Prism.Ioc;
@@ -13,6 +14,7 @@ using Aksl.ActiveContentManager.ViewModels;
 using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
 using Aksl.Modules.HamburgerMenuSideBar.ViewModels;
+using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.HamburgerMenuSideBar;
 
@@ -153,32 +155,43 @@ public static class HamburgerMenuSideBarHelper
     #region Add Views To LeftPane Method
     public static async Task AddViewsToLeftPaneAsync(HamburgerMenuSideBarItemViewModel topuSideBarItem)
     {
-        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
         var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+        NodeResolver<HamburgerMenuSideBarItemViewModel> nodeResolver = new();
 
-        List<HamburgerMenuSideBarItemViewModel> leafsOfTopHeaderItem = new();
+        var sublLeafMenuItems = await topuSideBarItem.GetSubMenuAsync();
 
-        await RecursiveSubMenuItemViewModel(topuSideBarItem);
-
-        async Task RecursiveSubMenuItemViewModel(HamburgerMenuSideBarItemViewModel currenySubItem)
+        if (sublLeafMenuItems is not null && sublLeafMenuItems.Any())
         {
-            if (currenySubItem.HasSubMenu)
-            {
-                IEnumerable<Infrastructure.MenuItem> subMenuItems = await HamburgerMenuSideBarHelper.GetSubMenuAsync(currenySubItem.MenuItem);
+            List<HamburgerMenuSideBarItemViewModel> allBarItemLeafs = new();
 
-                if (subMenuItems is not null && subMenuItems.Any())
-                {
-                    var subBamburgerMenuSideBar = await HamburgerMenuSideBarHelper.CreateTopHamburgerMenuSideBarViewModelAsync(subMenuItems);
-                }
+            string topItemName = default;
+            foreach (var smi in sublLeafMenuItems)
+            {
+                var topItem = await nodeResolver.GetTopItemByMenuItemAsync(menuItem: smi, parent: topuSideBarItem, constructorResolver: (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, isKeepParent: true);
+                topItemName = topItem.Path;
             }
 
-            if (currenySubItem.HasChildren)
+            foreach (var topItem in topuSideBarItem.Children)
             {
-                foreach (var children in currenySubItem.Children)
-                {
-                   // await RecursiveSubMenuItemViewModel(children as T);
-                }
+                var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem as HamburgerMenuSideBarItemViewModel);
+                allBarItemLeafs.AddRange(allTopItemLeafs);
             }
+
+            var subHamburgerMenuSideBar = new HamburgerMenuSideBarViewModel
+            {
+                AllLeafHamburgerMenuSideBarItems = new ObservableCollection<HamburgerMenuSideBarItemViewModel>(allBarItemLeafs)
+            };
+
+            ContentInformation contentInfo = new()
+            {
+                Name = topItemName,
+                Title = topItemName,
+                ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarView,Aksl.Modules.HamburgerMenuSideBar",
+                ViewElement = new HamburgerMenuSideBarView() { DataContext = subHamburgerMenuSideBar }
+            };
+
+            leftPaneActiveContentViewModel.Add(contentInfo);
         }
     }
     #endregion
@@ -201,7 +214,7 @@ public static class HamburgerMenuSideBarHelper
                 Title = currentMenuItem.Title,
                 ViewName = currentMenuItem.ViewName
             };
-       
+
             var currentView = rightContentActiveContent.GetStoreViewElementByName(currentMenuItem.Name);
 
             if (currentView is not null)
@@ -210,7 +223,7 @@ public static class HamburgerMenuSideBarHelper
                 {
                     rightContentActiveContent.SetContentItem(contentInformation);
 
-                    rightContentActiveContent.SetMoveIndexOnSet();
+                  //  rightContentActiveContent.SetMoveIndexOnSet();
                 }
                 else
                 {
@@ -221,7 +234,7 @@ public static class HamburgerMenuSideBarHelper
             {
                 rightContentActiveContent.Add(contentInformation);
 
-                rightContentActiveContent.SetMoveIndexOnAdd();
+              //  rightContentActiveContent.SetMoveIndexOnAdd();
             }
         }
         else

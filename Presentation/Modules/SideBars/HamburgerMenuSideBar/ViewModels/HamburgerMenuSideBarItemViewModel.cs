@@ -170,16 +170,26 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             {
                 if (SetProperty<bool>(ref _isSelected, value))
                 {
-                    if (!HasSubMenu && IsLeaf && _isSelected )
+                    if (!HasSubMenu && IsLeaf && _isSelected)
                     {
                         //var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
                         //buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
 
-                        //HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
+                        HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
                     }
 
                     if (HasSubMenu && _isSelected)
                     {
+                        var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+
+                        if (leftPaneActiveContentViewModel.ContainItemByName(this.Path))
+                        {
+                            leftPaneActiveContentViewModel.SetContentItemByName(this.Path);
+                        }
+                        else
+                        {
+                            HamburgerMenuSideBarHelper.AddViewsToLeftPaneAsync(this).Await();
+                        }
                         //AddViewToLeftPaneAsync().Await();
                     }
                 }

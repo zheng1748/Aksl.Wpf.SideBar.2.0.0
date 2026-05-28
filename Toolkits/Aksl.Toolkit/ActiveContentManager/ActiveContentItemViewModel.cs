@@ -22,6 +22,8 @@ namespace Aksl.ActiveContentManager.ViewModels
         public ActiveContentItemViewModel(ContentInformation  contentInformation)
         {
             _contentInformation = contentInformation;
+
+            ViewElementVisibility = Visibility.Collapsed;
         }
         #endregion
 

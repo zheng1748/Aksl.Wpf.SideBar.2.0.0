@@ -242,7 +242,7 @@ namespace Aksl.Modules.Account.ViewModels
         public void SetShellActiveItem()
         {
             var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
-            shellContentActiveContentViewModel.SetActiveItemByName(ActiveContentNames.HamburgerMenuSideBarName);
+            shellContentActiveContentViewModel.SetSelectedItemByName(ActiveContentNames.HamburgerMenuSideBarName);
         }
         #endregion
 

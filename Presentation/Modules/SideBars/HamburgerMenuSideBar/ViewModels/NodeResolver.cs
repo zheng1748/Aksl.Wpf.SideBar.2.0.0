@@ -11,7 +11,6 @@ using Prism.Mvvm;
 using Prism.Unity;
 using Unity;
 
-using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
 
 namespace Aksl.Modules.HamburgerMenuSideBar;
