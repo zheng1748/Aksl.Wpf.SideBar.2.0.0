@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 using Aksl.Infrastructure;
@@ -8,24 +9,39 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
     public class GroupedMenuViewModel : GroupedMenuViewModelBase
     {
         #region Members
-        private readonly MenuItem _headerMenuItem;
+        //private readonly MenuItem _headerMenuItem;
         private IEnumerable<MenuItem> _leafMenuItems;
+        private readonly MenuItemViewModel _headerMenuItemViewModel;
+        private IEnumerable<MenuItemViewModel> _leafMenuItemViewModels;
         #endregion
 
         #region Constructors
-        public GroupedMenuViewModel(int groupIndex, MenuItem headerMenuItem, IEnumerable<MenuItem> leafMenuItems) : base()
+        //public GroupedMenuViewModel(int groupIndex, MenuItem headerMenuItem, IEnumerable<MenuItem> leafMenuItems) : base()
+        //{
+        //    GroupIndex = groupIndex;
+        //    _leafMenuItems = leafMenuItems;
+        //    _headerMenuItem = headerMenuItem;
+        //    MenuItemHeader=new(headerMenuItem);
+        //}
+
+        public GroupedMenuViewModel(int groupIndex, MenuItemViewModel headerMenuItemViewModel, IEnumerable<MenuItemViewModel> leafMenuItemViewModels) : base()
         {
             GroupIndex = groupIndex;
-            _leafMenuItems = leafMenuItems;
-            _headerMenuItem = headerMenuItem;
-            MenuItemHeader=new(headerMenuItem);
+            _headerMenuItemViewModel = headerMenuItemViewModel;
+            _leafMenuItemViewModels = leafMenuItemViewModels;
+
+            MenuItemHeader = new(headerMenuItemViewModel);
+
+            CreateMenuContentViewModel();
+
+            IsGrouped = true;
         }
         #endregion
 
         #region Properties
         public int GroupIndex { get; }
-
-        public string HeaderTitle => _headerMenuItem.Title;
+        public bool IsGrouped { get; set; }
+      //  public string HeaderTitle => _headerMenuItem.Title;
         public MenuItemHeaderViewModel MenuItemHeader { get; set; }
         public MenuContentViewModel MenuContent { get; private set; }
 
@@ -56,15 +72,14 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             }
         }
 
-        private bool _isLoading;
-        public bool IsLoading
-        {
-            get => _isLoading;
-            set => SetProperty(ref _isLoading, value);
-        }
+        //private bool _isLoading;
+        //public bool IsLoading
+        //{
+        //    get => _isLoading;
+        //    set => SetProperty(ref _isLoading, value);
+        //}
         #endregion
 
-      
         #region Create MenuItem ViewModel Method
         internal void CreateMenuItemViewModels()
         {
@@ -111,11 +126,12 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         #endregion
 
         #region Create MenuContent ViewModel Method
-        internal void CreateMenuContentViewModels()
+       private void CreateMenuContentViewModel()
         {
-            IsLoading = true;
+            // IsLoading = true;
 
-            MenuContentViewModel menuContentViewModel = new(GroupIndex, _leafMenuItems);
+            //  MenuContentViewModel menuContentViewModel = new(GroupIndex, _leafMenuItems);
+            MenuContentViewModel menuContentViewModel = new(GroupIndex, _leafMenuItemViewModels);
             AddPropertyChanged();
 
             void AddPropertyChanged()
@@ -124,25 +140,15 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                 {
                     if (sender is MenuContentViewModel mcvm)
                     {
-                        //if (e.PropertyName == nameof(MenuContentViewModel.IsLoading) && !mcvm.IsLoading)
-                        //{
-                        //    IsLoading = false;
-                        //}
-
                         if (e.PropertyName == nameof(MenuContentViewModel.SelectedMenuItem))
                         {
-                            //_selectedMenuItem = mcvm.SelectedMenuItem;
                             SelectedMenuItem = mcvm.SelectedMenuItem;
-                            //  RaisePropertyChanged(nameof(MenuContent));
                         }
                     }
                 };
             }
 
-            menuContentViewModel.CreateMenuItemViewModels();
             MenuContent = menuContentViewModel;
-
-            IsLoading = false;
         }
         #endregion
     }

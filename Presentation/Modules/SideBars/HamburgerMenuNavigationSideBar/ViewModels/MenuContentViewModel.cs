@@ -11,19 +11,31 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
     public class MenuContentViewModel : BindableBase
     {
         #region Members
-        private IEnumerable<MenuItem> _leafMenuItems;
+        //private IEnumerable<MenuItem> _leafMenuItems;
+        private IEnumerable<MenuItemViewModel> _leafMenuItemViewModels;
         #endregion
 
         #region Constructors
         public MenuContentViewModel()
         {
         }
-        public MenuContentViewModel(int groupIndex, IEnumerable<MenuItem> leafMenuItems)
+
+        //public MenuContentViewModel(int groupIndex, IEnumerable<MenuItem> leafMenuItems)
+        //{
+        //    GroupIndex = groupIndex;
+        //    _leafMenuItems = leafMenuItems;
+
+        //    MenuItems = new();
+        //}
+
+        public MenuContentViewModel(int groupIndex, IEnumerable<MenuItemViewModel> leafMenuItemViewModels)
         {
             GroupIndex = groupIndex;
-            _leafMenuItems = leafMenuItems;
+            _leafMenuItemViewModels = leafMenuItemViewModels;
 
-            MenuItems = new();
+            MenuItems = new(_leafMenuItemViewModels);
+
+            SetMenuItemViewModels();
         }
         #endregion
 
@@ -72,12 +84,12 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             }
         }
 
-        private bool _isLoading;
-        public bool IsLoading
-        {
-            get => _isLoading;
-            set => SetProperty<bool>(ref _isLoading, value);
-        }
+        //private bool _isLoading;
+        //public bool IsLoading
+        //{
+        //    get => _isLoading;
+        //    set => SetProperty<bool>(ref _isLoading, value);
+        //}
         #endregion
 
         #region Clear Selected MenuItem Method
@@ -90,11 +102,24 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             }
         }
 
-        internal void ResetSelectedMenuItem(MenuItemViewModel selectedMenuItemItem)
+        //internal void ResetSelectedMenuItem(MenuItemViewModel selectedMenuItemItem)
+        //{
+        //    if (selectedMenuItemItem is not null)
+        //    {
+        //        SelectedMenuItem = selectedMenuItemItem;
+        //    }
+        //}
+        #endregion
+
+        #region Set MenuItemViewModels Method
+        private void SetMenuItemViewModels()
         {
-            if (selectedMenuItemItem is not null)
+            int index = 0;
+
+            foreach (var mivm in MenuItems)
             {
-                SelectedMenuItem = selectedMenuItemItem;
+                mivm.GroupIndex = GroupIndex;
+                mivm.Index = index++;
             }
         }
         #endregion
@@ -104,16 +129,21 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         {
             int index = 0;
 
-            IsLoading = true;
+          //  IsLoading = true;
 
-            foreach (var menuItem in _leafMenuItems)
+            //foreach (var menuItem in _leafMenuItems)
+            //{
+            //    MenuItemViewModel menuItemViewModel = new(GroupIndex, index++, menuItem);
+
+            //    MenuItems.Add(menuItemViewModel);
+            //}
+
+            foreach (var mivm in _leafMenuItemViewModels)
             {
-                MenuItemViewModel menuItemViewModel = new(GroupIndex, index++, menuItem);
-
-                MenuItems.Add(menuItemViewModel);
+                mivm.Index = index++;
             }
 
-            IsLoading = false;
+            //IsLoading = false;
         }
         #endregion
     }

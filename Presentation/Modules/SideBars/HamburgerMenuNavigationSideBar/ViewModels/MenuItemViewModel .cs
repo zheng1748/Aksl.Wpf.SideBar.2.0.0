@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 using Prism;
@@ -10,14 +11,13 @@ using Prism.Mvvm;
 using Prism.Unity;
 using Unity;
 
-using Aksl.Toolkit.Controls;
-
+using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
+using Aksl.Toolkit.Controls;
 
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 {
-    public class MenuItemViewModel : BindableBase
+    public class MenuItemViewModel : NodeViewModel
     {
         #region Members
         protected readonly IEventAggregator _eventAggregator;
@@ -32,16 +32,35 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             Index = index;
             _menuItem = menuItem;
         }
+
+        public MenuItemViewModel() : base()
+        {
+            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+
+            _menuItem = null;
+            //Parent = null;
+
+            //_children = new();
+        }
+
+        public MenuItemViewModel(MenuItem menuItem, MenuItemViewModel parent) : base(menuItem.Name, menuItem.Title, parent)
+        {
+            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+
+            _menuItem = menuItem;
+
+            //Parent = parent;
+            //Parent?.Children.Add(this);
+
+            //_children = new();
+        }
         #endregion
 
         #region Properties
         public MenuItem MenuItem => _menuItem;
-        public int GroupIndex { get; }
-        public int Index { get; }
+        public int GroupIndex { get; set; }
+        public int Index { get; set; }
         public string WorkspaceViewEventName { get; set; }
-        public string Name => _menuItem.Name;
-        public string Title => _menuItem.Title;
-        public bool IsLeaf => _menuItem.SubMenus.Count <= 0;
         private bool IsNextNavigation => _menuItem.IsNextNavigation;
         private bool HasNavigationName => !string.IsNullOrEmpty(_menuItem.NavigationName);
         private bool IsNexOnNotLeaf => _menuItem.IsNexOnNotLeaf;
@@ -54,20 +73,26 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             {
                 if (SetProperty<bool>(ref _isSelected, value))
                 {
-                    var isSelectedOnLeaf = IsLeaf && (!HasNavigationName || (HasNavigationName && !IsNextNavigation));
-                    var isSelectedOnNotLeaf = !IsLeaf && !IsNexOnNotLeaf;
-
-                    if (isSelectedOnLeaf && _isSelected)
+                    if (IsLeaf && _isSelected)
                     {
-                        var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
-                        buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
+                        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+                        ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, dialogViewService).Await();
                     }
 
-                    if (isSelectedOnNotLeaf && _isSelected)
-                    {
-                        var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
-                        buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
-                    }
+                    //var isSelectedOnLeaf = IsLeaf && (!HasNavigationName || (HasNavigationName && !IsNextNavigation));
+                    //var isSelectedOnNotLeaf = !IsLeaf && !IsNexOnNotLeaf;
+
+                    //if (isSelectedOnLeaf && _isSelected)
+                    //{
+                    //    var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
+                    //    buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
+                    //}
+
+                    //if (isSelectedOnNotLeaf && _isSelected)
+                    //{
+                    //    var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
+                    //    buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
+                    //}
                 }
             }
         }

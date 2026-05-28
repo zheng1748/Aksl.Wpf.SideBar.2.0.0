@@ -11,8 +11,9 @@
              xmlns:views="clr-namespace:Aksl.Modules.HamburgerMenuNavigationSideBar.Views"
              xmlns:a="clr-namespace:Aksl.Modules.HamburgerMenuNavigationSideBar"
              xmlns:sv="clr-namespace:Aksl.Modules.HamburgerMenuNavigationSideBar"
+             xmlns:acmview="clr-namespace:Aksl.ActiveContentManager.Views;assembly=Aksl.Toolkit"
              mc:Ignorable="d"
-             x:Name="HamburgerMenuNavigationSideBarContainer"
+             x:Name="HamburgerMenuNavigationSideBarHuber"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
 
@@ -916,7 +917,21 @@
                 <Grid x:Name="ContentRoot"
                       Grid.ColumnSpan="2">
                     <Border>
-                        <ContentControl x:Name="hamburgerMenuNavigationSideBarWorkspaceRegion"
+                        <acmview:ActiveContentView x:Name="RightContentHamburgerMenuNavigationSideBarActiveContentView"
+                                                   DataContext="{Binding Path=RightContentActiveContentViewModel}"
+                                                   HorizontalAlignment="Stretch"
+                                                   VerticalAlignment="Stretch"
+                                                   Margin="0,0,0,0">
+                            <ContentControl.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </ContentControl.RenderTransform>
+                        </acmview:ActiveContentView>
+                        <!--<ContentControl x:Name="hamburgerMenuNavigationSideBarWorkspaceRegion"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Margin="0,0,0,0"
@@ -929,7 +944,7 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </ContentControl.RenderTransform>
-                        </ContentControl>
+                        </ContentControl>-->
                     </Border>
                     <Rectangle x:Name="LightDismissLayer"
                                Fill="Transparent"

@@ -1,23 +1,34 @@
-﻿using Aksl.Infrastructure;
-using Aksl.Toolkit.Controls;
+﻿using System;
+
 using Prism.Events;
 using Prism.Mvvm;
-using System;
+
+using Aksl.Infrastructure;
+using Aksl.Toolkit.Controls;
 
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 {
     public class MenuItemHeaderViewModel : BindableBase
     {
         #region Members
-        private readonly MenuItem _menuItem;
+        //private readonly MenuItem _menuItem;
+        private readonly MenuItemViewModel _headerMenuItemViewModel;
         #endregion
 
         #region Constructors
-        public MenuItemHeaderViewModel(MenuItem menuItem)
-        {
-            _menuItem = menuItem;
+        //public MenuItemHeaderViewModel(MenuItem menuItem)
+        //{
+        //    _menuItem = menuItem;
 
-            HeaderTitle = _menuItem.Title;
+        //    HeaderTitle = _menuItem.Title;
+        //}
+
+        public MenuItemHeaderViewModel(MenuItemViewModel headerMenuItemViewModel)
+        {
+            _headerMenuItemViewModel = headerMenuItemViewModel;
+
+            HeaderTitle = headerMenuItemViewModel.Title;
+            IconKind= headerMenuItemViewModel.IconKind;
         }
         #endregion
 
@@ -29,17 +40,24 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             set => SetProperty<string>(ref _headerTitle, value);
         }
 
+        private PackIconKind _iconKind;
         public PackIconKind IconKind
         {
-            get
-            {
-                PackIconKind kind = PackIconKind.None;
-
-                _ = Enum.TryParse(_menuItem.IconKind, out kind);
-
-                return kind;
-            }
+            get => _iconKind;
+            set => SetProperty<PackIconKind>(ref _iconKind, value);
         }
+
+        //public PackIconKind IconKind
+        //{
+        //    get
+        //    {
+        //        PackIconKind kind = PackIconKind.None;
+
+        //        _ = Enum.TryParse(_menuItem.IconKind, out kind);
+
+        //        return kind;
+        //    }
+        //}
         #endregion
     }
 }

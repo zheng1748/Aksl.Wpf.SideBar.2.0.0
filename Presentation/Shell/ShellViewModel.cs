@@ -100,7 +100,7 @@ namespace Aksl.Modules.Shell.ViewModels
                         Title ="HamburgerMenuSideBarHubView",
                         ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarHubView,Aksl.Modules.HamburgerMenuSideBar",
                         //ViewElement = new HamburgerMenuSideBarHubView()
-                    },true);
+                    },false);
 
                     ShellContentActiveContentViewModel.Add(new()
                     {
@@ -108,7 +108,7 @@ namespace Aksl.Modules.Shell.ViewModels
                         Title = "NavigationSideBarHubView",
                         ViewName ="Aksl.Modules.HamburgerMenuNavigationSideBar.Views.HamburgerMenuNavigationSideBarHubView,Aksl.Modules.HamburgerMenuNavigationSideBar",
                         //ViewElement = new HamburgerMenuSideBarHubView()
-                    },false);
+                    },true);
                 }
 
                 RegisterLoginActiveContent();

@@ -196,7 +196,7 @@ public static class HamburgerMenuSideBarHelper
     }
     #endregion
 
-    #region Add To RightContent Method
+    #region Add View To RightContent Method
     public static async Task AddViewToRightContentAsync(Infrastructure.MenuItem currentMenuItem)
     {
         var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();

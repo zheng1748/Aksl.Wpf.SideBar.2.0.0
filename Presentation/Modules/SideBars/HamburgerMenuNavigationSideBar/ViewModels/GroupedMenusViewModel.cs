@@ -13,7 +13,6 @@ using Prism.Unity;
 using Unity;
 
 using Aksl.Dialogs.Services;
-
 using Aksl.Infrastructure;
 
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
@@ -28,12 +27,12 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         #endregion
 
         #region Constructors
-        public GroupedMenusViewModel(IEventAggregator eventAggregator, IMenuService menuService)
+        public GroupedMenusViewModel()
         {
-            _eventAggregator = eventAggregator;
+            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
             _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
-            _menuService = menuService;
+            _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
 
             GroupedMenus = new();
             NoGroupedMenus = new();
@@ -77,8 +76,8 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             }
         }
 
-        private NoGroupedMenuItemViewModel _selectedNoGroupedMenuItem;
-        public NoGroupedMenuItemViewModel SelectedNoGroupedMenuItem
+        private MenuItemViewModel _selectedNoGroupedMenuItem;
+        public MenuItemViewModel SelectedNoGroupedMenuItem
         {
             get => _selectedNoGroupedMenuItem;
             set
@@ -114,6 +113,93 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         {
             get => _isLoading;
             set => SetProperty<bool>(ref _isLoading, value);
+        }
+        #endregion
+
+        #region RegisterPropertyChanged Method
+        private  void AddGroupedMenuViewModelPropertyChanged(GroupedMenuViewModel groupedMenuViewModel)
+        {
+            groupedMenuViewModel.PropertyChanged += (sender, e) =>
+            {
+                if (sender is GroupedMenuViewModel gmvm)
+                {
+                    //if (e.PropertyName == nameof(GroupedMenuViewModel.IsLoading))
+                    //{
+                    //    //最后一个
+                    //    if (gmvm.GroupIndex == GroupedMenus.Count()-1 && !gmvm.IsLoading)
+                    //    {
+                    //        IsLoading = false;
+                    //    }
+                    //}
+
+                    if (e.PropertyName == nameof(GroupedMenuViewModel.SelectedMenuItem))
+                    {
+                        if (_currentGroupeIndex == gmvm.GroupIndex)
+                        {
+                            //SelectedMenuItem = gmvm.MenuContent.SelectedMenuItem;
+                            if ((gmvm.SelectedMenuItem is not null && gmvm.SelectedMenuItem.IsSelected) && SelectedMenuItem != gmvm.SelectedMenuItem)
+                            {
+                                SelectedMenuItem = gmvm.SelectedMenuItem;
+                            }
+                        }
+                        else
+                        {
+                            foreach (var gm in GroupedMenus)
+                            {
+                                if (_currentGroupeIndex == gm.GroupIndex)
+                                {
+                                    // _previewSelectedMenuItem = gm.MenuContent.SelectedMenuItem;
+                                    gm.MenuContent.ClearSelectedMenuItem();
+
+                                    break;
+                                }
+                            }
+
+                            _currentGroupeIndex = gmvm.GroupIndex;
+                            if ((gmvm.SelectedMenuItem is not null && gmvm.SelectedMenuItem.IsSelected) && SelectedMenuItem != gmvm.SelectedMenuItem)
+                            {
+                                SelectedMenuItem = gmvm.SelectedMenuItem;
+                            }
+                            //SelectedMenuItem = gmvm.MenuContent.SelectedMenuItem;
+                        }
+                    }
+                }
+            };
+        }
+
+       private void AddNoGroupedMenuViewModelPropertyChanged(NoGroupedMenuViewModel noGroupedMenuViewModel)
+        {
+            noGroupedMenuViewModel.PropertyChanged += (sender, e) =>
+            {
+                if (sender is NoGroupedMenuViewModel ngmvm)
+                {
+                    //if (e.PropertyName == nameof(NoGroupedMenuViewModel.IsLoading))
+                    //{
+                    //    //最后一个
+                    //    if (ngmvm.Index == NoGroupedMenus.Count()-1 && !ngmvm.IsLoading)
+                    //    {
+                    //        IsLoading = false;
+                    //    }
+                    //}
+
+                    if (e.PropertyName == nameof(NoGroupedMenuViewModel.SelectedNoGroupedMenuItem))
+                    {
+                        if (SelectedNoGroupedMenuItem is null &&
+                           (ngmvm.SelectedNoGroupedMenuItem is not null && ngmvm.SelectedNoGroupedMenuItem.IsSelected && ngmvm.SelectedNoGroupedMenuItem != SelectedNoGroupedMenuItem))
+                        {
+                            SelectedNoGroupedMenuItem = ngmvm.SelectedNoGroupedMenuItem;
+                        }
+
+                        if (SelectedNoGroupedMenuItem is not null &&
+                            (ngmvm.SelectedNoGroupedMenuItem is not null && ngmvm.SelectedNoGroupedMenuItem.IsSelected && ngmvm.SelectedNoGroupedMenuItem != SelectedNoGroupedMenuItem))
+                        {
+                            SelectedNoGroupedMenuItem.IsSelected = false;
+
+                            SelectedNoGroupedMenuItem = ngmvm.SelectedNoGroupedMenuItem;
+                        }
+                    }
+                }
+            };
         }
         #endregion
 
@@ -215,118 +301,136 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             var subMenuItems = rootMenuItem.SubMenus;
             int index = 0;
             int groupIndex = 0;
-            foreach (var smi in subMenuItems)
+            NodeResolver<MenuItemViewModel> nodeResolver = new();
+
+            if (subMenuItems is not null && subMenuItems.Any())
             {
-                var leafMenuItems = await GetAllLeafMenuItems(smi);
-
-                if (HasLeafMenu())
+                foreach (var smi in subMenuItems)
                 {
-                    GroupedMenuViewModel groupedMenuViewModel = new(groupIndex++, smi, leafMenuItems);
-                    //groupedMenuViewModel.CreateMenuContentViewModels();
-                    groupedMenuViewModel.CreateMenuItemViewModels();
+                    //var leafMenuItems = await GetAllLeafMenuItems(smi);
 
-                    GroupedMenus.Add(groupedMenuViewModel);
-                    AllMenus.Add(groupedMenuViewModel);
+                    List<MenuItemViewModel> allMenuItemLeafs = new();
 
-                    AddPropertyChanged();
-                    void AddPropertyChanged()
+                    MenuItemViewModel virtualParent = new();
+                    Func<MenuItem, MenuItemViewModel, MenuItemViewModel> constructorResolver = ((m, p) => { return new MenuItemViewModel(m, p); });
+                    var topItem = await nodeResolver.GetTopItemByMenuItemAsync(smi, virtualParent, constructorResolver, false);
+                    var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem);
+
+                    if (HasLeafMenus())
                     {
-                        groupedMenuViewModel.PropertyChanged += (sender, e) =>
+                        //GroupedMenuViewModel groupedMenuViewModel = new(groupIndex++, smi, leafMenuItems);
+                        GroupedMenuViewModel groupedMenuViewModel = new(groupIndex++, topItem, allTopItemLeafs);
+                        //groupedMenuViewModel.CreateMenuContentViewModels();
+                       // groupedMenuViewModel.CreateMenuItemViewModels();
+
+                        GroupedMenus.Add(groupedMenuViewModel);
+                        AllMenus.Add(groupedMenuViewModel);
+
+                        AddGroupedMenuViewModelPropertyChanged(groupedMenuViewModel);
+
+                       // AddPropertyChanged();
+                        void AddPropertyChanged()
                         {
-                            if (sender is GroupedMenuViewModel gmvm)
+                            groupedMenuViewModel.PropertyChanged += (sender, e) =>
                             {
-                                //if (e.PropertyName == nameof(GroupedMenuViewModel.IsLoading))
-                                //{
-                                //    //最后一个
-                                //    if (gmvm.GroupIndex == GroupedMenus.Count()-1 && !gmvm.IsLoading)
-                                //    {
-                                //        IsLoading = false;
-                                //    }
-                                //}
-
-                                if (e.PropertyName == nameof(GroupedMenuViewModel.SelectedMenuItem))
+                                if (sender is GroupedMenuViewModel gmvm)
                                 {
-                                    if (_currentGroupeIndex == gmvm.GroupIndex)
-                                    {
-                                        //SelectedMenuItem = gmvm.MenuContent.SelectedMenuItem;
-                                        if ((gmvm.SelectedMenuItem is not null && gmvm.SelectedMenuItem.IsSelected) && SelectedMenuItem != gmvm.SelectedMenuItem)
-                                        {
-                                            SelectedMenuItem = gmvm.SelectedMenuItem;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        foreach (var gm in GroupedMenus)
-                                        {
-                                            if (_currentGroupeIndex == gm.GroupIndex)
-                                            {
-                                                // _previewSelectedMenuItem = gm.MenuContent.SelectedMenuItem;
-                                                gm.MenuContent.ClearSelectedMenuItem();
+                                    //if (e.PropertyName == nameof(GroupedMenuViewModel.IsLoading))
+                                    //{
+                                    //    //最后一个
+                                    //    if (gmvm.GroupIndex == GroupedMenus.Count()-1 && !gmvm.IsLoading)
+                                    //    {
+                                    //        IsLoading = false;
+                                    //    }
+                                    //}
 
-                                                break;
+                                    if (e.PropertyName == nameof(GroupedMenuViewModel.SelectedMenuItem))
+                                    {
+                                        if (_currentGroupeIndex == gmvm.GroupIndex)
+                                        {
+                                            //SelectedMenuItem = gmvm.MenuContent.SelectedMenuItem;
+                                            if ((gmvm.SelectedMenuItem is not null && gmvm.SelectedMenuItem.IsSelected) && SelectedMenuItem != gmvm.SelectedMenuItem)
+                                            {
+                                                SelectedMenuItem = gmvm.SelectedMenuItem;
                                             }
                                         }
-
-                                        _currentGroupeIndex = gmvm.GroupIndex;
-                                        if ((gmvm.SelectedMenuItem is not null && gmvm.SelectedMenuItem.IsSelected) && SelectedMenuItem != gmvm.SelectedMenuItem)
+                                        else
                                         {
-                                            SelectedMenuItem = gmvm.SelectedMenuItem;
+                                            foreach (var gm in GroupedMenus)
+                                            {
+                                                if (_currentGroupeIndex == gm.GroupIndex)
+                                                {
+                                                    // _previewSelectedMenuItem = gm.MenuContent.SelectedMenuItem;
+                                                    gm.MenuContent.ClearSelectedMenuItem();
+
+                                                    break;
+                                                }
+                                            }
+
+                                            _currentGroupeIndex = gmvm.GroupIndex;
+                                            if ((gmvm.SelectedMenuItem is not null && gmvm.SelectedMenuItem.IsSelected) && SelectedMenuItem != gmvm.SelectedMenuItem)
+                                            {
+                                                SelectedMenuItem = gmvm.SelectedMenuItem;
+                                            }
+                                            //SelectedMenuItem = gmvm.MenuContent.SelectedMenuItem;
                                         }
-                                        //SelectedMenuItem = gmvm.MenuContent.SelectedMenuItem;
                                     }
                                 }
-                            }
-                        };
+                            };
+                        }
                     }
-                }
-                else
-                {
-                    NoGroupedMenuViewModel noGroupedMenuViewModel = new(index++, smi);
-                    noGroupedMenuViewModel.CreateMenuItemViewModels();
-
-                    NoGroupedMenus.Add(noGroupedMenuViewModel);
-                    AllMenus.Add(noGroupedMenuViewModel);
-
-                    AddPropertyChanged();
-                    void AddPropertyChanged()
+                    else
                     {
-                        noGroupedMenuViewModel.PropertyChanged += (sender, e) =>
+                       //NoGroupedMenuViewModel noGroupedMenuViewModel = new(index++, smi);
+                        NoGroupedMenuViewModel noGroupedMenuViewModel = new(index++, allTopItemLeafs);
+                       // noGroupedMenuViewModel.CreateMenuItemViewModels();
+
+                        NoGroupedMenus.Add(noGroupedMenuViewModel);
+                        AllMenus.Add(noGroupedMenuViewModel);
+
+                        AddNoGroupedMenuViewModelPropertyChanged(noGroupedMenuViewModel);
+                       // AddPropertyChanged();
+                        void AddPropertyChanged()
                         {
-                            if (sender is NoGroupedMenuViewModel ngmvm)
+                            noGroupedMenuViewModel.PropertyChanged += (sender, e) =>
                             {
-                                //if (e.PropertyName == nameof(NoGroupedMenuViewModel.IsLoading))
-                                //{
-                                //    //最后一个
-                                //    if (ngmvm.Index == NoGroupedMenus.Count()-1 && !ngmvm.IsLoading)
-                                //    {
-                                //        IsLoading = false;
-                                //    }
-                                //}
-
-                                if (e.PropertyName == nameof(NoGroupedMenuViewModel.SelectedNoGroupedMenuItem))
+                                if (sender is NoGroupedMenuViewModel ngmvm)
                                 {
-                                    if (SelectedNoGroupedMenuItem is null &&
-                                       (ngmvm.SelectedNoGroupedMenuItem is not null && ngmvm.SelectedNoGroupedMenuItem.IsSelected && ngmvm.SelectedNoGroupedMenuItem != SelectedNoGroupedMenuItem))
-                                    {
-                                        SelectedNoGroupedMenuItem = ngmvm.SelectedNoGroupedMenuItem;
-                                    }
+                                    //if (e.PropertyName == nameof(NoGroupedMenuViewModel.IsLoading))
+                                    //{
+                                    //    //最后一个
+                                    //    if (ngmvm.Index == NoGroupedMenus.Count()-1 && !ngmvm.IsLoading)
+                                    //    {
+                                    //        IsLoading = false;
+                                    //    }
+                                    //}
 
-                                    if (SelectedNoGroupedMenuItem is not null &&
-                                        (ngmvm.SelectedNoGroupedMenuItem is not null && ngmvm.SelectedNoGroupedMenuItem.IsSelected && ngmvm.SelectedNoGroupedMenuItem != SelectedNoGroupedMenuItem))
+                                    if (e.PropertyName == nameof(NoGroupedMenuViewModel.SelectedNoGroupedMenuItem))
                                     {
-                                        SelectedNoGroupedMenuItem.IsSelected = false;
+                                        if (SelectedNoGroupedMenuItem is null &&
+                                           (ngmvm.SelectedNoGroupedMenuItem is not null && ngmvm.SelectedNoGroupedMenuItem.IsSelected && ngmvm.SelectedNoGroupedMenuItem != SelectedNoGroupedMenuItem))
+                                        {
+                                            SelectedNoGroupedMenuItem = ngmvm.SelectedNoGroupedMenuItem;
+                                        }
 
-                                        SelectedNoGroupedMenuItem = ngmvm.SelectedNoGroupedMenuItem;
+                                        if (SelectedNoGroupedMenuItem is not null &&
+                                            (ngmvm.SelectedNoGroupedMenuItem is not null && ngmvm.SelectedNoGroupedMenuItem.IsSelected && ngmvm.SelectedNoGroupedMenuItem != SelectedNoGroupedMenuItem))
+                                        {
+                                            SelectedNoGroupedMenuItem.IsSelected = false;
+
+                                            SelectedNoGroupedMenuItem = ngmvm.SelectedNoGroupedMenuItem;
+                                        }
                                     }
                                 }
-                            }
-                        };
+                            };
+                        }
                     }
-                }
 
-                bool HasLeafMenu()
-                {
-                    return !AnyEqualsMenuItems(leafMenuItems, smi);
+                    bool HasLeafMenus()
+                    {
+                       // return !AnyEqualsMenuItems(leafMenuItems, smi);
+                        return !AnyEqualsMMenuItemViewModels(allTopItemLeafs, topItem);
+                    }
                 }
             }
 
@@ -409,7 +513,14 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             return isEquals;
         }
 
-        private bool IsEqualsNoGroupedMenuViewModel(NoGroupedMenuViewModel noGroupedMenuViewModel, NoGroupedMenuItemViewModel moGroupedMenuItemViewModel)
+        private bool AnyEqualsMMenuItemViewModels(IEnumerable<MenuItemViewModel> menuItemViewModels, MenuItemViewModel menuItemViewModel)
+        {
+            var isEquals = menuItemViewModels.Any(mi => IsEqualsNameOrTitle(mi.Name, menuItemViewModel.Name) || IsEqualsNameOrTitle(mi.Title, menuItemViewModel.Title));
+
+            return isEquals;
+        }
+
+        private bool IsEqualsNoGroupedMenuViewModel(NoGroupedMenuViewModel noGroupedMenuViewModel, MenuItemViewModel moGroupedMenuItemViewModel)
         {
             if (noGroupedMenuViewModel.SelectedNoGroupedMenuItem is null || moGroupedMenuItemViewModel is null)
             {

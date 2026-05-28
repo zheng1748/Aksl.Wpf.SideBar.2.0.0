@@ -652,7 +652,7 @@
         <Expander.Content>
             <!--<views:MenuContentView x:Name="menuContentView"-->
             <!--DataContext="{Binding MenuContent}" />-->
-            <views:MenuContentView x:Name="menuContentView"
+            <views:MenuContentView x:Name="menuContentView" 
                                    DataContext="{Binding MenuContent}" />
         </Expander.Content>
     </Expander>

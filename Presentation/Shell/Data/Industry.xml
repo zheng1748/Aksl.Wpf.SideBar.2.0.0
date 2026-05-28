@@ -25,7 +25,7 @@
 			  IconKind="Pipette"
 			  ModuleName=""
 			  ViewName=""
-		      IsNextNavigation="False"
+		     IsNextNavigation="True"
 			  NavigationName="Pipelines">
 	</MenuItem>
 	<MenuItem Id="1"

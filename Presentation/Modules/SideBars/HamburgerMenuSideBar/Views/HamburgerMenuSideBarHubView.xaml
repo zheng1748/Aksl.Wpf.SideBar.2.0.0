@@ -8,13 +8,13 @@
              xmlns:a="clr-namespace:Aksl.Modules.HamburgerMenuSideBar"
              xmlns:sv="clr-namespace:Aksl.Modules.HamburgerMenuSideBar"
              mc:Ignorable="d"
-             x:Name="HamburgerMenuSideBarHubBarer"
              xmlns:materialDesign="clr-namespace:Aksl.Toolkit.Controls;assembly=Aksl.Toolkit.Controls"
              xmlns:akslControls="clr-namespace:Aksl.Toolkit.Controls;assembly=Aksl.Toolkit.Controls"
              xmlns:behaviors="clr-namespace:Aksl.Xaml.Behaviors;assembly=Aksl.Toolkit"
              xmlns:inf="clr-namespace:Aksl.Infrastructure;assembly=Aksl.Infrastructure"
              xmlns:views="clr-namespace:Aksl.Modules.HamburgerMenuSideBar.Views"
              xmlns:acmview="clr-namespace:Aksl.ActiveContentManager.Views;assembly=Aksl.Toolkit"
+             x:Name="HamburgerMenuSideBarHubBarer"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
 

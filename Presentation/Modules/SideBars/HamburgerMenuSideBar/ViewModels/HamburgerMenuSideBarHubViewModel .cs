@@ -62,7 +62,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             CreateMovePreviousCommand();
 
             RegisterPropertyChanged();
-            RegisterActiveContentsAsync().Await();
+            RegisterActiveContentAsync().Await();
             // RegisterBuildWorkspaceViewEvents();
             RegisterHamburgerMenuBarPaneOpenEvent();
         }
@@ -318,10 +318,10 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             {
                 if (SetProperty<bool>(ref _isPaneOpen, value))
                 {
-                    //if (HamburgerMenuSideBar is not null)
-                    //{
-                    //    HamburgerMenuSideBar.IsPaneOpen = value;
-                    //}
+                    if (TopHamburgerMenuSideBar is not null)
+                    {
+                        TopHamburgerMenuSideBar.IsPaneOpen = value;
+                    }
 
                     VisualState = GetVisualState();
                 }
@@ -428,8 +428,8 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         }
         #endregion
 
-        #region Register ActiveContents Method
-        private async Task RegisterActiveContentsAsync()
+        #region Register ActiveContent Method
+        private async Task RegisterActiveContentAsync()
         {
             RegisterRightContentActiveContent();
             void RegisterRightContentActiveContent()

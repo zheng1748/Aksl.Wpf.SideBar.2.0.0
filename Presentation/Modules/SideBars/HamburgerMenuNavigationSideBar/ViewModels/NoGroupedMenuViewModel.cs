@@ -11,26 +11,47 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
     public class NoGroupedMenuViewModel : GroupedMenuViewModelBase
     {
         #region Members
-        private readonly MenuItem _menuItem;
+        //private readonly MenuItem _menuItem;
+        //private IEnumerable<MenuItemViewModel> _leafMenuItemViewModels;
         #endregion
 
         #region Constructors
-        public NoGroupedMenuViewModel(int index, MenuItem menuItems)
+        //public NoGroupedMenuViewModel(int index, MenuItem menuItems)
+        //{
+        //    Index = index;
+        //    _menuItem = menuItems;
+
+        //    NoGroupedMenuItems = new();
+        //}
+
+        public NoGroupedMenuViewModel(int index, IEnumerable<MenuItemViewModel> leafMenuItemViewModels)
         {
             Index = index;
-            _menuItem = menuItems;
+            NoGroupedMenuItems = new(leafMenuItemViewModels);
 
-            NoGroupedMenuItems = new(); 
+            //NoGroupedMenuItems = new();
+
+            IsGrouped = false;
         }
         #endregion
 
         #region Properties
         public int Index { get; }
 
-        public ObservableCollection<NoGroupedMenuItemViewModel> NoGroupedMenuItems { get; private set; }
+        //  public ObservableCollection<NoGroupedMenuItemViewModel> NoGroupedMenuItems { get; private set; }
+        public ObservableCollection<MenuItemViewModel> NoGroupedMenuItems { get; private set; }
 
-        private NoGroupedMenuItemViewModel _selectedNoGroupedMenuItem;
-        public NoGroupedMenuItemViewModel SelectedNoGroupedMenuItem
+        public bool IsGrouped { get; set; }
+
+        //private NoGroupedMenuItemViewModel _selectedNoGroupedMenuItem;
+        //public NoGroupedMenuItemViewModel SelectedNoGroupedMenuItem
+        //{
+        //    get => _selectedNoGroupedMenuItem;
+        //    set => SetProperty(ref _selectedNoGroupedMenuItem, value);
+        //}
+
+        private MenuItemViewModel _selectedNoGroupedMenuItem;
+        public MenuItemViewModel SelectedNoGroupedMenuItem
         {
             get => _selectedNoGroupedMenuItem;
             set => SetProperty(ref _selectedNoGroupedMenuItem, value);
@@ -66,17 +87,17 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             if (SelectedNoGroupedMenuItem is not null)
             {
                 SelectedNoGroupedMenuItem.IsSelected = false;
-               // SelectedNoGroupedMenuItem = null;
+                // SelectedNoGroupedMenuItem = null;
             }
         }
 
-        internal void ResetSelectedNoGroupeMenuItem(NoGroupedMenuItemViewModel selectedNoGroupedMenuItem)
-        {
-            if (selectedNoGroupedMenuItem is not null)
-            {
-                SelectedNoGroupedMenuItem = selectedNoGroupedMenuItem;
-            }
-        }
+        //internal void ResetSelectedNoGroupeMenuItem(NoGroupedMenuItemViewModel selectedNoGroupedMenuItem)
+        //{
+        //    if (selectedNoGroupedMenuItem is not null)
+        //    {
+        //        SelectedNoGroupedMenuItem = selectedNoGroupedMenuItem;
+        //    }
+        //}
         #endregion
 
         #region Create MenuItem ViewModel Method
@@ -84,9 +105,9 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         {
             //IsLoading = true;
 
-            NoGroupedMenuItemViewModel noGroupedMenuItemViewModel = new(Index, _menuItem);
+            //NoGroupedMenuItemViewModel noGroupedMenuItemViewModel = new(Index, _menuItem);
 
-            NoGroupedMenuItems.Add(noGroupedMenuItemViewModel);
+            // NoGroupedMenuItems.Add(noGroupedMenuItemViewModel);
 
             //IsLoading = false;
         }

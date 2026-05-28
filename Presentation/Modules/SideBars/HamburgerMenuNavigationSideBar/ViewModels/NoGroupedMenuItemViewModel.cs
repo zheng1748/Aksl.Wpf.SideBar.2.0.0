@@ -22,7 +22,7 @@ using Aksl.Infrastructure.Events;
 
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 {
-    public class NoGroupedMenuItemViewModel :   BindableBase
+    public class NoGroupedMenuItemViewModel : BindableBase
     {
         #region Members
         protected readonly IEventAggregator _eventAggregator; 
@@ -60,20 +60,20 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             {
                 if (SetProperty<bool>(ref _isSelected, value))
                 {
-                    var isSelectedOnLeaf = IsLeaf && (!HasNavigationName || (HasNavigationName && !IsNextNavigation));
-                    var isSelectedOnNotLeaf = !IsLeaf && !IsNexOnNotLeaf;
+                    //var isSelectedOnLeaf = IsLeaf && (!HasNavigationName || (HasNavigationName && !IsNextNavigation));
+                    //var isSelectedOnNotLeaf = !IsLeaf && !IsNexOnNotLeaf;
 
-                    if (isSelectedOnLeaf && _isSelected)
-                    {
-                        var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
-                        buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
-                    }
+                    //if (isSelectedOnLeaf && _isSelected)
+                    //{
+                    //    var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
+                    //    buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
+                    //}
 
-                    if (isSelectedOnNotLeaf && _isSelected)
-                    {
-                        var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
-                        buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
-                    }
+                    //if (isSelectedOnNotLeaf && _isSelected)
+                    //{
+                    //    var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
+                    //    buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
+                    //}
                 }
             }
         }

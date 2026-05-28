@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-
 using Prism;
+using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Mvvm;
@@ -14,8 +15,8 @@ using Prism.Regions;
 using Prism.Unity;
 using Unity;
 
+using Aksl.ActiveContentManager.ViewModels;
 using Aksl.Dialogs.Services;
-
 using Aksl.Infrastructure;
 using Aksl.Infrastructure.Events;
 
@@ -40,24 +41,32 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
             _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
-            _menuService = _container.Resolve<IMenuService>();
+            //_menuService = _container.Resolve<IMenuService>();
+            _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
 
             SelectedDisplayMode = SplitViewDisplayMode.CompactInline;
             IsPaneOpen = true;
             SelectedPlacement = SplitViewPanePlacement.Left;
 
-            _workspaceViewEventName = "OnBuildHamburgerMenuNavigationSideBarWorkspaceViewEvent";
-            WorkspaceRegionName = RegionNames.HamburgerNavigationSideBarWorkspaceRegion;
+           // _workspaceViewEventName = "OnBuildHamburgerMenuNavigationSideBarWorkspaceViewEvent";
+           // WorkspaceRegionName = RegionNames.HamburgerNavigationSideBarWorkspaceRegion;
 
             CreateGroupedMenusViewModelAsync().Await();
 
-            RegisterBuildWorkspaceViewEvents();
+            RegisterActiveContentAsync().Await();
+            //RegisterPropertyChanged();
+
+            //RegisterBuildWorkspaceViewEvents(); 
             RegisterHamburgerMenuBarPaneOpenEvent();
         }
         #endregion
 
         #region Properties
+        public ActiveContentViewModel RightContentActiveContentViewModel { get; set; }
         public GroupedMenusViewModel GroupedMenu { get; private set; }
+
+        public MenuItemViewModel SelectedMenuItem { get;  set; }
+        public ObservableCollection<NoGroupedMenuViewModel> NoGroupedMenus { get; }
 
         private string _workspaceRegionName;
         public string WorkspaceRegionName
@@ -71,6 +80,33 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         {
             get => _isLoading;
             set => SetProperty<bool>(ref _isLoading, value);
+        }
+        #endregion
+
+        #region Register PropertyChanged Method
+        private void RegisterPropertyChanged()
+        {
+            GroupedMenu.PropertyChanged += (sender, e) =>
+            {
+                if (sender is GroupedMenusViewModel gmvm)
+                {
+                    if (e.PropertyName == nameof(GroupedMenusViewModel.SelectedMenuItem)) 
+                    {
+                        if (gmvm.SelectedMenuItem is not null)
+                        {
+                            ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, _dialogViewService).Await();
+                        }
+                    }
+
+                    if (e.PropertyName == nameof(GroupedMenusViewModel.SelectedNoGroupedMenuItem))
+                    {
+                        if (gmvm.SelectedNoGroupedMenuItem is not null)
+                        {
+                            ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedNoGroupedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, _dialogViewService).Await();
+                        }
+                    }
+                }
+            };
         }
         #endregion
 
@@ -221,6 +257,20 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         }
         #endregion
 
+        #region Register ActiveContents Method
+        private async Task RegisterActiveContentAsync()
+        {
+            RegisterRightContentActiveContent();
+            void RegisterRightContentActiveContent()
+            {
+                _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
+                var rightContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
+
+                RightContentActiveContentViewModel = rightContentActiveContentViewModel;
+            }
+        }
+        #endregion
+
         #region Register BuildWorkspaceView Event
         private void RegisterBuildWorkspaceViewEvents()
         {
@@ -328,9 +378,9 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 
             try
             {
-                GroupedMenu = new(_eventAggregator, _menuService);
-                AddPropertyChanged();
+                GroupedMenu = new();
 
+                AddPropertyChanged();
                 void AddPropertyChanged()
                 {
                     GroupedMenu.PropertyChanged += (sender, e) =>
