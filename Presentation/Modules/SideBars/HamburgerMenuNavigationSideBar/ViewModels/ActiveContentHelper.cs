@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Aksl.ActiveContentManager;
+using Aksl.ActiveContentManager.ViewModels;
+using Aksl.Dialogs.Services;
+using Prism;
+using Prism.Ioc;
+using Prism.Services.Dialogs;
+using Prism.Unity;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Interop;
-
-using Prism;
-using Prism.Ioc;
-using Prism.Unity;
-
-using Aksl.ActiveContentManager;
-using Aksl.ActiveContentManager.ViewModels;
-using Aksl.Dialogs.Services;
+using System.Windows.Media.Media3D;
 
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels;
 
@@ -55,7 +55,7 @@ public static class ActiveContentHelper
         }
         else
         {
-            await dialogViewService.AlertAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
+            await dialogViewService.AlertAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type",width:650,height:300,okText:"确定");
         }
     }
     #endregion

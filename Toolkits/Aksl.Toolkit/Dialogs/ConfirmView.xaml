@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:prism="http://prismlibrary.com/"
-             Width="{Binding Path=Width}"
-             Height="{Binding Path=Height}"
+           
              xmlns:converters="clr-namespace:Aksl.Toolkit.Converters"
              mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
@@ -13,8 +12,9 @@
         <converters:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
         <converters:BooleanNegationToVisibilityConverter x:Key="booleanNegationToVisibilityConverter" />
     </UserControl.Resources>
-    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-          Margin="0">
+    <Grid  Width="{Binding Path=Width}"
+            Height="{Binding Path=Height}"
+            Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5" />
@@ -27,7 +27,7 @@
                 BorderThickness="3"
                 BorderBrush="WhiteSmoke">
             <TextBlock Margin="7"
-                       Text="{Binding Message}"
+                       Text="{Binding Message,Mode=OneWay}"
                        TextWrapping="Wrap"
                        FontSize="16"
                        Foreground="Black" />
@@ -36,23 +36,21 @@
                     Grid.Row="2"
                     HorizontalAlignment="Center">
             <Button x:Name="OkButton"
-                    Content="{Binding OkText}"
-                    Command="{Binding OKCommand}"
-                    CommandParameter="true"
+                    Content="{Binding Path=OkText,Mode=OneWay}"
+                    Command="{Binding Path=OkCommand,Mode=OneWay}"
                     Width="60"
-                    Height="20"
+                    Height="30"
                     HorizontalAlignment="Right"
-                    Margin="0,4,20,4">
+                    Margin="0,4,20,10">
             </Button>
             <Button x:Name="CancelButton"
                     Visibility="{Binding Path=IsConfirm,Mode=OneWay,Converter={StaticResource booleanToVisibilityConverter}}"
-                    Content="{Binding CancelText}"
-                    Command="{Binding CancelCommand}"
-                    CommandParameter="false"
+                    Content="{Binding CancelText,Mode=OneWay}"
+                    Command="{Binding CancelCommand,Mode=OneWay}"
                     Width="60"
                     Height="20"
                     HorizontalAlignment="Right"
-                    Margin="20,4,0,4">
+                    Margin="20,4,0,10">
             </Button>
         </StackPanel>
     </Grid>

@@ -11,18 +11,10 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
     public class MenuItemHeaderViewModel : BindableBase
     {
         #region Members
-        //private readonly MenuItem _menuItem;
         private readonly MenuItemViewModel _headerMenuItemViewModel;
         #endregion
 
         #region Constructors
-        //public MenuItemHeaderViewModel(MenuItem menuItem)
-        //{
-        //    _menuItem = menuItem;
-
-        //    HeaderTitle = _menuItem.Title;
-        //}
-
         public MenuItemHeaderViewModel(MenuItemViewModel headerMenuItemViewModel)
         {
             _headerMenuItemViewModel = headerMenuItemViewModel;

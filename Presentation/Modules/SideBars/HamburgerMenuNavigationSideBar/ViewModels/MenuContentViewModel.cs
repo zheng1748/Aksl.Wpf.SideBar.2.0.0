@@ -4,30 +4,15 @@ using System.Collections.ObjectModel;
 using Prism.Events;
 using Prism.Mvvm;
 
-using Aksl.Infrastructure;
-
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 {
     public class MenuContentViewModel : BindableBase
     {
         #region Members
-        //private IEnumerable<MenuItem> _leafMenuItems;
         private IEnumerable<MenuItemViewModel> _leafMenuItemViewModels;
         #endregion
 
         #region Constructors
-        public MenuContentViewModel()
-        {
-        }
-
-        //public MenuContentViewModel(int groupIndex, IEnumerable<MenuItem> leafMenuItems)
-        //{
-        //    GroupIndex = groupIndex;
-        //    _leafMenuItems = leafMenuItems;
-
-        //    MenuItems = new();
-        //}
-
         public MenuContentViewModel(int groupIndex, IEnumerable<MenuItemViewModel> leafMenuItemViewModels)
         {
             GroupIndex = groupIndex;
@@ -83,13 +68,6 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                 }
             }
         }
-
-        //private bool _isLoading;
-        //public bool IsLoading
-        //{
-        //    get => _isLoading;
-        //    set => SetProperty<bool>(ref _isLoading, value);
-        //}
         #endregion
 
         #region Clear Selected MenuItem Method
@@ -97,18 +75,9 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         {
             if (SelectedMenuItem is not null)
             {
-                //SelectedMenuItem.IsSelected = false; 
                 SelectedMenuItem = null;
             }
         }
-
-        //internal void ResetSelectedMenuItem(MenuItemViewModel selectedMenuItemItem)
-        //{
-        //    if (selectedMenuItemItem is not null)
-        //    {
-        //        SelectedMenuItem = selectedMenuItemItem;
-        //    }
-        //}
         #endregion
 
         #region Set MenuItemViewModels Method
@@ -121,29 +90,6 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                 mivm.GroupIndex = GroupIndex;
                 mivm.Index = index++;
             }
-        }
-        #endregion
-
-        #region Create MenuItem ViewModel Method
-        internal void CreateMenuItemViewModels()
-        {
-            int index = 0;
-
-          //  IsLoading = true;
-
-            //foreach (var menuItem in _leafMenuItems)
-            //{
-            //    MenuItemViewModel menuItemViewModel = new(GroupIndex, index++, menuItem);
-
-            //    MenuItems.Add(menuItemViewModel);
-            //}
-
-            foreach (var mivm in _leafMenuItemViewModels)
-            {
-                mivm.Index = index++;
-            }
-
-            //IsLoading = false;
         }
         #endregion
     }

@@ -1,14 +1,27 @@
-﻿using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-
+﻿using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Infrastructure.Events;
+using Aksl.Modules.Account;
+using Aksl.Modules.Account.ViewModels;
+using Aksl.Modules.Account.Views;
+using Aksl.Modules.AirCompresser;
+using Aksl.Modules.CoolingTower;
+using Aksl.Modules.ExpandHamburgerMenu;
+using Aksl.Modules.ExpandHamburgerMenuNavigationBar;
+using Aksl.Modules.ExpandHamburgerMenuTab;
+using Aksl.Modules.ExpandHamburgerMenuTreeBar;
+using Aksl.Modules.HamburgerMenuNavigationSideBar;
+using Aksl.Modules.HamburgerMenuPopupSideBar;
+using Aksl.Modules.HamburgerMenuSideBar;
+using Aksl.Modules.HamburgerMenuTreeSideBar;
+using Aksl.Modules.Home;
+using Aksl.Modules.MenuSub;
+using Aksl.Modules.Others;
+using Aksl.Modules.Pipeline;
+using Aksl.Modules.Shell.ViewModels;
+using Aksl.Modules.Shell.Views;
+using Aksl.Modules.TabBar;
+using Aksl.Modules.Thermometer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,30 +33,16 @@ using Prism.Modularity;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using Prism.Unity;
-
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
-
-using Aksl.Modules.ExpandHamburgerMenu;
-using Aksl.Modules.ExpandHamburgerMenuNavigationBar;
-using Aksl.Modules.ExpandHamburgerMenuTab;
-using Aksl.Modules.ExpandHamburgerMenuTreeBar;
-using Aksl.Modules.HamburgerMenuNavigationSideBar;
-using Aksl.Modules.HamburgerMenuPopupSideBar;
-using Aksl.Modules.HamburgerMenuSideBar;
-using Aksl.Modules.HamburgerMenuTreeSideBar;
-using Aksl.Modules.MenuSub;
-using Aksl.Modules.Account;
-using Aksl.Modules.AirCompresser;
-using Aksl.Modules.CoolingTower;
-using Aksl.Modules.Home;
-using Aksl.Modules.Others;
-using Aksl.Modules.Pipeline;
-using Aksl.Modules.Shell.ViewModels;
-using Aksl.Modules.Shell.Views;
-using Aksl.Modules.TabBar;
-using Aksl.Modules.Thermometer;
+using System;
+using System.Buffers;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Aksl.Modules.Shell
 {
@@ -197,6 +196,30 @@ namespace Aksl.Modules.Shell
 
         protected override void OnInitialized()
         {
+            var dialogService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<Dialogs.Services.DialogService>();
+
+            var loginPopupView = Container.Resolve<LoginPopupView>();
+            var loginPopupViewModel = loginPopupView.DataContext as LoginPopupViewModel;
+
+            var parameters = new DialogParameters { { "Title", "登   陆" }, { "WindowCloseButtonVisibility", "Visible" }, { "Width", "670" }, { "Height", "380" }, 
+                                                 { "OkText", "确定" }, { "CancelText", "取消" },{ "OkIconKind", "AccountAdd" }, { "OkToolTip", "登  陆" }, { "UserNameWater", "用户名" }, { "PasswordWater", "密码" } };
+            // dialogService.ShowDialog(loginPopupView, parameters: parameters);
+            dialogService.ShowDialog(loginPopupView, parameters: parameters, callback: (result) =>
+            {
+                if (result.Result == ButtonResult.None)
+                {
+                    Shutdown();
+                }
+
+                if (result.Parameters.TryGetValue("LoginPopupViewModel", out LoginPopupViewModel loginPopupViewModel))
+                {
+                    if (!loginPopupViewModel.IsSuccessful)
+                    {
+                        Shutdown();
+                    }
+                }
+            });
+
             base.OnInitialized();
         }
     }

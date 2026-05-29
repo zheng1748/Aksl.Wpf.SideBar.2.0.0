@@ -1,17 +1,17 @@
-﻿using System;
-
-using Prism.Commands;
+﻿using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
+using System;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
 
 namespace Aksl.Dialogs.ViewModels
 {
-    public class ConfirmViewModel : BindableBase, IDialogAware
+    public class ConfirmViewModel : DialogAware
     {
         #region Constructors
-        public ConfirmViewModel()
+        public ConfirmViewModel() : base()
         {
-            CreateCommand();
         }
         #endregion
 
@@ -23,108 +23,43 @@ namespace Aksl.Dialogs.ViewModels
             set => SetProperty<bool>(ref _isConfirm, value);
         }
 
-        private string _okText = "OK";
-        public string OkText
-        {
-            get => _okText;
-            set => SetProperty(ref _okText, value);
-        }
-
-        private string _cancelText = "Cancel";
-        public string CancelText
-        {
-            get => _cancelText;
-            set => SetProperty(ref _cancelText, value);
-        }
-
         private string _message;
         public string Message
         {
             get => _message;
             set => SetProperty(ref _message, value);
         }
-
-        private string _title = "Notification";
-        public string Title
-        {
-            get => _title;
-            set => SetProperty(ref _title, value);
-        }
-
-        private double _width = 300d;
-        public double Width
-        {
-            get => _width;
-            set => SetProperty<double>(ref _width, value);
-        }
-
-        private double _height = 150d;
-        public double Height
-        {
-            get => _height;
-            set => SetProperty<double>(ref _height, value);
-        }
         #endregion
 
         #region IDialogAware
-        public event Action<IDialogResult> RequestClose;
+        public override event Action<IDialogResult> RequestClose;
 
-        public bool CanCloseDialog()
+        public override void OnDialogOpened(IDialogParameters parameters)
         {
-            return true;
-        }
+            base.OnDialogOpened(parameters);
 
-        public void OnDialogClosed()
-        {
-
-        }
-
-        public void OnDialogOpened(IDialogParameters parameters)
-        {
-            IsConfirm = parameters.GetValue<bool?>("IsConfirm") ?? true;
-            Message = parameters.GetValue<string>("Message");
             Title = parameters.GetValue<string>("Title") ?? "Notification";
             OkText = parameters.GetValue<string>("OkText") ?? "OK";
             CancelText = parameters.GetValue<string>("CancelText") ?? "Cancel";
             Width = parameters.GetValue<double?>("Width") ?? 200d;
             Height = parameters.GetValue<double?>("Height") ?? 100d;
+
+            IsConfirm = parameters.GetValue<bool?>("IsConfirm") ?? true;
+            Message = parameters.GetValue<string>("Message");
         }
         #endregion
 
-        #region Create Command
-        public DelegateCommand<string> OKCommand { get; private set; }
-
-        public DelegateCommand<string> CancelCommand { get; private set; }
-
-        private void CreateCommand()
+        #region Ok Command
+        protected override async Task ExecuteOkCommandAsync()
         {
-            OKCommand = new DelegateCommand<string>(ExecuteOKOrCancelCommand,
-            (parameter) =>
-            {
-                return true;
-            });
-
-            CancelCommand = new DelegateCommand<string>(ExecuteOKOrCancelCommand,
-            (parameter) =>
-            {
-                return true;
-            });
+            RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
         }
+        #endregion
 
-        private void ExecuteOKOrCancelCommand(string parameter)
+        #region Cancel Command
+        protected override async Task ExecuteCancelCommandAsync()
         {
-            ButtonResult result = ButtonResult.None;
-
-            if (parameter?.ToLower() == "true")
-            {
-                result = ButtonResult.OK;
-            }
-            else if (parameter?.ToLower() == "false")
-            {
-                result = ButtonResult.Cancel;
-            }
-
-            RequestClose?.Invoke(new DialogResult(result));
+            RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
         }
         #endregion
     }

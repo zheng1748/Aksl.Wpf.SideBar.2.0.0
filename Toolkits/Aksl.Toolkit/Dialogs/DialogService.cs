@@ -32,7 +32,7 @@ namespace Aksl.Dialogs.Services
 
         private void ShowDialogInternal(FrameworkElement dialogContent, IDialogParameters parameters, bool isModal, string windowName = null, Action<IDialogResult> callback = null)
         {
-            if (parameters == null)
+            if (parameters is null)
             {
                 parameters = new DialogParameters();
             }
@@ -113,28 +113,28 @@ namespace Aksl.Dialogs.Services
 
             EventHandler closedHandler = null;
             closedHandler = (o, e) =>
-                {
-                    dialogWindow.Closed -= closedHandler;
-                    dialogWindow.Closing -= closingHandler;
-                    dialogWindow.GetDialogViewModel().RequestClose -= requestCloseHandler;
+            {
+                dialogWindow.Closed -= closedHandler;
+                dialogWindow.Closing -= closingHandler;
+                dialogWindow.GetDialogViewModel().RequestClose -= requestCloseHandler;
 
-                    dialogWindow.GetDialogViewModel().OnDialogClosed();
+                dialogWindow.GetDialogViewModel().OnDialogClosed();
 
-                    if (dialogWindow.Result == null)
-                        dialogWindow.Result = new DialogResult();
+                if (dialogWindow.Result == null)
+                    dialogWindow.Result = new DialogResult();
 
-                    callback?.Invoke(dialogWindow.Result);
+                callback?.Invoke(dialogWindow.Result);
 
-                    dialogWindow.DataContext = null;
-                    dialogWindow.Content = null;
-                };
+                dialogWindow.DataContext = null;
+                dialogWindow.Content = null;
+            };
             dialogWindow.Closed += closedHandler;
         }
 
         protected virtual void ConfigureDialogWindowProperties(IDialogWindow window, FrameworkElement dialogContent, IDialogAware viewModel)
         {
             var windowStyle = Dialog.GetWindowStyle(dialogContent);
-            if (windowStyle != null)
+            if (windowStyle is not null)
             {
                 window.Style = windowStyle;
             }

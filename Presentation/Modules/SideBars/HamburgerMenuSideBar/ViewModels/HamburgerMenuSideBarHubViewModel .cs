@@ -26,6 +26,7 @@ using Aksl.ActiveContentManager.ViewModels;
 using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
 using Aksl.Infrastructure.Events;
+
 using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
@@ -35,10 +36,8 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         #region Members
         private readonly IUnityContainer _container;
         private readonly IEventAggregator _eventAggregator;
-        private readonly IRegionManager _regionManager;
         private readonly IDialogViewService _dialogViewService;
         private readonly IMenuService _menuService;
-        //private object _currentView;
         private string _workspaceViewEventName;
         #endregion
 
@@ -46,7 +45,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         public HamburgerMenuSideBarHubViewModel()
         {
             _container = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
-            _regionManager = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IRegionManager>();
             _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
             _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
@@ -63,7 +61,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
             RegisterPropertyChanged();
             RegisterActiveContentAsync().Await();
-            // RegisterBuildWorkspaceViewEvents();
             RegisterHamburgerMenuBarPaneOpenEvent();
         }
         #endregion
@@ -476,139 +473,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         }
         #endregion
 
-        #region Register BuildWorkspaceView Event
-        private void RegisterBuildWorkspaceViewEvents()
-        {
-            var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(_workspaceViewEventName) as OnBuildWorkspaceViewEventbase;
-            Debug.Assert(buildHWorkspaceViewEvent is not null);
-
-            // _eventAggregator.GetEvent<OnBuildHamburgerMenuSideBarWorkspaceViewEvent>().Subscribe(async (bhmsbwve) =>
-            buildHWorkspaceViewEvent.Subscribe(async (bmve) =>
-            {
-                var currentMenuItem = bmve.CurrentMenuItem;
-                var currentActiveContent = RightContentActiveContentViewModel;
-
-                try
-                {
-                    await LoadViewAsync();
-
-                    #region LoadView Method
-                    async Task LoadViewAsync()
-                    {
-                        string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
-                        Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
-                        if (viewType is not null)
-                        {
-                            //IRegion region = _regionManager.Regions[WorkspaceRegionName];
-                            var viewName = viewType.Name;
-
-                            ContentInformation contentInformation = new()
-                            {
-                                Name = currentMenuItem.Name,
-                                Title = currentMenuItem.Title,
-                                ViewName = currentMenuItem.ViewName
-                            };
-
-                            //_currentView = region.GetView(viewTypeAssemblyQualifiedName);
-                            //var currentView = region.Views.FirstOrDefault(v => v.GetType() == viewType);
-                            var currentView = currentActiveContent.GetStoreViewElementByName(currentMenuItem.Name);
-                            if (currentView is null)
-                            {
-                                // currentView = region.GetView(viewType.FullName);
-                            }
-
-                            if (currentView is not null)
-                            {
-                                if (currentMenuItem.IsCacheable)
-                                {
-                                    // region.Activate(currentView);
-                                    currentActiveContent.SetContentItem(contentInformation);
-                                }
-                                else
-                                {
-                                    //region.Remove(currentView);
-                                    currentActiveContent.RetsetContentItem(contentInformation);
-                                    // AddView();
-                                }
-                            }
-                            else
-                            {
-                                AddView();
-                            }
-
-                            void AddView()
-                            {
-                                if (CanAddView())
-                                {
-                                    currentActiveContent.Add(contentInformation);
-
-                                    //NavigationParameters navigationParameters = new()
-                                    //{
-                                    //    { "CurrentMenuItem", currentMenuItem }
-                                    //};
-
-                                    //_regionManager.RequestNavigate(WorkspaceRegionName, viewName, navigationParameters);
-                                }
-                            }
-
-                            bool CanAddView() => !string.IsNullOrEmpty(currentMenuItem.ModuleName);
-                        }
-                        else
-                        {
-                            await _dialogViewService.AlertAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
-                        }
-                    }
-                    #endregion
-
-                    #region Navigated To LoginView Method
-                    //void NavigatedToLoginView()
-                    //{
-                    //    var contentRegion = _regionManager.Regions[RegionNames.ShellContentRegion];
-                    //    var activeViews = contentRegion.ActiveViews;
-                    //    if (activeViews is not null && activeViews.Any())
-                    //    {
-                    //        _activeView = activeViews.FirstOrDefault();
-                    //    }
-
-                    //    var viewName = GetViewName();
-
-                    //    var loginViewName = "LoginView";
-                    //    (string ViewName, Infrastructure.MenuItem CurrentMenuItem, string LoginViewName, object ActiveView, object SelectedHamburgerMenuItem, object PreviewSelectedHamburgerMenuItem) parameters = (viewName, currentMenuItem, loginViewName, _activeView, selectedHamburgerMenuItem, previewSelectedHamburgerMenuItem);
-
-                    //    NavigationParameters navigationParameters = new()
-                    //    {
-                    //       {NavigationParameterNames.NavToSignIn,parameters},
-                    //    };
-
-                    //    _regionManager.RequestNavigate(RegionNames.ShellContentRegion, loginViewName, navigationParameters);
-                    //}
-                    #endregion
-
-                    #region GetViewName Method
-                    //string GetViewName()
-                    //{
-                    //    string viewName = default;
-
-                    //    string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
-                    //    Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
-                    //    if (viewType is not null)
-                    //    {
-                    //        viewName = viewType.Name;
-                    //    }
-
-                    //    return viewName;
-                    //}
-                    #endregion
-
-                }
-                catch (Exception ex)
-                {
-                    await _dialogViewService.AlertAsync(message: $"Unable to loading \"{currentMenuItem.ModuleName}\" module.: \"{ex.Message}\"", title: "Error: Load Module");
-                }
-            }, ThreadOption.UIThread, true);
-        }
-        #endregion
-
         #region MovePrevious Command
         public ICommand MovePreviousCommand { get; set; }
 
@@ -627,8 +491,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
         private async Task ExecuteMovePreviousCommandAsync(ActiveContentItemViewModel activeContentItemViewModel)
         {
-            // IsLoading = true;
-
             try
             {
 
@@ -642,8 +504,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             {
                 await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Login In Failure:");
             }
-
-            // IsLoading = false;
         }
 
         private bool CanExecuteMovePreviousCommand(ActiveContentItemViewModel activeContentItemViewModel)
@@ -743,49 +603,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                         await RecursiveSubActiveContent(LeftPaneActiveContentViewModel.SelectedContentItem);
                     }
                 }
-            }
-        }
-        #endregion
-
-        #region LoadView Method
-        private async Task LoadViewAsync(Infrastructure.MenuItem currentMenuItem)
-        {
-            var currentActiveContent = RightContentActiveContentViewModel;
-
-            string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
-            Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
-            if (viewType is not null)
-            {
-                var viewName = viewType.Name;
-
-                ContentInformation contentInformation = new()
-                {
-                    Name = currentMenuItem.Name,
-                    Title = currentMenuItem.Title,
-                    ViewName = currentMenuItem.ViewName
-                };
-                ;
-                var currentView = currentActiveContent.GetStoreViewElementByName(currentMenuItem.Name);
-
-                if (currentView is not null)
-                {
-                    if (currentMenuItem.IsCacheable)
-                    {
-                        currentActiveContent.SetContentItem(contentInformation);
-                    }
-                    else
-                    {
-                        currentActiveContent.RetsetContentItem(contentInformation);
-                    }
-                }
-                else
-                {
-                    currentActiveContent.Add(contentInformation);
-                }
-            }
-            else
-            {
-                await _dialogViewService.AlertAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
             }
         }
         #endregion

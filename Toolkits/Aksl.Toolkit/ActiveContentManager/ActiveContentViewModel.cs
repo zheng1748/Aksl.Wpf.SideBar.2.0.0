@@ -13,7 +13,6 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using Unity;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Aksl.ActiveContentManager.ViewModels
 {

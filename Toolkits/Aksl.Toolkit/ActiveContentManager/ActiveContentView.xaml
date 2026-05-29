@@ -11,13 +11,13 @@
              d:DesignWidth="800">
     <UserControl.Resources>
         
-        <Style x:Key="dragDropItemContainerStyle"
+        <!--<Style x:Key="dragDropItemContainerStyle"
                TargetType="{x:Type ContentPresenter}">
             <Setter Property="HorizontalAlignment"
                     Value="Stretch" />
             <Setter Property="VerticalAlignment"
                     Value="Stretch" />
-        </Style>
+        </Style>-->
         
         <ItemsPanelTemplate x:Key="activeContentItemsPanelTemplate">
             <Grid></Grid>

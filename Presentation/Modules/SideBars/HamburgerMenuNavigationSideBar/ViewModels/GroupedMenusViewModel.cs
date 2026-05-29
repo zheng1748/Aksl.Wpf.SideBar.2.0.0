@@ -46,9 +46,6 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         public ObservableCollection<GroupedMenuViewModelBase> AllMenus { get; }
         public string WorkspaceViewEventName { get; set; }
 
-        //internal MenuItemViewModel _previewSelectedMenuItem;
-        //internal MenuItemViewModel PreviewSelectedMenuItem => _previewSelectedMenuItem;
-
         private MenuItemViewModel _selectedMenuItemItem;
         public MenuItemViewModel SelectedMenuItem
         {
@@ -61,17 +58,6 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                     {
                         ClearSelectedNoGroupedMenuItem();
                     }
-
-                    //foreach (var gm in GroupedMenus)
-                    //{
-                    //    if (_currentGroupeIndex == gm.GroupIndex)
-                    //    {
-                    //        if (gm.MenuContent.SelectedMenuItem != _selectedMenuItemItem)
-                    //        {
-                    //            gm.MenuContent.SelectedMenuItem = _selectedMenuItemItem;
-                    //        }
-                    //    }
-                    //}
                 }
             }
         }
@@ -116,8 +102,8 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         }
         #endregion
 
-        #region RegisterPropertyChanged Method
-        private  void AddGroupedMenuViewModelPropertyChanged(GroupedMenuViewModel groupedMenuViewModel)
+        #region Register PropertyChanged Methods
+        private void AddGroupedMenuViewModelPropertyChanged(GroupedMenuViewModel groupedMenuViewModel)
         {
             groupedMenuViewModel.PropertyChanged += (sender, e) =>
             {
@@ -231,31 +217,12 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 
                 if (groupedMenu is not null)
                 {
-                    //_selectedMenuItemItem = null;
-                    // _previewSelectedMenuItem = null;
                     SelectedMenuItem = null;
 
                     groupedMenu.MenuContent.ClearSelectedMenuItem();
                     _currentGroupeIndex = -1;
                 }
             }
-
-            //foreach (var gm in GroupedMenus)
-            //{
-            //    if (_currentGroupeIndex == gm.GroupIndex)
-            //    {
-            //        if (_selectedMenuItemItem is not null)
-            //        {
-            //            _selectedMenuItemItem = null;
-            //            _previewSelectedMenuItem = null;
-            //        }
-
-            //        gm.MenuContent.ClearSelectedMenuItem();
-            //        _currentGroupeIndex = -1;
-
-            //        break;
-            //    }
-            //}
         }
 
         internal void ResetSelectedMenuItem(MenuItemViewModel selectedMenuItemItem)
@@ -274,19 +241,8 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                 if (groupedMenu is not null)
                 {
                     groupedMenu.MenuContent.SelectedMenuItem = selectedMenuItemItem;
-                    //groupedMenu.MenuContent.ResetSelectedMenuItem(selectedMenuItemItem);
-                    //_currentGroupeIndex = groupedMenu.MenuContent.GroupIndex;
-                    //_selectedMenuItemItem = selectedMenuItemItem;
+                  
                 }
-                //foreach (var gm in GroupedMenus)
-                //{
-                //    if (_currentGroupeIndex == gm.GroupIndex)
-                //    {
-                //        gm.MenuContent.ResetSelectedMenuItem(selectedMenuItemItem);
-
-                //        break;
-                //    }
-                //}
             }
         }
         #endregion
@@ -307,10 +263,6 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             {
                 foreach (var smi in subMenuItems)
                 {
-                    //var leafMenuItems = await GetAllLeafMenuItems(smi);
-
-                    List<MenuItemViewModel> allMenuItemLeafs = new();
-
                     MenuItemViewModel virtualParent = new();
                     Func<MenuItem, MenuItemViewModel, MenuItemViewModel> constructorResolver = ((m, p) => { return new MenuItemViewModel(m, p); });
                     var topItem = await nodeResolver.GetTopItemByMenuItemAsync(smi, virtualParent, constructorResolver, false);
@@ -318,139 +270,26 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 
                     if (HasLeafMenus())
                     {
-                        //GroupedMenuViewModel groupedMenuViewModel = new(groupIndex++, smi, leafMenuItems);
                         GroupedMenuViewModel groupedMenuViewModel = new(groupIndex++, topItem, allTopItemLeafs);
-                        //groupedMenuViewModel.CreateMenuContentViewModels();
-                       // groupedMenuViewModel.CreateMenuItemViewModels();
 
                         GroupedMenus.Add(groupedMenuViewModel);
                         AllMenus.Add(groupedMenuViewModel);
 
                         AddGroupedMenuViewModelPropertyChanged(groupedMenuViewModel);
-
-                       // AddPropertyChanged();
-                        void AddPropertyChanged()
-                        {
-                            groupedMenuViewModel.PropertyChanged += (sender, e) =>
-                            {
-                                if (sender is GroupedMenuViewModel gmvm)
-                                {
-                                    //if (e.PropertyName == nameof(GroupedMenuViewModel.IsLoading))
-                                    //{
-                                    //    //最后一个
-                                    //    if (gmvm.GroupIndex == GroupedMenus.Count()-1 && !gmvm.IsLoading)
-                                    //    {
-                                    //        IsLoading = false;
-                                    //    }
-                                    //}
-
-                                    if (e.PropertyName == nameof(GroupedMenuViewModel.SelectedMenuItem))
-                                    {
-                                        if (_currentGroupeIndex == gmvm.GroupIndex)
-                                        {
-                                            //SelectedMenuItem = gmvm.MenuContent.SelectedMenuItem;
-                                            if ((gmvm.SelectedMenuItem is not null && gmvm.SelectedMenuItem.IsSelected) && SelectedMenuItem != gmvm.SelectedMenuItem)
-                                            {
-                                                SelectedMenuItem = gmvm.SelectedMenuItem;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            foreach (var gm in GroupedMenus)
-                                            {
-                                                if (_currentGroupeIndex == gm.GroupIndex)
-                                                {
-                                                    // _previewSelectedMenuItem = gm.MenuContent.SelectedMenuItem;
-                                                    gm.MenuContent.ClearSelectedMenuItem();
-
-                                                    break;
-                                                }
-                                            }
-
-                                            _currentGroupeIndex = gmvm.GroupIndex;
-                                            if ((gmvm.SelectedMenuItem is not null && gmvm.SelectedMenuItem.IsSelected) && SelectedMenuItem != gmvm.SelectedMenuItem)
-                                            {
-                                                SelectedMenuItem = gmvm.SelectedMenuItem;
-                                            }
-                                            //SelectedMenuItem = gmvm.MenuContent.SelectedMenuItem;
-                                        }
-                                    }
-                                }
-                            };
-                        }
                     }
                     else
                     {
-                       //NoGroupedMenuViewModel noGroupedMenuViewModel = new(index++, smi);
                         NoGroupedMenuViewModel noGroupedMenuViewModel = new(index++, allTopItemLeafs);
-                       // noGroupedMenuViewModel.CreateMenuItemViewModels();
 
                         NoGroupedMenus.Add(noGroupedMenuViewModel);
                         AllMenus.Add(noGroupedMenuViewModel);
 
                         AddNoGroupedMenuViewModelPropertyChanged(noGroupedMenuViewModel);
-                       // AddPropertyChanged();
-                        void AddPropertyChanged()
-                        {
-                            noGroupedMenuViewModel.PropertyChanged += (sender, e) =>
-                            {
-                                if (sender is NoGroupedMenuViewModel ngmvm)
-                                {
-                                    //if (e.PropertyName == nameof(NoGroupedMenuViewModel.IsLoading))
-                                    //{
-                                    //    //最后一个
-                                    //    if (ngmvm.Index == NoGroupedMenus.Count()-1 && !ngmvm.IsLoading)
-                                    //    {
-                                    //        IsLoading = false;
-                                    //    }
-                                    //}
-
-                                    if (e.PropertyName == nameof(NoGroupedMenuViewModel.SelectedNoGroupedMenuItem))
-                                    {
-                                        if (SelectedNoGroupedMenuItem is null &&
-                                           (ngmvm.SelectedNoGroupedMenuItem is not null && ngmvm.SelectedNoGroupedMenuItem.IsSelected && ngmvm.SelectedNoGroupedMenuItem != SelectedNoGroupedMenuItem))
-                                        {
-                                            SelectedNoGroupedMenuItem = ngmvm.SelectedNoGroupedMenuItem;
-                                        }
-
-                                        if (SelectedNoGroupedMenuItem is not null &&
-                                            (ngmvm.SelectedNoGroupedMenuItem is not null && ngmvm.SelectedNoGroupedMenuItem.IsSelected && ngmvm.SelectedNoGroupedMenuItem != SelectedNoGroupedMenuItem))
-                                        {
-                                            SelectedNoGroupedMenuItem.IsSelected = false;
-
-                                            SelectedNoGroupedMenuItem = ngmvm.SelectedNoGroupedMenuItem;
-                                        }
-                                    }
-                                }
-                            };
-                        }
                     }
 
                     bool HasLeafMenus()
                     {
-                       // return !AnyEqualsMenuItems(leafMenuItems, smi);
                         return !AnyEqualsMMenuItemViewModels(allTopItemLeafs, topItem);
-                    }
-                }
-            }
-
-            SetWorkspaceViewEventName();
-
-            void SetWorkspaceViewEventName()
-            {
-                foreach (var gm in GroupedMenus)
-                {
-                    foreach (var mi in gm.MenuContent.MenuItems)
-                    {
-                        mi.WorkspaceViewEventName = this.WorkspaceViewEventName;
-                    }
-                }
-
-                foreach (var ngm in NoGroupedMenus)
-                {
-                    foreach (var mi in ngm.NoGroupedMenuItems)
-                    {
-                        mi.WorkspaceViewEventName = this.WorkspaceViewEventName;
                     }
                 }
             }
@@ -508,16 +347,16 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         #region Contain Methods
         private bool AnyEqualsMenuItems(IEnumerable<MenuItem> menuItems, MenuItem menuItem)
         {
-            var isEquals = menuItems.Any(mi => IsEqualsNameOrTitle(mi.Name, menuItem.Name) || IsEqualsNameOrTitle(mi.Title, menuItem.Title));
+            var isAny = menuItems.Any(mi => IsEqualsNameOrTitle(mi.Name, menuItem.Name) || IsEqualsNameOrTitle(mi.Title, menuItem.Title));
 
-            return isEquals;
+            return isAny;
         }
 
         private bool AnyEqualsMMenuItemViewModels(IEnumerable<MenuItemViewModel> menuItemViewModels, MenuItemViewModel menuItemViewModel)
         {
-            var isEquals = menuItemViewModels.Any(mi => IsEqualsNameOrTitle(mi.Name, menuItemViewModel.Name) || IsEqualsNameOrTitle(mi.Title, menuItemViewModel.Title));
+            var isAny = menuItemViewModels.Any(mi => IsEqualsNameOrTitle(mi.Name, menuItemViewModel.Name) || IsEqualsNameOrTitle(mi.Title, menuItemViewModel.Title));
 
-            return isEquals;
+            return isAny;
         }
 
         private bool IsEqualsNoGroupedMenuViewModel(NoGroupedMenuViewModel noGroupedMenuViewModel, MenuItemViewModel moGroupedMenuItemViewModel)
@@ -527,10 +366,10 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                 return false;
             }
 
-            var isEquals = IsEqualsNameOrTitle(noGroupedMenuViewModel.SelectedNoGroupedMenuItem.Name, moGroupedMenuItemViewModel.Name) ||
-                           IsEqualsNameOrTitle(noGroupedMenuViewModel.SelectedNoGroupedMenuItem.Title, moGroupedMenuItemViewModel.Title);
+            var isAny = IsEqualsNameOrTitle(noGroupedMenuViewModel.SelectedNoGroupedMenuItem.Name, moGroupedMenuItemViewModel.Name) ||
+                        IsEqualsNameOrTitle(noGroupedMenuViewModel.SelectedNoGroupedMenuItem.Title, moGroupedMenuItemViewModel.Title);
 
-            return isEquals;
+            return isAny;
         }
 
         private bool IsEqualsNameOrTitle(string nameOrTitle, string otherNameOrTitle)
@@ -540,10 +379,10 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                 return false;
             }
 
-            var isEquals = (!string.IsNullOrEmpty(nameOrTitle) && nameOrTitle.Equals(otherNameOrTitle, StringComparison.InvariantCultureIgnoreCase)) ||
-                           (!string.IsNullOrEmpty(otherNameOrTitle) && otherNameOrTitle.Equals(nameOrTitle, StringComparison.InvariantCultureIgnoreCase));
+            var isAny = (!string.IsNullOrEmpty(nameOrTitle) && nameOrTitle.Equals(otherNameOrTitle, StringComparison.InvariantCultureIgnoreCase)) ||
+                        (!string.IsNullOrEmpty(otherNameOrTitle) && otherNameOrTitle.Equals(nameOrTitle, StringComparison.InvariantCultureIgnoreCase));
 
-            return isEquals;
+            return isAny;
         }
 
         internal void GetLeafMenuItems(MenuItem currentMenuItem, IList<MenuItem> leafMenuItems)

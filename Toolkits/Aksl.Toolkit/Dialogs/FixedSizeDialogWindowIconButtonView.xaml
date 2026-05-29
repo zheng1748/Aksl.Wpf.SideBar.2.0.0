@@ -62,15 +62,17 @@
                 Width="{Binding Path=Content.Height,RelativeSource={RelativeSource Mode=Self}}"
                 Height="{Binding Path=Content.Height,RelativeSource={RelativeSource Mode=Self}}"
                 Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                Command="{Binding Path=DataContext.CancelCommand,Mode=OneWay,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}}"
+                Visibility="{Binding Path=DataContext.WindowCloseButtonVisibility,Mode=OneWay,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}}"
                 ToolTip="Window Close"
                 Margin="0,0,10,0"
                 Padding="0,0,2,0">
-            <ei:Interaction.Triggers>
+            <!--<ei:Interaction.Triggers>
                 <ei:EventTrigger EventName="Click">
                     <ei:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}}"
                                          MethodName="Close" />
                 </ei:EventTrigger>
-            </ei:Interaction.Triggers>
+            </ei:Interaction.Triggers>-->
         </Button>
     </StackPanel>
 </UserControl>

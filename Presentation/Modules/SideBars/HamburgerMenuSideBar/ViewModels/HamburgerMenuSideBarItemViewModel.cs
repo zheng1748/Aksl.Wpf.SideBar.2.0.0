@@ -115,9 +115,6 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                 // if (!HasSubMenu && IsLeaf && _isSelected)
                 if (IsAddViewToRightContent())
                 {
-                    //var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
-                    //buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
-
                     HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
                 }
 
@@ -178,24 +175,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     }
     #endregion
 
-    #region Load View To LeftPane Method
-    public HamburgerMenuSideBarViewModel HamburgerMenuSideBar { get; set; }
-
-    private HamburgerMenuSideBarItemViewModel _selectedHamburgerMenuSideBarItem;
-    public HamburgerMenuSideBarItemViewModel SelectedHamburgerMenuSideBarItem
-    {
-        get => _selectedHamburgerMenuSideBarItem;
-        set
-        {
-            if (SetProperty(ref _selectedHamburgerMenuSideBarItem, value))
-            {
-                if (_selectedHamburgerMenuSideBarItem is not null)
-                {
-                }
-            }
-        }
-    }
-
+    #region Get SubMenu Method
     private bool HasSubMenuInternal()
     {
         //var subMenuItems = HamburgerMenuSideBarHelper.GetSubMenuAsync(_menuItem).GetAwaiter().GetResult();
@@ -231,6 +211,25 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
         bool IsExistsViewInSubMenu(MenuItem mi) => (mi is not null) && mi.SubMenus.Any(sm => !string.IsNullOrEmpty(sm.ViewName));
 
         return subMenuItems;
+    }
+    #endregion
+
+    #region Add View To LeftPane Method
+    public HamburgerMenuSideBarViewModel HamburgerMenuSideBar { get; set; }
+
+    private HamburgerMenuSideBarItemViewModel _selectedHamburgerMenuSideBarItem;
+    public HamburgerMenuSideBarItemViewModel SelectedHamburgerMenuSideBarItem
+    {
+        get => _selectedHamburgerMenuSideBarItem;
+        set
+        {
+            if (SetProperty(ref _selectedHamburgerMenuSideBarItem, value))
+            {
+                if (_selectedHamburgerMenuSideBarItem is not null)
+                {
+                }
+            }
+        }
     }
 
     private async Task AddViewToLeftPaneAsync()

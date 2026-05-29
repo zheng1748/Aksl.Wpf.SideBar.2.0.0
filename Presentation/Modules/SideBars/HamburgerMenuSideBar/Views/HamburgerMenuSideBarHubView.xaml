@@ -970,7 +970,8 @@
                         <!--Visibility="{Binding Path=CanMove,Converter={StaticResource booleanToVisibilityConverter}}"-->
                         <DockPanel>
                             <StackPanel DockPanel.Dock="Top"
-                                        Orientation="Horizontal" Height="24">
+                                        Orientation="Horizontal"
+                                        Height="24">
                                 <Button Command="{Binding Path=MovePreviousCommand,Mode=OneWay}"
                                         CommandParameter="{Binding Path=DataContext.SelectedContentItem,ElementName=LeftPaneHamburgerMenuSideBarActiveContentView}"
                                         Content="{materialDesign:PackIcon Kind=ArrowLeft,Size=24}"

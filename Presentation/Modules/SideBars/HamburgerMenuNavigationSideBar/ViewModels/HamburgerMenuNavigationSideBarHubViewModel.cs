@@ -41,22 +41,17 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
             _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
-            //_menuService = _container.Resolve<IMenuService>();
             _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
 
             SelectedDisplayMode = SplitViewDisplayMode.CompactInline;
             IsPaneOpen = true;
             SelectedPlacement = SplitViewPanePlacement.Left;
 
-           // _workspaceViewEventName = "OnBuildHamburgerMenuNavigationSideBarWorkspaceViewEvent";
-           // WorkspaceRegionName = RegionNames.HamburgerNavigationSideBarWorkspaceRegion;
-
             CreateGroupedMenusViewModelAsync().Await();
 
             RegisterActiveContentAsync().Await();
             //RegisterPropertyChanged();
 
-            //RegisterBuildWorkspaceViewEvents(); 
             RegisterHamburgerMenuBarPaneOpenEvent();
         }
         #endregion
@@ -67,13 +62,6 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 
         public MenuItemViewModel SelectedMenuItem { get;  set; }
         public ObservableCollection<NoGroupedMenuViewModel> NoGroupedMenus { get; }
-
-        private string _workspaceRegionName;
-        public string WorkspaceRegionName
-        {
-            get => _workspaceRegionName;
-            set => SetProperty<string>(ref _workspaceRegionName, value);
-        }
 
         private bool _isLoading;
         public bool IsLoading
@@ -268,89 +256,6 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 
                 RightContentActiveContentViewModel = rightContentActiveContentViewModel;
             }
-        }
-        #endregion
-
-        #region Register BuildWorkspaceView Event
-        private void RegisterBuildWorkspaceViewEvents()
-        {
-            var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(_workspaceViewEventName) as OnBuildWorkspaceViewEventbase;
-            Debug.Assert(buildHWorkspaceViewEvent is not null);
-
-             buildHWorkspaceViewEvent.Subscribe(async (bmve) =>
-             {
-                var currentMenuItem = bmve.CurrentMenuItem;
-
-                try
-                {
-                     //var previewSelectedMenuItem = NavigationSideBar.PreviewSelectedMenuItem;
-                     //var selectedMenuItem = NavigationSideBar.SelectedMenuItem;
-
-                     await LoadViewAsync();
-
-                     #region LoadView Method
-                     async Task LoadViewAsync()
-                     {
-                         string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
-                         Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
-                         if (viewType is not null)
-                         {
-                             IRegion region = _regionManager.Regions[WorkspaceRegionName];
-                             var viewName = viewType.Name;
-
-                             //_currentView = region.GetView(viewTypeAssemblyQualifiedName);
-                             var currentView = region.Views.FirstOrDefault(v => v.GetType() == viewType);
-                             if (currentView is null)
-                             {
-                                 currentView = region.GetView(viewType.FullName);
-                             }
-
-                             if (currentView is not null)
-                             {
-                                 if (currentMenuItem.IsCacheable)
-                                 {
-                                     region.Activate(currentView);
-                                 }
-                                 else
-                                 {
-                                     region.Remove(currentView);
-
-                                     AddView();
-                                 }
-                             }
-                             else
-                             {
-                                 AddView();
-                             }
-
-                             void AddView()
-                             {
-                                 if (CanAddView())
-                                 {
-                                     NavigationParameters navigationParameters = new()
-                                    {
-                                        { "CurrentMenuItem", currentMenuItem }
-                                    };
-
-                                     _regionManager.RequestNavigate(WorkspaceRegionName, viewName, navigationParameters);
-                                 }
-                             }
-
-                             bool CanAddView() => !string.IsNullOrEmpty(currentMenuItem.ModuleName);
-                         }
-                         else
-                         {
-                             await _dialogViewService.AlertAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
-                         }
-                     }
-                     #endregion
-
-                 }
-                 catch (Exception ex)
-                {
-                    await _dialogViewService.AlertAsync(message: $"Unable to loading \"{currentMenuItem.ModuleName}\" module.: \"{ex.Message}\"", title: "Error: Load Module");
-                }
-            }, ThreadOption.UIThread, true);
         }
         #endregion
 

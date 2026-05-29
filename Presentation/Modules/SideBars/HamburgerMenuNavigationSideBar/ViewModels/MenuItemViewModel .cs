@@ -76,23 +76,9 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                     if (IsLeaf && _isSelected)
                     {
                         var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+
                         ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, dialogViewService).Await();
                     }
-
-                    //var isSelectedOnLeaf = IsLeaf && (!HasNavigationName || (HasNavigationName && !IsNextNavigation));
-                    //var isSelectedOnNotLeaf = !IsLeaf && !IsNexOnNotLeaf;
-
-                    //if (isSelectedOnLeaf && _isSelected)
-                    //{
-                    //    var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
-                    //    buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
-                    //}
-
-                    //if (isSelectedOnNotLeaf && _isSelected)
-                    //{
-                    //    var buildHWorkspaceViewEvent = _eventAggregator.GetEvent(WorkspaceViewEventName) as OnBuildWorkspaceViewEventbase;
-                    //    buildHWorkspaceViewEvent.Publish(new() { CurrentMenuItem = _menuItem });
-                    //}
                 }
             }
         }
