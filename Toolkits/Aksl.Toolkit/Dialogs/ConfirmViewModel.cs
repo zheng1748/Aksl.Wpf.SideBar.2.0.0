@@ -1,9 +1,11 @@
-﻿using Prism.Commands;
+﻿using Aksl.Toolkit.Controls;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Aksl.Dialogs.ViewModels
 {
@@ -39,11 +41,14 @@ namespace Aksl.Dialogs.ViewModels
             base.OnDialogOpened(parameters);
 
             Title = parameters.GetValue<string>("Title") ?? "Notification";
+            WindowCloseButtonVisibility = GetWindowCloseButtonVisibility(parameters.GetValue<string>("WindowCloseButtonVisibility"), Visibility.Visible);
+            Width = parameters.GetValue<double?>("Width") ?? 650d;
+            Height = parameters.GetValue<double?>("Height") ?? 300d;
             OkText = parameters.GetValue<string>("OkText") ?? "OK";
+            OkIconKind = GetPackIconKind(parameters.GetValue<string>("OkIconKind"), PackIconKind.None);
+            OkToolTip = parameters.GetValue<string>("OkToolTip") ?? "OK";
             CancelText = parameters.GetValue<string>("CancelText") ?? "Cancel";
-            Width = parameters.GetValue<double?>("Width") ?? 200d;
-            Height = parameters.GetValue<double?>("Height") ?? 100d;
-
+          
             IsConfirm = parameters.GetValue<bool?>("IsConfirm") ?? true;
             Message = parameters.GetValue<string>("Message");
         }

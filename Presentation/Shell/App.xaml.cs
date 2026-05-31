@@ -93,8 +93,9 @@ namespace Aksl.Modules.Shell
             containerRegistry.RegisterInstance<IServiceProvider>(serviceProvider);
 
             containerRegistry.RegisterDialogWindow<Dialogs.Views.FixedSizeDialogWindow>(name: nameof(Dialogs.Views.FixedSizeDialogWindow));
+            containerRegistry.RegisterSingleton(typeof(Aksl.Dialogs.Services.IDialogViewService), typeof(Aksl.Dialogs.Services.DialogViewService));
             containerRegistry.RegisterDialog<Dialogs.Views.ConfirmView, Dialogs.ViewModels.ConfirmViewModel>();
-            containerRegistry.RegisterSingleton(typeof(Dialogs.Services.IDialogViewService), typeof(Dialogs.Services.DialogViewService));
+            containerRegistry.RegisterDialog<LoginPopupView, LoginPopupViewModel>();
 
             RegisterMenuFactoryAsync(containerRegistry).Await();
 
@@ -194,32 +195,78 @@ namespace Aksl.Modules.Shell
             base.InitializeShell(shell);
         }
 
-        protected override void OnInitialized()
+        protected override async void OnInitialized()
         {
             var dialogService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<Dialogs.Services.DialogService>();
+            var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
             var loginPopupView = Container.Resolve<LoginPopupView>();
             var loginPopupViewModel = loginPopupView.DataContext as LoginPopupViewModel;
 
-            var parameters = new DialogParameters { { "Title", "登   陆" }, { "WindowCloseButtonVisibility", "Visible" }, { "Width", "670" }, { "Height", "380" }, 
-                                                 { "OkText", "确定" }, { "CancelText", "取消" },{ "OkIconKind", "AccountAdd" }, { "OkToolTip", "登  陆" }, { "UserNameWater", "用户名" }, { "PasswordWater", "密码" } };
-            // dialogService.ShowDialog(loginPopupView, parameters: parameters);
-            dialogService.ShowDialog(loginPopupView, parameters: parameters, callback: (result) =>
+            try
             {
-                if (result.Result == ButtonResult.None)
-                {
-                    Shutdown();
-                }
+                //loginPopupViewModel.RequestClose += (result) =>
+                //{
+                //    if (result.Result == ButtonResult.Cancel)
+                //    {
+                //        Shutdown();
+                //    }
+                //    if (result.Parameters.TryGetValue("LoginPopupViewModel", out LoginPopupViewModel loginPopupViewModel))
+                //    {
+                //        if (!loginPopupViewModel.IsSuccessful)
+                //        {
+                //            Shutdown();
+                //        }
+                //    }
+                //};
+                var parameters = new DialogParameters { { "UserNameWater", "用户名" }, { "PasswordWater", "密码" } };
 
-                if (result.Parameters.TryGetValue("LoginPopupViewModel", out LoginPopupViewModel loginPopupViewModel))
-                {
-                    if (!loginPopupViewModel.IsSuccessful)
-                    {
-                        Shutdown();
-                    }
-                }
-            });
+                //dialogService.Show<LoginPopupView>(parameters: parameters);
+                // dialogService.ShowDialog(loginPopupView);
+                //dialogService.Show<LoginPopupView>(parameters: parameters, callBack: (result) =>
+                //{
+                //    if (result.Result == ButtonResult.Cancel)
+                //    {
+                //        Shutdown();
+                //    }
 
+                //    if (result.Parameters.TryGetValue("LoginPopupViewModel", out LoginPopupViewModel loginPopupViewModel))
+                //    {
+                //        if (!loginPopupViewModel.IsSuccessful)
+                //        {
+                //            Shutdown();
+                //        }
+                //    }
+                //});
+
+                //var parameters = new DialogParameters { { "Title", "登   陆" }, { "WindowCloseButtonVisibility", "Visible" }, { "Width", "670" }, { "Height", "380" }, 
+                //                                        { "OkText", "确定" }, { "OkIconKind", "AccountAdd" }, { "OkToolTip", "登  陆" }, { "CancelText", "取消" },
+                //                                        { "UserNameWater", "用户名" }, { "PasswordWater", "密码" } };
+                //dialogService.ShowDialog(loginPopupView, parameters: parameters);
+
+                //dialogService.ShowDialog(dialogContent: loginPopupView, callBack: (result) =>
+                //{
+                //    if (result.Result == ButtonResult.Cancel)
+                //    {
+                //        Shutdown();
+                //    }
+
+                //    if (result.Parameters.TryGetValue("LoginPopupViewModel", out LoginPopupViewModel loginPopupViewModel))
+                //    {
+                //        if (!loginPopupViewModel.IsSuccessful)
+                //        {
+                //            Shutdown();
+                //        }
+                //    }
+                //});
+
+              var dialogResult=await dialogViewService.ShowDialogAsync( contentName: "LoginPopupView",  parameters: parameters);
+            }
+            catch (Exception ex) 
+            {
+               dialogViewService.ConfirmWhenAsync(message: $"Unable to find \"{ex.Message}\".", title: $"Error:Missing Type").Await();
+            }
+         
             base.OnInitialized();
         }
     }

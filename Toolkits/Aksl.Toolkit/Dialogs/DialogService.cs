@@ -16,21 +16,69 @@ using Aksl.Dialogs.Views;
 
 namespace Aksl.Dialogs.Services
 {
-    public class DialogService
+    public interface IDialogService
     {
-        private readonly IUnityContainer _container;
+        void Show<T>(IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true);
+        void Show(string contentName, IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true);
 
+        void ShowDialog(string dialogContentName, IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true);
+
+        void ShowDialog(FrameworkElement dialogContent, IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true);
+    }
+
+    public class DialogService: Aksl.Dialogs.Services.IDialogService
+    { 
+        #region Members
+        private readonly IUnityContainer _container;
+        #endregion
+      
+        #region Constructors
         public DialogService()
         {
             _container = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
         }
+        #endregion
 
-        public void ShowDialog(FrameworkElement dialogContent, IDialogParameters parameters, string windowName= nameof(FixedSizeDialogWindow), Action<IDialogResult> callback = null)
+        #region Show Methods
+        public void Show<T>(IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null,bool isModal=true)
         {
-            ShowDialogInternal(dialogContent, parameters, true, windowName, callback);
+            var content = _container.Resolve<T>();
+            if (!(content is FrameworkElement dialogContent))
+            {
+                throw new NullReferenceException("A dialog's content must be a FrameworkElement");
+            }
+
+            ShowDialogInternal(dialogContent: dialogContent, parameters: parameters, windowName: windowName, callBack: callBack, isModal: isModal);
         }
 
-        private void ShowDialogInternal(FrameworkElement dialogContent, IDialogParameters parameters, bool isModal, string windowName = null, Action<IDialogResult> callback = null)
+        public void Show(string contentName, IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true)
+        {
+            var content = _container.Resolve<object>(contentName);
+            if (!(content is FrameworkElement dialogContent))
+            {
+                throw new NullReferenceException("A dialog's content must be a FrameworkElement");
+            }
+
+            ShowDialogInternal(dialogContent: dialogContent, parameters: parameters, windowName: windowName, callBack: callBack, isModal: isModal);
+        }
+
+        public void ShowDialog(string dialogContentName, IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true)
+        {
+            var content = _container.Resolve<object>(dialogContentName);
+            if (!(content is FrameworkElement dialogContent))
+            {
+                throw new NullReferenceException("A dialog's content must be a FrameworkElement");
+            }
+
+            ShowDialogInternal(dialogContent: dialogContent, parameters: parameters, windowName: windowName, callBack: callBack, isModal: isModal);
+        }
+
+        public void ShowDialog(FrameworkElement dialogContent,IDialogParameters parameters=null, string windowName= nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true)
+        {
+            ShowDialogInternal(dialogContent:dialogContent, parameters: parameters, windowName: windowName, callBack: callBack,isModal: isModal);
+        }
+
+        private void ShowDialogInternal(FrameworkElement dialogContent, IDialogParameters parameters, string windowName , Action<IDialogResult> callBack, bool isModal)
         {
             if (parameters is null)
             {
@@ -38,7 +86,7 @@ namespace Aksl.Dialogs.Services
             }
 
             IDialogWindow dialogWindow = CreateDialogWindow(windowName);
-            ConfigureDialogWindowEvents(dialogWindow, callback);
+            ConfigureDialogWindowEvents(dialogWindow, callBack);
             ConfigureDialogWindowContent(dialogContent, dialogWindow, parameters);
 
             ShowDialogWindow(dialogWindow, isModal);
@@ -70,10 +118,6 @@ namespace Aksl.Dialogs.Services
 
         protected virtual void ConfigureDialogWindowContent(FrameworkElement dialogContent, IDialogWindow window, IDialogParameters parameters)
         {
-            //var content = _containerExtension.Resolve<object>(dialogName);
-            //if (!(content is FrameworkElement dialogContent))
-            //    throw new NullReferenceException("A dialog's content must be a FrameworkElement");
-
             MvvmHelpers.AutowireViewModel(dialogContent);
 
             if (dialogContent.DataContext is not IDialogAware viewModel)
@@ -86,7 +130,7 @@ namespace Aksl.Dialogs.Services
             MvvmHelpers.ViewAndViewModelAction<IDialogAware>(viewModel, d => d.OnDialogOpened(parameters));
         }
 
-        protected virtual void ConfigureDialogWindowEvents(IDialogWindow dialogWindow, Action<IDialogResult> callback)
+        protected virtual void ConfigureDialogWindowEvents(IDialogWindow dialogWindow, Action<IDialogResult> callBack)
         {
             Action<IDialogResult> requestCloseHandler = null;
             requestCloseHandler = (o) =>
@@ -123,7 +167,7 @@ namespace Aksl.Dialogs.Services
                 if (dialogWindow.Result == null)
                     dialogWindow.Result = new DialogResult();
 
-                callback?.Invoke(dialogWindow.Result);
+                callBack?.Invoke(dialogWindow.Result);
 
                 dialogWindow.DataContext = null;
                 dialogWindow.Content = null;
@@ -144,6 +188,7 @@ namespace Aksl.Dialogs.Services
 
             window.Owner ??= Application.Current?.Windows.OfType<Window>().FirstOrDefault(x => x.IsActive);
         }
+        #endregion
     }
 
     internal static class IDialogWindowExtensions

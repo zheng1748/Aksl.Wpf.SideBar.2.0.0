@@ -113,7 +113,7 @@ namespace Aksl.Modules.Account.ViewModels
         }
         #endregion
 
-        #region Dialog Properties
+        #region Properties
         private string _userNameWater = "UserName";
         public string UserNameWater
         {
@@ -136,16 +136,16 @@ namespace Aksl.Modules.Account.ViewModels
         {
             base.OnDialogOpened(parameters);
 
-            Title = parameters.GetValue<string>("Title") ?? "登陆";
-            WindowCloseButtonVisibility = GetWindowCloseButtonVisibility(parameters.GetValue<string>("WindowCloseButtonVisibility"));
+            Title = parameters.GetValue<string>("Title") ?? "登  陆";
+            WindowCloseButtonVisibility = GetWindowCloseButtonVisibility(parameters.GetValue<string>("WindowCloseButtonVisibility"),Visibility.Visible);
             Width = GetDoubleValue(parameters.GetValue<string>("Width"), 650d);
             Height = GetDoubleValue(parameters.GetValue<string>("Height"), 350d);
-            OkText = parameters.GetValue<string>("OkText") ?? "确定";
-            CancelText = parameters.GetValue<string>("CancelText") ?? "Cancel";
-            OkIconKind = GetPackIconKind(parameters.GetValue<string>("OkIconKind"));
+            OkText = parameters.GetValue<string>("OkText") ?? "登陆";
+            OkIconKind = GetPackIconKind(parameters.GetValue<string>("OkIconKind"), PackIconKind.AccountAdd);
             OkToolTip = parameters.GetValue<string>("OkToolTip") ?? "登陆";
+            CancelText = parameters.GetValue<string>("CancelText") ?? "Cancel";
 
-            UserNameWater = parameters.GetValue<string>("UserNameWater") ?? "姓名";
+            UserNameWater = parameters.GetValue<string>("UserNameWater") ?? "用户名";
             PasswordWater = parameters.GetValue<string>("PasswordWater") ?? "密码";
         }
         #endregion

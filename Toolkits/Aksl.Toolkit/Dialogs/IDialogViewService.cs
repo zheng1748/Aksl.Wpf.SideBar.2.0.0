@@ -1,53 +1,83 @@
+using Aksl.Dialogs.Views;
+using Prism.Services.Dialogs;
 using System;
 using System.Threading.Tasks;
-
-using Prism.Services.Dialogs;
-
-using Aksl.Dialogs.Views;
+using System.Windows.Media.Media3D;
 
 namespace Aksl.Dialogs.Services
 {
     public interface IDialogViewService
     {
-        Task AlertAsync(string message, string title = null, string windowCloseButtonVisibility = "Collapsed", double width = 650d, double height = 300d, string okText = "Ok", string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null);
+        Task AlertAsync(string message, string title = null, string windowCloseButtonVisibility = "Visible", double width = 650d, double height = 300d, string okText = "确 定", string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null);
 
-        Task ConfirmAsync(string message, string title = null, string windowCloseButtonVisibility = "Collapsed", double width = 650d, double height = 300d, string okText = "Ok", string cancelText = "Cancel", string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null);
+        Task ConfirmAsync(string message, string title = null, string windowCloseButtonVisibility = "Collapsed", double width = 650d, double height = 300d, string okText = "确 定", string cancelText = "取 消", string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null);
+
+        Task<bool> ConfirmWhenAsync(string message, string title = null, string windowCloseButtonVisibility = "Collapsed", double width = 650d, double height = 300d, string okText = "确 定", string cancelText = "取 消", string windowName = nameof(FixedSizeDialogWindow));
+
+        Task<IDialogResult> ShowDialogAsync(string contentName, IDialogParameters parameters = null);
     }
 
     public class DialogViewService : IDialogViewService
     {
         #region Members
-        private readonly IDialogService _dialogService;
+        private readonly Aksl.Dialogs.Services.DialogService _dialogService;
         #endregion
 
         #region Constructors
-        public DialogViewService(IDialogService dialogService)
+        public DialogViewService(Aksl.Dialogs.Services.DialogService dialogService)
         {
             _dialogService = dialogService;
         }
         #endregion
 
-        public Task AlertAsync(string message, string title = null, string windowCloseButtonVisibility = "Collapsed", double width = 650d, double height = 300d, string okText = "Ok", string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null)
+        public Task AlertAsync(string message, string title = null, string windowCloseButtonVisibility = "Visible", double width = 650d, double height = 300d, string okText = "确 定", string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null)
         {
-            var parameters = new DialogParameters { { "IsConfirm", false }, { "Message", message }, { "Title", title }, { "WindowCloseButtonVisibility", windowCloseButtonVisibility }, { "Width", width }, { "Height", height }, { "OkText", okText }};
+            var parameters = new DialogParameters {{ "IsConfirm", false } ,{"Title", title }, { "WindowCloseButtonVisibility", windowCloseButtonVisibility },{ "Width", width },{ "Height", height },
+                                                   { "OkText", okText },{"Message", message }};
 
-            _dialogService.ShowDialog(nameof(Views.ConfirmView), parameters, callBack, windowName);
+            _dialogService.ShowDialog(dialogContentName:  nameof(Views.ConfirmView),parameters: parameters, windowName: windowName, callBack: callBack);
 
             //  _dialogService.Alert(message: message, title: title, width: width, height: height, okText: okText, callBack: callBack, windowName: nameof(FixedSizeDialogWindow));
 
             return Task.CompletedTask;
         }
 
-        public Task ConfirmAsync(string message, string title = null, string windowCloseButtonVisibility = "Collapsed", double width = 650d, double height = 300d, string okText = "Ok", string cancelText = "Cancel", string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null)
+        public Task ConfirmAsync(string message, string title = null, string windowCloseButtonVisibility = "Visible", double width = 650d, double height = 300d, string okText = "确 定", string cancelText = "取 消", string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null)
         {
-            var parameters = new DialogParameters { {"Title",  title },  { "IsConfirm",true }, { "Message", message },{ "WindowCloseButtonVisibility", windowCloseButtonVisibility}, { "Width", width }, { "Height", height },
-                                                    { "OkText",  okText }, {"CancelText",cancelText  } };
+            var parameters = new DialogParameters {{ "IsConfirm",true },  {"Title",  title },{ "WindowCloseButtonVisibility", windowCloseButtonVisibility}, { "Width", width }, { "Height", height },
+                                                    { "OkText",  okText },{"CancelText",cancelText  },  { "Message", message } };
 
-            _dialogService.ShowDialog(nameof(Views.ConfirmView), parameters, callBack, windowName);
+            _dialogService.ShowDialog(dialogContentName: nameof(Views.ConfirmView), parameters: parameters, windowName: windowName, callBack: callBack);
 
             // _dialogService.Confirm(message: message, title: title, width: width, height: height, okText: okText, cancelText: cancelText, callBack: callBack, windowName: nameof(FixedSizeDialogWindow));
 
             return Task.CompletedTask;
+        }
+
+        public Task<bool> ConfirmWhenAsync(string message, string title = null, string windowCloseButtonVisibility = "Collapsed", double width = 650, double height = 300, string okText = "确 定", string cancelText = "取 消", string windowName = "FixedSizeDialogWindow")
+        {
+            var parameters = new DialogParameters {{ "IsConfirm",true },  {"Title",  title },{ "WindowCloseButtonVisibility", windowCloseButtonVisibility}, { "Width", width }, { "Height", height },
+                                                    { "OkText",  okText },{"CancelText",cancelText  },  { "Message", message } };
+
+            bool isOk = false;
+            _dialogService.ShowDialog(dialogContentName: nameof(Views.ConfirmView), parameters: parameters, windowName: windowName, callBack: (result) =>
+            {
+                isOk = result.Result == ButtonResult.OK;
+            });
+
+            return Task.FromResult(isOk);
+        }
+
+        public Task<IDialogResult> ShowDialogAsync(string contentName, IDialogParameters parameters = null)
+        {
+            IDialogResult dialogResult = null;
+
+            _dialogService.ShowDialog(dialogContentName: contentName, parameters: parameters, callBack: (result) =>
+            {
+                dialogResult = result;
+            });
+
+            return Task.FromResult(dialogResult);
         }
     }
 
@@ -57,7 +87,7 @@ namespace Aksl.Dialogs.Services
         {
             if (!string.IsNullOrEmpty(message) || !string.IsNullOrWhiteSpace(message))
             {
-                await dialogViewService.AlertAsync(message,title: title);
+                await dialogViewService.AlertAsync(message, title: title);
             }
         }
 
@@ -65,7 +95,7 @@ namespace Aksl.Dialogs.Services
         {
             if (!string.IsNullOrEmpty(message) || !string.IsNullOrWhiteSpace(message))
             {
-                await dialogViewService.AlertAsync(message,title: title, okText: okText);
+                await dialogViewService.AlertAsync(message, title: title, okText: okText);
             }
         }
     }

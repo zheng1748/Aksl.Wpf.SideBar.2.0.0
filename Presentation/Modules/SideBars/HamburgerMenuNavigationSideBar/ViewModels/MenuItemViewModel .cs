@@ -77,7 +77,16 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                     {
                         var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
-                        ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, dialogViewService).Await();
+                        try
+                        {
+                            var contentInformation = ActiveContentHelper.CreateContentInformationAsync(_menuItem);
+
+                            // ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, dialogViewService).Await();
+                        }
+                        catch (Exception ex)
+                        {
+                            dialogViewService.AlertAsync(message: $"Unable to find \"{ex.Message}\".", title: $"Error:Add View");
+                        }
                     }
                 }
             }

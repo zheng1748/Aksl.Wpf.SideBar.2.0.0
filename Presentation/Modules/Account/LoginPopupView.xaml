@@ -59,7 +59,7 @@
         <Style x:Key="userNameTextBox"
                TargetType="{x:Type TextBox}">
             <Setter Property="FontSize"
-                    Value="12" />
+                    Value="15" />
             <Setter Property="TextWrapping"
                     Value="Wrap" />
             <Setter Property="VerticalContentAlignment"
@@ -90,7 +90,7 @@
             <Setter Property="TextWrapping"
                     Value="Wrap" />
             <Setter Property="FontSize"
-                    Value="12" />
+                    Value="15" />
             <Setter Property="VerticalContentAlignment"
                     Value="Center" />
             <Setter Property="Margin"
@@ -118,7 +118,7 @@
         <Style x:Key="passwordBoxInError"
                TargetType="PasswordBox">
             <Setter Property="FontSize"
-                    Value="12" />
+                    Value="15" />
             <Setter Property="VerticalContentAlignment"
                     Value="Center" />
             <Setter Property="Margin"
@@ -145,7 +145,7 @@
         <Style x:Key="passwordTextBoxWater"
                TargetType="{x:Type TextBox}">
             <Setter Property="FontSize"
-                    Value="12" />
+                    Value="15" />
             <Setter Property="VerticalContentAlignment"
                     Value="Center" />
             <Setter Property="Margin"
@@ -192,7 +192,7 @@
                 CornerRadius="5">
             <Grid Visibility="{Binding Path=IsLoading,Converter={StaticResource booleanNegationToVisibilityConverter}}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="50" />
                     <RowDefinition Height="60" />
                     <RowDefinition Height="60" />
                     <RowDefinition Height="*" />
@@ -215,7 +215,7 @@
                 </Button>-->
 
                 <Grid Grid.Row="1"
-                      Margin="20,5,20,5"
+                      Margin="80,30,0,5" 
                       FocusManager.FocusedElement="{Binding ElementName=userNameTextBox}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -234,7 +234,7 @@
                 </Grid>
 
                 <Grid Grid.Row="2"
-                      Margin="20,5,20,5"
+                      Margin="80,30,0,5"
                       FocusManager.FocusedElement="{Binding ElementName=passwordBox}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -260,14 +260,14 @@
                          FontSize="10"
                          HorizontalAlignment="Center"
                          VerticalAlignment="Center"
-                        ToolTip="{Binding Path=OkToolTip,Mode=OneWay}">
+                         ToolTip="{Binding Path=OkToolTip,Mode=OneWay}">
                     <Button.Content>
                         <StackPanel Orientation="Vertical">
-                            <materialDesign:PackIcon Kind="{Binding Path=OkIconKind,Mode=OneWay}"
+                            <materialDesign:PackIcon Kind="{Binding Path=OkIconKind,Mode=OneWay}" 
                                                      Background="Transparent"
                                                      HorizontalAlignment="Center"
                                                      VerticalAlignment="Center" />
-                            <TextBlock Text="{Binding Path=OkToolTip,Mode=OneWay}" />
+                            <TextBlock Text="{Binding Path=OkText,Mode=OneWay}" />
                         </StackPanel>
                     </Button.Content>
                 </Button>

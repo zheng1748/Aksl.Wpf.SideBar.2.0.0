@@ -22,11 +22,11 @@ namespace Aksl.Modules.RadarMap
         }
         #endregion
 
-        #region IModule 成员
+        #region IModule
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterForNavigation<RadarMapHubView>();
-            containerRegistry.RegisterForNavigation<RadarHubView>();
+            //containerRegistry.RegisterForNavigation<RadarMapHubView>();
+            //containerRegistry.RegisterForNavigation<RadarHubView>();
         }
 
         public void OnInitialized(IContainerProvider containerProvider)

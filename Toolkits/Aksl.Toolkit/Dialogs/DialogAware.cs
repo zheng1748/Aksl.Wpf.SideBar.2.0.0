@@ -41,7 +41,7 @@ namespace Aksl.Dialogs
             set => SetProperty<double>(ref _height, value);
         }
 
-        private Visibility _closeWindowCloseButtonVisibility = Visibility.Collapsed;
+        private Visibility _closeWindowCloseButtonVisibility = Visibility.Visible;
         public Visibility WindowCloseButtonVisibility
         {
             get => _closeWindowCloseButtonVisibility;
@@ -102,18 +102,23 @@ namespace Aksl.Dialogs
             //OkToolTip = parameters.GetValue<string>("OkToolTip") ?? "登陆";
         }
 
-        protected PackIconKind GetPackIconKind(string value)
+        protected PackIconKind GetPackIconKind(string value, PackIconKind defaulValue= PackIconKind.No)
         {
-            PackIconKind kind = PackIconKind.No;
+            if (string.IsNullOrEmpty(value))
+            {
+                return defaulValue;
+            }
 
-            _ = Enum.TryParse(value, out kind);
+          // PackIconKind kind = PackIconKind.No;
 
-            return kind;
+            _ = Enum.TryParse(value, out defaulValue);
+
+            return defaulValue;
         }
 
-        protected Visibility GetWindowCloseButtonVisibility(string value)
+        protected Visibility GetWindowCloseButtonVisibility(string value, Visibility defaulValue = Visibility.Visible)
         {
-            Visibility defaulValue = Visibility.Visible;
+          //  Visibility defaulValue = Visibility.Visible;
 
             try
             {
