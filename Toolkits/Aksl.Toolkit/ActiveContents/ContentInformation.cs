@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 
-namespace Aksl.ActiveContentManager
+namespace Aksl.ActiveContents
 {
     public record ContentInformation
     {

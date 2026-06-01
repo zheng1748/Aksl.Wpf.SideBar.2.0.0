@@ -1,17 +1,4 @@
-﻿using Aksl.ActiveContentManager.ViewModels;
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
-using Aksl.Modules.Account.Views;
-using Aksl.Toolkit.UI;
-using Prism;
-using Prism.Commands;
-using Prism.Events;
-using Prism.Ioc;
-using Prism.Mvvm;
-using Prism.Regions;
-using Prism.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -20,7 +7,22 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+
+using Prism;
+using Prism.Commands;
+using Prism.Events;
+using Prism.Ioc;
+using Prism.Mvvm;
+using Prism.Regions;
+using Prism.Unity;
 using Unity;
+
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Toolkit.UI;
+
+using Aksl.Infrastructure.Events;
+using Aksl.Modules.Account.Views;
 
 namespace Aksl.Modules.Account.ViewModels
 {
@@ -241,7 +243,7 @@ namespace Aksl.Modules.Account.ViewModels
         #region Set Shell ActiveItem Method
         public void SetShellActiveItem()
         {
-            var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+            var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContents.ViewModels.ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
             shellContentActiveContentViewModel.SetSelectedItemByName(ActiveContentNames.HamburgerMenuSideBarName);
         }
         #endregion

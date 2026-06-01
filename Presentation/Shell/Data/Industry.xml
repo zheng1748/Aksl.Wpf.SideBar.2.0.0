@@ -25,7 +25,7 @@
 			  IconKind="Pipette"
 			  ModuleName=""
 			  ViewName=""
-		     IsNextNavigation="True"
+		     IsNextNavigation="False"
 			  NavigationName="Pipelines">
 	</MenuItem>
 	<MenuItem Id="1"
@@ -36,7 +36,7 @@
 			  IconKind="ThermometerAlert"
 			  ModuleName=""
 			  ViewName="" 
-			  IsNextNavigation="True"
+			  IsNextNavigation="False"
 			  NavigationName="Thermometers">
 	</MenuItem>
 	<MenuItem Id="1"

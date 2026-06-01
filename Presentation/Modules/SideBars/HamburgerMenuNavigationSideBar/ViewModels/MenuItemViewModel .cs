@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
+﻿using Aksl.ActiveContents.ViewModels;
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Toolkit.Controls;
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Mvvm;
+using Prism.Regions;
 using Prism.Unity;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Unity;
-
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Toolkit.Controls;
 
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 {
@@ -75,18 +75,23 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                 {
                     if (IsLeaf && _isSelected)
                     {
-                        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+                        //var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+                        //var rightContentActiveContentViewModel = (System.Windows.Application.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
 
-                        try
-                        {
-                            var contentInformation = ActiveContentHelper.CreateContentInformationAsync(_menuItem);
+                        //// var contentInformation = activeContentManager.CreateContentInformationAsync(_menuItem);
+                        //ActiveContentManager activeContentManager = new();
 
-                            // ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, dialogViewService).Await();
-                        }
-                        catch (Exception ex)
-                        {
-                            dialogViewService.AlertAsync(message: $"Unable to find \"{ex.Message}\".", title: $"Error:Add View");
-                        }
+                        //Action<string> exceptionHandler= (message) =>
+                        //{
+                        //    dialogViewService.AlertAsync(message: $"\"{message}\".", title: $"Error:Add View");
+                        //};
+                        //NavigationParameters navigationParameters = new() { { "CurrentMenuItem", _menuItem } };
+                        //activeContentManager.AddViewToContentAsync(_menuItem, rightContentActiveContentViewModel, navigationParameters, exceptionHandler).Await();
+
+                        //var contentInformation = ActiveContentHelper.CreateContentInformationAsync(_menuItem);
+                        //ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, dialogViewService).Await();
+
+                       ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
                     }
                 }
             }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 using Prism;
 using Prism.Events;
@@ -12,15 +14,11 @@ using Prism.Regions;
 using Prism.Unity;
 using Unity;
 
-using Microsoft.Extensions.DependencyInjection;
-
-using Aksl.ActiveContentManager;
-using Aksl.ActiveContentManager.ViewModels;
+using Aksl.ActiveContents.ViewModels;
 using Aksl.Dialogs.Services;
+
 using Aksl.Infrastructure;
 using Aksl.Infrastructure.Events;
-using Aksl.Modules.Account.Views;
-using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.Shell.ViewModels
 {
@@ -32,17 +30,17 @@ namespace Aksl.Modules.Shell.ViewModels
         private readonly IEventAggregator _eventAggregator;
         private readonly IRegionManager _regionManager;
         private readonly IDialogViewService _dialogViewService;
-       private object _currentView;
+        private object _currentView;
         #endregion
 
         #region Constructors
         public ShellViewModel()
         {
-            _container = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
-            _serviceProvider = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IServiceProvider>();
-            _regionManager = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IRegionManager>();
-            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
-            _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+            _container = (Application.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
+            _serviceProvider = (Application.Current as PrismApplicationBase).Container.Resolve<IServiceProvider>();
+            _regionManager = (Application.Current as PrismApplicationBase).Container.Resolve<IRegionManager>();
+            _eventAggregator = (Application.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+            _dialogViewService = (Application.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
             RegisterActiveContents();
 
@@ -77,54 +75,61 @@ namespace Aksl.Modules.Shell.ViewModels
         #region Register ActiveContent Method
         private void RegisterActiveContents()
         {
-            RegisterShellContentActiveContent();
-            void RegisterShellContentActiveContent()
+            try
             {
-                _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.ShellContent);
-                ShellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
-
                 RegisterShellContentActiveContent();
                 void RegisterShellContentActiveContent()
                 {
-                    ShellContentActiveContentViewModel.Add(new()
-                    {
-                        Name = nameof(LoginView),
-                        Title = nameof(LoginView),
-                        ViewName = "Aksl.Modules.Account.Views.LoginView,Aksl.Modules.Account",
-                        //ViewElement = new LoginView(),
-                    }, false);
+                    _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.ShellContent);
+                    ShellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
 
-                    ShellContentActiveContentViewModel.Add(new()
+                    RegisterShellContentActiveContent();
+                    void RegisterShellContentActiveContent()
                     {
-                        Name ="HamburgerMenuSideBarHubView",
-                        Title ="HamburgerMenuSideBarHubView",
-                        ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarHubView,Aksl.Modules.HamburgerMenuSideBar",
-                        //ViewElement = new HamburgerMenuSideBarHubView()
-                    },false);
+                        ShellContentActiveContentViewModel.Add(new()
+                        {
+                            Name = "LoginView",
+                            Title = "LoginView",
+                            ViewName = "Aksl.Modules.Account.Views.LoginView,Aksl.Modules.Account",
+                            //ViewElement = new LoginView(),
+                        }, false);
 
-                    ShellContentActiveContentViewModel.Add(new()
+                        ShellContentActiveContentViewModel.Add(new()
+                        {
+                            Name = "HamburgerMenuSideBarHubView",
+                            Title = "HamburgerMenuSideBarHubView",
+                            ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarHubView,Aksl.Modules.HamburgerMenuSideBar",
+                            //ViewElement = new HamburgerMenuSideBarHubView()
+                        }, true);
+
+                        ShellContentActiveContentViewModel.Add(new()
+                        {
+                            Name = "HamburgerMenuNavigationSideBarHubView",
+                            Title = "NavigationSideBarHubView",
+                            ViewName = "Aksl.Modules.HamburgerMenuNavigationSideBar.Views.HamburgerMenuNavigationSideBarHubView,Aksl.Modules.HamburgerMenuNavigationSideBar",
+                            //ViewElement = new HamburgerMenuSideBarHubView()
+                        }, false);
+                    }
+
+                    RegisterLoginActiveContent();
+                    void RegisterLoginActiveContent()
                     {
-                        Name = "HamburgerMenuNavigationSideBarHubView",
-                        Title = "NavigationSideBarHubView",
-                        ViewName ="Aksl.Modules.HamburgerMenuNavigationSideBar.Views.HamburgerMenuNavigationSideBarHubView,Aksl.Modules.HamburgerMenuNavigationSideBar",
-                        //ViewElement = new HamburgerMenuSideBarHubView()
-                    },true);
+                        _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.LoginContent);
+                        LoginActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LoginContent);
+
+                        LoginActiveContentViewModel.Add(new()
+                        {
+                            Name = "LoginStatusView",
+                            Title = "LoginStatusView",
+                            ViewName = "Aksl.Modules.Account.Views.LoginStatusView,Aksl.Modules.Account",
+                            // ViewElement = new LoginStatusView(),
+                        });
+                    }
                 }
-
-                RegisterLoginActiveContent();
-                void RegisterLoginActiveContent()
-                {
-                    _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.LoginContent);
-                    LoginActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LoginContent);
-
-                    LoginActiveContentViewModel.Add(new()
-                    {
-                        Name = nameof(LoginStatusView),
-                        Title = nameof(LoginStatusView),
-                        ViewName = "",
-                        ViewElement = new LoginStatusView(),
-                    });
-                }
+            }
+            catch (Exception ex)
+            {
+                _dialogViewService.AlertAsync(message: $"Registering Message \"{ex.Message}\"", title: "Error:Register ActiveContents").Await();
             }
         }
         #endregion

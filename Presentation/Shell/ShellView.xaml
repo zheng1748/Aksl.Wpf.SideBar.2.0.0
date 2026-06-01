@@ -13,7 +13,7 @@
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
         xmlns:materialDesign="clr-namespace:Aksl.Toolkit.Controls;assembly=Aksl.Toolkit.Controls"
-        xmlns:acmviews="clr-namespace:Aksl.ActiveContentManager.Views;assembly=Aksl.Toolkit"
+        xmlns:acviews="clr-namespace:Aksl.ActiveContents.Views;assembly=Aksl.Toolkit"
         xmlns:hmviews="clr-namespace:Aksl.Modules.HamburgerMenuSideBar.Views;assembly=Aksl.Modules.HamburgerMenuSideBar"
         xmlns:inf="clr-namespace:Aksl.Infrastructure;assembly=Aksl.Infrastructure"
         xmlns:views="clr-namespace:Aksl.Modules.Shell.Views"
@@ -475,7 +475,7 @@
                            Foreground="{Binding Path=(Window.Foreground),RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}}">
                 </TextBlock>
 
-                <acmviews:ActiveContentItemView x:Name="LoginActiveContentView"
+                <acviews:ActiveContentItemView x:Name="LoginActiveContentView"
                                                 Grid.Column="2"
                                                 WindowChrome.IsHitTestVisibleInChrome="True"
                                                 Margin="0,0,30,0"
@@ -488,7 +488,7 @@
                             <TranslateTransform />
                         </TransformGroup>
                     </ContentControl.RenderTransform>
-                </acmviews:ActiveContentItemView>
+                </acviews:ActiveContentItemView>
 
                 <!--<ContentControl x:Name="loginRegion"
                                 Grid.Column="2"
@@ -513,7 +513,7 @@
                        Height="8"
                        BorderBrush="#193441" />
             
-            <acmviews:ActiveContentView x:Name="ShellContentActiveContentView"
+            <acviews:ActiveContentView x:Name="ShellContentActiveContentView"
                                         Grid.Row="2"
                                         Margin="1"
                                         DataContext="{Binding Path=ShellContentActiveContentViewModel}">
@@ -525,7 +525,7 @@
                         <TranslateTransform />
                     </TransformGroup>
                 </ContentControl.RenderTransform>
-            </acmviews:ActiveContentView>
+            </acviews:ActiveContentView>
             <!--<ContentControl x:Name="contentRegion"
                             Grid.Row="2"
                             Margin="2"

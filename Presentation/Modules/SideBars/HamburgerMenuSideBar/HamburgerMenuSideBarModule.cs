@@ -25,7 +25,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar
         #region IModule
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            //containerRegistry.RegisterForNavigation<HamburgerMenuSideBarHubView>();
+            containerRegistry.RegisterForNavigation<HamburgerMenuSideBarHubView>();
         }
 
         public void OnInitialized(IContainerProvider containerProvider)

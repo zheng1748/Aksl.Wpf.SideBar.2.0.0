@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Aksl.ActiveContentManager.Views
+namespace Aksl.ActiveContents.Views
 {
     public partial class ActiveContentItemView : UserControl
     {

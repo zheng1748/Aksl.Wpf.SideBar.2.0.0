@@ -1,6 +1,7 @@
-﻿using Aksl.ActiveContentManager;
-using Aksl.ActiveContentManager.ViewModels;
+﻿using Aksl.ActiveContents;
+using Aksl.ActiveContents.ViewModels;
 using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
 using Prism;
 using Prism.Common;
 using Prism.Ioc;
@@ -22,93 +23,93 @@ using Unity;
 
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels;
 
-public static class ActiveContentHelper
-{
-    #region Create ContentInformation Method
-    public static async Task<ContentInformation> CreateContentInformationAsync(Infrastructure.MenuItem menuItem)
-    {
-        var container = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
-        var regionNavigationService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IRegionNavigationService>();
-        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+//public static class ActiveContentHelper
+//{
+//    #region Create ContentInformation Method
+//    //public static async Task<ContentInformation> CreateContentInformationAsync(Infrastructure.MenuItem menuItem)
+//    //{
+//    //    var container = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
+//    //    var regionNavigationService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IRegionNavigationService>();
+//    //    var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
-        string viewTypeAssemblyQualifiedName = menuItem.ViewName;
-        Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
-        if (viewType is not null)
-        {
-            ContentInformation contentInformation = new()
-            {
-                Name = menuItem.Name,
-                Title = menuItem.Title,
-                ViewName = menuItem.ViewName
-            };
+//    //    string viewTypeAssemblyQualifiedName = menuItem.ViewName;
+//    //    Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
+//    //    if (viewType is not null)
+//    //    {
+//    //        ContentInformation contentInformation = new()
+//    //        {
+//    //            Name = menuItem.Name,
+//    //            Title = menuItem.Title,
+//    //            ViewName = menuItem.ViewName
+//    //        };
 
-            var viewName = viewType.Name;
+//    //        var viewName = viewType.Name;
 
-            var currentView = container.Resolve<object>(viewName);
-            if (currentView is FrameworkElement frameworkElement)
-            {
-                MvvmHelpers.AutowireViewModel(currentView);
+//    //        var currentView = container.Resolve<object>(viewName);
+//    //        if (currentView is FrameworkElement frameworkElement)
+//    //        {
+//    //            MvvmHelpers.AutowireViewModel(currentView);
 
-                NavigationParameters navigationParameters = new() { { "CurrentMenuItem", menuItem } };
+//    //            NavigationParameters navigationParameters = new() { { "CurrentMenuItem", menuItem } };
 
-                var navigationContext = new NavigationContext(regionNavigationService, new Uri(viewName, UriKind.RelativeOrAbsolute), navigationParameters);
+//    //            var navigationContext = new NavigationContext(regionNavigationService, new Uri(viewName, UriKind.RelativeOrAbsolute), navigationParameters);
 
-                Action<INavigationAware> action = (n) => n.OnNavigatedTo(navigationContext);
-                MvvmHelpers.ViewAndViewModelAction(currentView, action);
+//    //            Action<INavigationAware> action = (n) => n.OnNavigatedTo(navigationContext);
+//    //            MvvmHelpers.ViewAndViewModelAction(currentView, action);
 
-                contentInformation.ViewName = null;
-                contentInformation.ViewElement = frameworkElement;
-            }
+//    //            contentInformation.ViewName = null;
+//    //            contentInformation.ViewElement = frameworkElement;
+//    //        }
 
-            return contentInformation;
-        }
-        else
-        {
-            throw new ArgumentException(menuItem.ViewName);
-        }
-    }
-    #endregion
+//    //        return contentInformation;
+//    //    }
+//    //    else
+//    //    {
+//    //        throw new ArgumentException(menuItem.ViewName);
+//    //    }
+//    //}
+//    #endregion
 
-    #region Add View To Content Method
-    public static async Task AddViewToContentAsync(Infrastructure.MenuItem currentMenuItem,string activeContentName, IDialogViewService dialogViewService)
-    {
-        var rightContentActiveContent = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: activeContentName);
+//    #region Add View To Content Method
+//    //public static async Task AddViewToContentAsync(Infrastructure.MenuItem currentMenuItem,string activeContentName, IDialogViewService dialogViewService)
+//    //{
+//    //    var rightContentActiveContent = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContents.ViewModels.ActiveContentViewModel>(name: activeContentName);
 
-        string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
-        Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
-        if (viewType is not null)
-        {
-            var viewName = viewType.Name;
+//    //    string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
+//    //    Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
+//    //    if (viewType is not null)
+//    //    {
+//    //        var viewName = viewType.Name;
 
-            ContentInformation contentInformation = new()
-            {
-                Name = currentMenuItem.Name,
-                Title = currentMenuItem.Title,
-                ViewName = currentMenuItem.ViewName
-            };
+//    //        ActiveContents.ContentInformation contentInformation = new()
+//    //        {
+//    //            Name = currentMenuItem.Name,
+//    //            Title = currentMenuItem.Title,
+//    //            ViewName = currentMenuItem.ViewName
+//    //        };
 
-            var currentView = rightContentActiveContent.GetStoreViewElementByName(currentMenuItem.Name);
+//    //        var currentView = rightContentActiveContent.GetStoreViewElementByName(currentMenuItem.Name);
 
-            if (currentView is not null)
-            {
-                if (currentMenuItem.IsCacheable)
-                {
-                    rightContentActiveContent.SetContentItem(contentInformation);
-                }
-                else
-                {
-                    rightContentActiveContent.RetsetContentItem(contentInformation);
-                }
-            }
-            else
-            {
-                rightContentActiveContent.Add(contentInformation);
-            }
-        }
-        else
-        {
-            var result = await dialogViewService.ConfirmWhenAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
-        }
-    }
-    #endregion
-}
+//    //        if (currentView is not null)
+//    //        {
+//    //            if (currentMenuItem.IsCacheable)
+//    //            {
+//    //                rightContentActiveContent.SetContentItem(contentInformation);
+//    //            }
+//    //            else
+//    //            {
+//    //                rightContentActiveContent.RetsetContentItem(contentInformation);
+//    //            }
+//    //        }
+//    //        else
+//    //        {
+//    //            rightContentActiveContent.Add(contentInformation);
+//    //        }
+//    //    }
+//    //    else
+//    //    {
+//    //        var result = await dialogViewService.ConfirmWhenAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
+//    //    }
+//    //}
+//    #endregion
+//}

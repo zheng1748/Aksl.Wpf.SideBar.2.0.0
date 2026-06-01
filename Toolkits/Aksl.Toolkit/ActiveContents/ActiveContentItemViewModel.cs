@@ -10,7 +10,7 @@ using Prism.Mvvm;
 using Prism.Unity;
 using Unity;
 
-namespace Aksl.ActiveContentManager.ViewModels 
+namespace Aksl.ActiveContents.ViewModels 
 {
     public class ActiveContentItemViewModel : BindableBase
     {
@@ -22,8 +22,6 @@ namespace Aksl.ActiveContentManager.ViewModels
         public ActiveContentItemViewModel(ContentInformation  contentInformation)
         {
             _contentInformation = contentInformation;
-
-            ViewElementVisibility = Visibility.Collapsed;
         }
         #endregion
 
@@ -40,8 +38,11 @@ namespace Aksl.ActiveContentManager.ViewModels
             {
                 if (_viewElementType is null)
                 {
-                    string viewTypeAssemblyQualifiedName = _contentInformation.ViewName;
-                    _viewElementType = Type.GetType(viewTypeAssemblyQualifiedName);
+                    if (!string.IsNullOrEmpty(_contentInformation.ViewName))
+                    {
+                        string viewTypeAssemblyQualifiedName = _contentInformation.ViewName;
+                        _viewElementType = Type.GetType(viewTypeAssemblyQualifiedName);
+                    }
                 }
 
                 return _viewElementType;
@@ -57,8 +58,8 @@ namespace Aksl.ActiveContentManager.ViewModels
                 {
                     if (ViewElementType is not null)
                     {
-                        // viewElemen = Activator.CreateInstance(viewType) as DependencyObject;
-                        _viewElement = (PrismApplication.Current as PrismApplicationBase).Container.Resolve(ViewElementType) as DependencyObject;
+                        _viewElement = Activator.CreateInstance(ViewElementType) as DependencyObject;
+                       // _viewElement = (PrismApplication.Current as PrismApplicationBase).Container.Resolve(ViewElementType) as DependencyObject;
                     }
                 }
 

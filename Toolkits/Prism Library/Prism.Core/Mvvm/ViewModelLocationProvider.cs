@@ -107,7 +107,6 @@ namespace Prism.Mvvm
                 viewModel = _defaultViewModelFactoryWithViewParameter != null ? _defaultViewModelFactoryWithViewParameter(view, viewModelType) : _defaultViewModelFactory(viewModelType);
             }
 
-
             setDataContextCallback(view, viewModel);
         }
 

@@ -1,4 +1,17 @@
-﻿using System;
+﻿using Aksl.ActiveContents;
+using Aksl.ActiveContents.ViewModels;
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Infrastructure.Events;
+using Aksl.Modules.HamburgerMenuSideBar.Views;
+using Aksl.Toolkit.Controls;
+using Prism;
+using Prism.Events;
+using Prism.Ioc;
+using Prism.Mvvm;
+using Prism.Regions;
+using Prism.Unity;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
@@ -6,22 +19,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml.Linq;
-
-using Prism;
-using Prism.Events;
-using Prism.Ioc;
-using Prism.Mvvm;
-using Prism.Unity;
 using Unity;
-
-using Aksl.ActiveContentManager;
-using Aksl.ActiveContentManager.ViewModels;
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
-using Aksl.Toolkit.Controls;
-
-using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels;
 
@@ -115,7 +113,19 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                 // if (!HasSubMenu && IsLeaf && _isSelected)
                 if (IsAddViewToRightContent())
                 {
-                    HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
+                    //var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+                    //var rightContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
+
+                    //ActiveContentManager activeContentManager = new();
+                    //Action<string> exceptionHandler = (message) =>
+                    //{
+                    //    dialogViewService.AlertAsync(message: $"\"{message}\".", title: $"Error:Add View");
+                    //};
+                    //NavigationParameters navigationParameters = new() { { "CurrentMenuItem", menuItem } };
+                    //activeContentManager.AddViewToContentAsync(_menuItem, rightContentActiveContentViewModel, exceptionHandler).Await();
+
+                    //HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
+                    ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await();
                 }
 
                 //if (HasSubMenu && _isSelected)

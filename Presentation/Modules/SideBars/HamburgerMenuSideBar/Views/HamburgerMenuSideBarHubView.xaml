@@ -13,7 +13,7 @@
              xmlns:behaviors="clr-namespace:Aksl.Xaml.Behaviors;assembly=Aksl.Toolkit"
              xmlns:inf="clr-namespace:Aksl.Infrastructure;assembly=Aksl.Infrastructure"
              xmlns:views="clr-namespace:Aksl.Modules.HamburgerMenuSideBar.Views"
-             xmlns:acmview="clr-namespace:Aksl.ActiveContentManager.Views;assembly=Aksl.Toolkit"
+             xmlns:acview="clr-namespace:Aksl.ActiveContents.Views;assembly=Aksl.Toolkit"
              x:Name="HamburgerMenuSideBarHubBarer"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
@@ -922,7 +922,7 @@
                 <Grid x:Name="ContentRoot"
                       Grid.ColumnSpan="2">
                     <Border>
-                        <acmview:ActiveContentView x:Name="RightContentHamburgerMenuSideBarActiveContentView"
+                        <acview:ActiveContentView x:Name="RightContentHamburgerMenuSideBarActiveContentView"
                                                    DataContext="{Binding Path=RightContentActiveContentViewModel}"
                                                    HorizontalAlignment="Stretch"
                                                    VerticalAlignment="Stretch"
@@ -935,7 +935,7 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </ContentControl.RenderTransform>
-                        </acmview:ActiveContentView>
+                        </acview:ActiveContentView>
                         <!--<ContentControl x:Name="hamburgerMenuSideBarWorkspaceRegion"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
@@ -985,7 +985,7 @@
                                         IsEnabled="{Binding Path=CanMove}">
                                 </Button>
                             </StackPanel>
-                            <acmview:ActiveContentView x:Name="LeftPaneHamburgerMenuSideBarActiveContentView"
+                            <acview:ActiveContentView x:Name="LeftPaneHamburgerMenuSideBarActiveContentView"
                                                        DataContext="{Binding Path=LeftPaneActiveContentViewModel}"
                                                        HorizontalAlignment="Stretch"
                                                        VerticalAlignment="Stretch"
@@ -999,7 +999,7 @@
                                         <TranslateTransform />
                                     </TransformGroup>
                                 </ContentControl.RenderTransform>
-                                </acmview:ActiveContentView>
+                                </acview:ActiveContentView>
                            
                         </DockPanel>
                         <!--<ContentControl Grid.Column="0"

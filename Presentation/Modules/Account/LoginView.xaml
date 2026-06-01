@@ -9,7 +9,7 @@
              xmlns:materialDesign="clr-namespace:Aksl.Toolkit.Controls;assembly=Aksl.Toolkit.Controls"
              xmlns:aksl="clr-namespace:Aksl.Toolkit.UI.Controls;assembly=Aksl.Toolkit"
              mc:Ignorable="d"
-             x:Name="loginViewContainer"
+             x:Name="LoginViewContainer"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
 

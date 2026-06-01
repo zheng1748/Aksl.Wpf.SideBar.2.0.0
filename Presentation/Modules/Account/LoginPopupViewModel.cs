@@ -1,20 +1,4 @@
-﻿using Aksl.ActiveContentManager.ViewModels;
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
-using Aksl.Modules.Account.Views;
-using Aksl.Toolkit.Controls;
-using Aksl.Toolkit.UI;
-using Prism;
-using Prism.Commands;
-using Prism.Events;
-using Prism.Ioc;
-using Prism.Mvvm;
-using Prism.Regions;
-using Prism.Services.Dialogs;
-using Prism.Unity;
-using System;
-using System.CodeDom.Compiler;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -22,13 +6,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Media3D;
+
+using Prism;
+using Prism.Commands;
+using Prism.Ioc;
+using Prism.Services.Dialogs;
+using Prism.Unity;
 using Unity;
+
+using Aksl.Dialogs.Services;
+using Aksl.Toolkit.Controls;
 
 namespace Aksl.Modules.Account.ViewModels
 {
-    public class LoginPopupViewModel :  Dialogs.DialogAware, IDataErrorInfo
+    public class LoginPopupViewModel : Aksl.Dialogs.DialogAware, IDataErrorInfo
     {
         #region Members
         private readonly IDialogViewService _dialogViewService;
@@ -151,19 +142,6 @@ namespace Aksl.Modules.Account.ViewModels
         #endregion
 
         #region Ok Command
-        //protected void CreateOkCommand()
-        //{
-        //    OkCommand = new DelegateCommand(async () =>
-        //    {
-        //        await ExecuteOkCommandAsync();
-        //    },
-        //    () =>
-        //    {
-        //        var canExecute = CanExecuteOkCommand();
-        //        return canExecute;
-        //    });
-        //}
-
         protected override async Task ExecuteOkCommandAsync()
         {
             IsLoading = true;

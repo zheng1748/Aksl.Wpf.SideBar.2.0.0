@@ -15,8 +15,9 @@ using Prism.Regions;
 using Prism.Unity;
 using Unity;
 
-using Aksl.ActiveContentManager.ViewModels;
+using Aksl.ActiveContents.ViewModels;
 using Aksl.Dialogs.Services;
+
 using Aksl.Infrastructure;
 using Aksl.Infrastructure.Events;
 
@@ -50,7 +51,7 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             CreateGroupedMenusViewModelAsync().Await();
 
             RegisterActiveContentAsync().Await();
-            //RegisterPropertyChanged();
+           // RegisterPropertyChanged();
 
             RegisterHamburgerMenuBarPaneOpenEvent();
         }
@@ -74,7 +75,7 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         #region Register PropertyChanged Method
         private void RegisterPropertyChanged()
         {
-            GroupedMenu.PropertyChanged += (sender, e) =>
+            GroupedMenu.PropertyChanged += async (sender, e) =>
             {
                 if (sender is GroupedMenusViewModel gmvm)
                 {
@@ -82,7 +83,12 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                     {
                         if (gmvm.SelectedMenuItem is not null)
                         {
-                            ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, _dialogViewService).Await();
+                            ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
+                            //var result = await ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
+                            //if (!result)
+                            //{
+                            //   // await _dialogViewService.AlertAsync(message: $"Unable to load view \"{gmvm.SelectedMenuItem.MenuItem.ViewName}\".", title: "Error: Load View");
+                            //}
                         }
                     }
 
@@ -90,7 +96,8 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                     {
                         if (gmvm.SelectedNoGroupedMenuItem is not null)
                         {
-                            ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedNoGroupedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, _dialogViewService).Await();
+                            //ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedNoGroupedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, _dialogViewService).Await();
+                            ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedNoGroupedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
                         }
                     }
                 }

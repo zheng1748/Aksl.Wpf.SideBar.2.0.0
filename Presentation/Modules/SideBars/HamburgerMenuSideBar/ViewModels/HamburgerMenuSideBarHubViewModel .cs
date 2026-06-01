@@ -21,9 +21,9 @@ using Prism.Unity;
 using System;
 using Unity;
 
-using Aksl.ActiveContentManager;
-using Aksl.ActiveContentManager.ViewModels;
+using Aksl.ActiveContents.ViewModels;
 using Aksl.Dialogs.Services;
+
 using Aksl.Infrastructure;
 using Aksl.Infrastructure.Events;
 
@@ -44,9 +44,9 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         #region Constructors
         public HamburgerMenuSideBarHubViewModel()
         {
-            _container = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
-            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
-            _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+            _container = (Application.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
+            _eventAggregator = (Application.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+            _dialogViewService = (Application.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
             _menuService = _container.Resolve<IMenuService>();
 
@@ -246,7 +246,8 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                                     SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem = hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemEithNotSubMenu;
                                     SelectedHamburgerMenuSideBarItem = SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem;
 
-                                    HamburgerMenuSideBarHelper.AddViewToRightContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem).Await();
+                                    //HamburgerMenuSideBarHelper.AddViewToRightContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem).Await();
+                                    ActiveContentHelper.AddViewToContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await();
                                 }
                                 else
                                 {
@@ -256,7 +257,8 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
                             if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is not null && IsAddViewToRightContent(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem))
                             {
-                                HamburgerMenuSideBarHelper.AddViewToRightContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem).Await();
+                                ActiveContentHelper.AddViewToContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await();
+                               // HamburgerMenuSideBarHelper.AddViewToRightContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem).Await();
                             }
                         }
                     }
@@ -493,7 +495,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         {
             try
             {
-
                 //await MovePreviousName();
 
                 ExecuteBackByName(activeContentItemViewModel);
@@ -502,7 +503,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Login In Failure:");
+                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Execute Move Previous Failure ");
             }
         }
 

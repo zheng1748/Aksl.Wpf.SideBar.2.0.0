@@ -11,7 +11,7 @@
              xmlns:views="clr-namespace:Aksl.Modules.HamburgerMenuNavigationSideBar.Views"
              xmlns:a="clr-namespace:Aksl.Modules.HamburgerMenuNavigationSideBar"
              xmlns:sv="clr-namespace:Aksl.Modules.HamburgerMenuNavigationSideBar"
-             xmlns:acmview="clr-namespace:Aksl.ActiveContentManager.Views;assembly=Aksl.Toolkit"
+             xmlns:acview="clr-namespace:Aksl.ActiveContents.Views;assembly=Aksl.Toolkit"
              mc:Ignorable="d"
              x:Name="HamburgerMenuNavigationSideBarHuber"
              prism:ViewModelLocator.AutoWireViewModel="True">
@@ -917,7 +917,7 @@
                 <Grid x:Name="ContentRoot"
                       Grid.ColumnSpan="2">
                     <Border>
-                        <acmview:ActiveContentView x:Name="RightContentHamburgerMenuNavigationSideBarActiveContentView"
+                        <acview:ActiveContentView x:Name="RightContentHamburgerMenuNavigationSideBarActiveContentView"
                                                    DataContext="{Binding Path=RightContentActiveContentViewModel}"
                                                    HorizontalAlignment="Stretch"
                                                    VerticalAlignment="Stretch"
@@ -930,7 +930,7 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </ContentControl.RenderTransform>
-                        </acmview:ActiveContentView>
+                        </acview:ActiveContentView>
                         <!--<ContentControl x:Name="hamburgerMenuNavigationSideBarWorkspaceRegion"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"

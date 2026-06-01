@@ -1,8 +1,8 @@
-﻿using Aksl.ActiveContentManager.ViewModels;
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
-using Aksl.Modules.Account.Views;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+
 using Prism;
 using Prism.Commands;
 using Prism.Events;
@@ -10,27 +10,27 @@ using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Unity;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Unity;
+
+using Aksl.Dialogs.Services;
+
+using Aksl.Infrastructure;
+using Aksl.Infrastructure.Events;
+
+using Aksl.Modules.Account.Views;
 
 namespace Aksl.Modules.Account.ViewModels
 {
     public class LoginStatusViewModel : BindableBase, INavigationAware
     {
         #region Members
-        private readonly IRegionManager _regionManager;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDialogViewService _dialogViewService;
-        private object _activeView = default;
         #endregion
 
         #region Constructors
         public LoginStatusViewModel()
         {
-            _regionManager = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IRegionManager>();
             _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
             _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
@@ -97,23 +97,6 @@ namespace Aksl.Modules.Account.ViewModels
         }
         #endregion
 
-        #region Get Active View Method
-        private void GetActiveView()
-        {
-            var regionManager = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IRegionManager>();
-            var region = regionManager.Regions[RegionNames.ShellContentRegion];
-
-            if (region is not null)
-            {
-                var activeViews = region.ActiveViews;
-                if (activeViews is not null && activeViews.Any())
-                {
-                    _activeView = activeViews.FirstOrDefault();
-                }
-            }
-        }
-        #endregion
-
         #region SignIn Command
         public ICommand SignInCommand { get; private set; }
 
@@ -136,54 +119,15 @@ namespace Aksl.Modules.Account.ViewModels
 
             try
             {
-               // var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: "ShellContentActiveContentViewModel");
-                var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+                var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContents.ViewModels.ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
                 shellContentActiveContentViewModel.SetSelectedItemByName(nameof(LoginView));
-
-                // var contentRegion = _regionManager.Regions[RegionNames.ShellContentRegion];
-
-                //Type loginViewType = typeof(LoginView);
-                //var loginViewName = nameof(LoginView);
-
-                //if (contentRegion is not null && !string.IsNullOrEmpty(loginViewName))
-                //{
-                //    var currentView = contentRegion.Views.FirstOrDefault(v => v.GetType() == loginViewType);
-
-                //    var activeViews = contentRegion.ActiveViews;
-                //    if (activeViews is not null && activeViews.Any())
-                //    {
-                //        _activeView = activeViews.FirstOrDefault();
-                //    }
-
-                //    NavigationParameters navigationParameters = new()
-                //    {
-                //       { "ActiveView",  _activeView }
-                //    };
-
-                //    _regionManager.RequestNavigate(RegionNames.ShellContentRegion, loginViewName, navigationParameters);
-
-                   
-
-                //    // currentView = region.Views.FirstOrDefault(v => v.GetType() == loginViewType);
-                //    //if (currentView is null)
-                //    //{
-                //    //    currentView = region.GetView(loginViewType.FullName);
-                //    //}
-
-                //    //if (currentView is not null)
-                //    //{
-                //    //    region.Add(currentView);
-                //    //}
-
-                //    //IsAuthenticated = true;
-                //}
             }
             catch (Exception ex)
             {
                 await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Sign In Failure:");
             }
 
-            //  IsSignIning = false;
+             IsSignIning = false;
         }
 
         private bool CanExecuteSignInCommand()

@@ -1,20 +1,19 @@
-﻿using System;
+﻿using Aksl.ActiveContents;
+using Aksl.ActiveContents.ViewModels;
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Modules.HamburgerMenuSideBar.ViewModels;
+using Aksl.Modules.HamburgerMenuSideBar.Views;
+using Prism;
+using Prism.Ioc;
+using Prism.Regions;
+using Prism.Unity;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Interop;
-
-using Prism;
-using Prism.Ioc;
-using Prism.Unity;
-
-using Aksl.ActiveContentManager;
-using Aksl.ActiveContentManager.ViewModels;
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Modules.HamburgerMenuSideBar.ViewModels;
-using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.HamburgerMenuSideBar;
 
@@ -197,50 +196,65 @@ public static class HamburgerMenuSideBarHelper
     #endregion
 
     #region Add View To RightContent Method
-    public static async Task AddViewToRightContentAsync(Infrastructure.MenuItem currentMenuItem)
+    public static async Task AddViewToRightContentAsync(Infrastructure.MenuItem menuItem)
     {
         var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
         var rightContentActiveContent = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
+        var rightContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
 
-        string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
-        Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
-        if (viewType is not null)
+        ActiveContentManager activeContentManager = new();
+        //Action<string> exceptionHandler = (message) =>
+        //{
+        //    dialogViewService.AlertAsync(message: $"\"{message}\".", title: $"Error:Add View");
+        //};
+        NavigationParameters navigationParameters = new() { { "CurrentMenuItem", menuItem } };
+
+       var message=await activeContentManager.AddViewToContentAsync(menuItem, rightContentActiveContentViewModel, navigationParameters);
+        if (!string.IsNullOrEmpty(message))
         {
-            var viewName = viewType.Name;
-
-            ContentInformation contentInformation = new()
-            {
-                Name = currentMenuItem.Name,
-                Title = currentMenuItem.Title,
-                ViewName = currentMenuItem.ViewName
-            };
-
-            var currentView = rightContentActiveContent.GetStoreViewElementByName(currentMenuItem.Name);
-
-            if (currentView is not null)
-            {
-                if (currentMenuItem.IsCacheable)
-                {
-                    rightContentActiveContent.SetContentItem(contentInformation);
-
-                  //  rightContentActiveContent.SetMoveIndexOnSet();
-                }
-                else
-                {
-                    rightContentActiveContent.RetsetContentItem(contentInformation);
-                }
-            }
-            else
-            {
-                rightContentActiveContent.Add(contentInformation);
-
-              //  rightContentActiveContent.SetMoveIndexOnAdd();
-            }
+            await dialogViewService.AlertAsync(message: $"message \".", title: $"Error:Missing ViewType");
         }
-        else
-        {
-            await dialogViewService.AlertAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
-        }
+        //activeContentManager.AddViewToContentAsync(menuItem, rightContentActiveContentViewModel, navigationParameters, exceptionHandler).Await();
+
+            //string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
+            //Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
+            //if (viewType is not null)
+            //{
+            //    var viewName = viewType.Name;
+
+            //    ContentInformation contentInformation = new()
+            //    {
+            //        Name = currentMenuItem.Name,
+            //        Title = currentMenuItem.Title,
+            //        ViewName = currentMenuItem.ViewName
+            //    };
+
+            //    var currentView = rightContentActiveContent.GetStoreViewElementByName(currentMenuItem.Name);
+
+            //    if (currentView is not null)
+            //    {
+            //        if (currentMenuItem.IsCacheable)
+            //        {
+            //            rightContentActiveContent.SetContentItem(contentInformation);
+
+            //          //  rightContentActiveContent.SetMoveIndexOnSet();
+            //        }
+            //        else
+            //        {
+            //            rightContentActiveContent.RetsetContentItem(contentInformation);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        rightContentActiveContent.Add(contentInformation);
+
+            //      //  rightContentActiveContent.SetMoveIndexOnAdd();
+            //    }
+            //}
+            //else
+            //{
+            //    await dialogViewService.AlertAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
+            //}
     }
     #endregion
 }

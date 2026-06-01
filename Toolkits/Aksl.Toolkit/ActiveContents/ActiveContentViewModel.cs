@@ -1,10 +1,4 @@
-﻿using Prism;
-using Prism.Commands;
-using Prism.Events;
-using Prism.Ioc;
-using Prism.Mvvm;
-using Prism.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
@@ -12,9 +6,16 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+
+using Prism;
+using Prism.Commands;
+using Prism.Events;
+using Prism.Ioc;
+using Prism.Mvvm;
+using Prism.Unity;
 using Unity;
 
-namespace Aksl.ActiveContentManager.ViewModels
+namespace Aksl.ActiveContents.ViewModels
 {
     public class ActiveContentViewModel : BindableBase
     {
@@ -61,7 +62,7 @@ namespace Aksl.ActiveContentManager.ViewModels
             set => SetProperty<int>(ref _selectedIndex, value);
         }
 
-        public int MoveIndex { get; set; }
+      //  public int MoveIndex { get; set; }
 
         public bool CanMove
         {
@@ -80,7 +81,7 @@ namespace Aksl.ActiveContentManager.ViewModels
             if (contentInformation.ViewElement is not null)
             {
                 newActiveContentItemViewModel.ViewElement = contentInformation.ViewElement;
-                //(newActiveContentItemViewModel.ViewElement as UIElement).Visibility = Visibility.Collapsed;
+                (newActiveContentItemViewModel.ViewElement as UIElement).Visibility = Visibility.Collapsed;
             }
 
             AddCore(newActiveContentItemViewModel, isActive);
@@ -124,10 +125,10 @@ namespace Aksl.ActiveContentManager.ViewModels
             {
                 SetActiveContentItem(newActiveContentItemViewModel); 
             }
-            //else
-            //{
-            //    newActiveContentItemViewModel.ViewElementVisibility = Visibility.Collapsed;
-            //}
+            else
+            {
+                newActiveContentItemViewModel.ViewElementVisibility = Visibility.Collapsed;
+            }
 
             RaisePropertyChanged(nameof(CanMove));
             RaisePropertyChanged(nameof(ActiveContentItems));
@@ -209,6 +210,7 @@ namespace Aksl.ActiveContentManager.ViewModels
                 if (contentInformation.ViewElement is not null)
                 {
                     activeContentItem.ViewElement = contentInformation.ViewElement;
+                    (activeContentItem.ViewElement as UIElement).Visibility = Visibility.Collapsed;
                 }
 
                 SetActiveContentItem(activeContentItem);
@@ -222,6 +224,7 @@ namespace Aksl.ActiveContentManager.ViewModels
                     if (contentInformation.ViewElement is not null)
                     {
                         storeContentItem.ViewElement = contentInformation.ViewElement;
+                        (storeContentItem.ViewElement as UIElement).Visibility = Visibility.Collapsed;
                     }
 
                     ActiveContentItems.Add(storeContentItem);
