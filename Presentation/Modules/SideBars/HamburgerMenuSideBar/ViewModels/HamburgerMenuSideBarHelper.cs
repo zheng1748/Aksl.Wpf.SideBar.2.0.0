@@ -46,6 +46,50 @@ public static class HamburgerMenuSideBarHelper
     }
     #endregion
 
+    #region Add Views To LeftPane Method
+    public static async Task AddViewsToLeftPaneAsync(HamburgerMenuSideBarItemViewModel topuSideBarItem)
+    {
+        var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+        NodeResolver<HamburgerMenuSideBarItemViewModel> nodeResolver = new();
+
+        var sublLeafMenuItems = await topuSideBarItem.GetSubMenuAsync();
+
+        if (sublLeafMenuItems is not null && sublLeafMenuItems.Any())
+        {
+            List<HamburgerMenuSideBarItemViewModel> allBarItemLeafs = new();
+
+            string topItemName = default;
+            foreach (var smi in sublLeafMenuItems)
+            {
+                var topItem = await nodeResolver.GetTopItemByMenuItemAsync(menuItem: smi, parent: topuSideBarItem, constructorResolver: (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, isKeepParent: true);
+                topItemName = topItem.Path;
+            }
+
+            foreach (var topItem in topuSideBarItem.Children)
+            {
+                var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem as HamburgerMenuSideBarItemViewModel);
+                allBarItemLeafs.AddRange(allTopItemLeafs);
+            }
+
+            var subHamburgerMenuSideBar = new HamburgerMenuSideBarViewModel
+            {
+                AllLeafHamburgerMenuSideBarItems = new ObservableCollection<HamburgerMenuSideBarItemViewModel>(allBarItemLeafs)
+            };
+
+            ContentInformation contentInfo = new()
+            {
+                Name = topItemName,
+                Title = topItemName,
+                ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarView,Aksl.Modules.HamburgerMenuSideBar",
+                ViewElement = new HamburgerMenuSideBarView() { DataContext = subHamburgerMenuSideBar }
+            };
+
+            leftPaneActiveContentViewModel.Add(contentInfo);
+        }
+    }
+    #endregion
+
     #region Get All SubMenuSideBar ViewModels Method
     public static async Task<List<(string Path, HamburgerMenuSideBarViewModel MenuSideBar)>> GetAllSubMenuSideBarViewModelsAsync(HamburgerMenuSideBarViewModel menuSideBar)
     {
@@ -151,110 +195,68 @@ public static class HamburgerMenuSideBarHelper
     }
     #endregion
 
-    #region Add Views To LeftPane Method
-    public static async Task AddViewsToLeftPaneAsync(HamburgerMenuSideBarItemViewModel topuSideBarItem)
-    {
-        var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
-        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
-        NodeResolver<HamburgerMenuSideBarItemViewModel> nodeResolver = new();
-
-        var sublLeafMenuItems = await topuSideBarItem.GetSubMenuAsync();
-
-        if (sublLeafMenuItems is not null && sublLeafMenuItems.Any())
-        {
-            List<HamburgerMenuSideBarItemViewModel> allBarItemLeafs = new();
-
-            string topItemName = default;
-            foreach (var smi in sublLeafMenuItems)
-            {
-                var topItem = await nodeResolver.GetTopItemByMenuItemAsync(menuItem: smi, parent: topuSideBarItem, constructorResolver: (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, isKeepParent: true);
-                topItemName = topItem.Path;
-            }
-
-            foreach (var topItem in topuSideBarItem.Children)
-            {
-                var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem as HamburgerMenuSideBarItemViewModel);
-                allBarItemLeafs.AddRange(allTopItemLeafs);
-            }
-
-            var subHamburgerMenuSideBar = new HamburgerMenuSideBarViewModel
-            {
-                AllLeafHamburgerMenuSideBarItems = new ObservableCollection<HamburgerMenuSideBarItemViewModel>(allBarItemLeafs)
-            };
-
-            ContentInformation contentInfo = new()
-            {
-                Name = topItemName,
-                Title = topItemName,
-                ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarView,Aksl.Modules.HamburgerMenuSideBar",
-                ViewElement = new HamburgerMenuSideBarView() { DataContext = subHamburgerMenuSideBar }
-            };
-
-            leftPaneActiveContentViewModel.Add(contentInfo);
-        }
-    }
-    #endregion
-
     #region Add View To RightContent Method
     public static async Task AddViewToRightContentAsync(Infrastructure.MenuItem menuItem)
     {
-        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
-        var rightContentActiveContent = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
-        var rightContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
+       // var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+       // //var rightContentActiveContent = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
+       // var rightContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
 
-        ActiveContentManager activeContentManager = new();
-        //Action<string> exceptionHandler = (message) =>
-        //{
-        //    dialogViewService.AlertAsync(message: $"\"{message}\".", title: $"Error:Add View");
-        //};
-        NavigationParameters navigationParameters = new() { { "CurrentMenuItem", menuItem } };
+       // ActiveContentManager activeContentManager = new();
+       // //Action<string> exceptionHandler = (message) =>
+       // //{
+       // //    dialogViewService.AlertAsync(message: $"\"{message}\".", title: $"Error:Add View");
+       // //};
+       // NavigationParameters navigationParameters = new() { { "CurrentMenuItem", menuItem } };
 
-       var message=await activeContentManager.AddViewToContentAsync(menuItem, rightContentActiveContentViewModel, navigationParameters);
-        if (!string.IsNullOrEmpty(message))
-        {
-            await dialogViewService.AlertAsync(message: $"message \".", title: $"Error:Missing ViewType");
-        }
+       //var result=await activeContentManager.AddViewToContentAsync(menuItem, rightContentActiveContentViewModel, navigationParameters);
+       // if (!result.IsAdd)
+       // {
+       //     await dialogViewService.AlertAsync(message: $"message \".", title: $"Error:Missing ViewType");
+       // }
+
+          ActiveContentHelper.AddViewToContentAsync(menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await();
         //activeContentManager.AddViewToContentAsync(menuItem, rightContentActiveContentViewModel, navigationParameters, exceptionHandler).Await();
 
-            //string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
-            //Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
-            //if (viewType is not null)
-            //{
-            //    var viewName = viewType.Name;
+        //string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
+        //Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
+        //if (viewType is not null)
+        //{
+        //    var viewName = viewType.Name;
 
-            //    ContentInformation contentInformation = new()
-            //    {
-            //        Name = currentMenuItem.Name,
-            //        Title = currentMenuItem.Title,
-            //        ViewName = currentMenuItem.ViewName
-            //    };
+        //    ContentInformation contentInformation = new()
+        //    {
+        //        Name = currentMenuItem.Name,
+        //        Title = currentMenuItem.Title,
+        //        ViewName = currentMenuItem.ViewName
+        //    };
 
-            //    var currentView = rightContentActiveContent.GetStoreViewElementByName(currentMenuItem.Name);
+        //    var currentView = rightContentActiveContent.GetStoreViewElementByName(currentMenuItem.Name);
 
-            //    if (currentView is not null)
-            //    {
-            //        if (currentMenuItem.IsCacheable)
-            //        {
-            //            rightContentActiveContent.SetContentItem(contentInformation);
+        //    if (currentView is not null)
+        //    {
+        //        if (currentMenuItem.IsCacheable)
+        //        {
+        //            rightContentActiveContent.SetContentItem(contentInformation);
 
-            //          //  rightContentActiveContent.SetMoveIndexOnSet();
-            //        }
-            //        else
-            //        {
-            //            rightContentActiveContent.RetsetContentItem(contentInformation);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        rightContentActiveContent.Add(contentInformation);
+        //          //  rightContentActiveContent.SetMoveIndexOnSet();
+        //        }
+        //        else
+        //        {
+        //            rightContentActiveContent.RetsetContentItem(contentInformation);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        rightContentActiveContent.Add(contentInformation);
 
-            //      //  rightContentActiveContent.SetMoveIndexOnAdd();
-            //    }
-            //}
-            //else
-            //{
-            //    await dialogViewService.AlertAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
-            //}
+        //      //  rightContentActiveContent.SetMoveIndexOnAdd();
+        //    }
+        //}
+        //else
+        //{
+        //    await dialogViewService.AlertAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
+        //}
     }
     #endregion
 }

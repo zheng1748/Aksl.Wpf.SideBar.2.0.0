@@ -1,47 +1,41 @@
-﻿using Aksl.ActiveContents;
-using Aksl.ActiveContents.ViewModels;
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
+﻿using System;
+using System.Threading.Tasks;
+
 using Prism;
-using Prism.Common;
 using Prism.Ioc;
 using Prism.Regions;
-using Prism.Services.Dialogs;
 using Prism.Unity;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media.Media3D;
 using Unity;
+
+using Aksl.ActiveContents.ViewModels;
+using Aksl.Dialogs.Services;
 
 namespace Aksl.Infrastructure;
 
 public static class ActiveContentHelper
 {
     #region Add View To Content Method
-    public static async Task AddViewToContentAsync(Infrastructure.MenuItem menuItem,string activeContentNames)
+    public static async Task AddViewToContentAsync(Infrastructure.MenuItem menuItem, string activeContentNames, NavigationParameters navigationParameters = null)
     {
         var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
         var contentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: activeContentNames);
 
         ActiveContentManager activeContentManager = new();
-        //Action<string> exceptionHandler = (message) =>
-        //{
-        //    dialogViewService.AlertAsync(message: $"\"{message}\".", title: $"Error:Add View");
-        //};
-        NavigationParameters navigationParameters = new() { { "CurrentMenuItem", menuItem } };
-        // activeContentManager.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters, exceptionHandler).Await();
-        var message = await activeContentManager.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
-        if (!string.IsNullOrEmpty(message))
+
+        if (navigationParameters is null)
         {
-            await dialogViewService.AlertAsync(message: $"{message} \".", title: $"Error:Missing ViewType");
+            navigationParameters = new() { { "CurrentMenuItem", menuItem } };
+        }
+
+        var result = await activeContentManager.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
+        if (!result.IsAdd)
+        {
+           // throw new ArgumentNullException(result.Nessage);
+            //System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            //{
+            //    dialogViewService.AlertAsync(message: $"{result.Nessage} \".", title: $"Error:Add View").Await();
+            //});
+            dialogViewService.AlertAsync(message: $"{result.Nessage} \".", title: $"Error:Add View").Await();
         }
     }
     #endregion

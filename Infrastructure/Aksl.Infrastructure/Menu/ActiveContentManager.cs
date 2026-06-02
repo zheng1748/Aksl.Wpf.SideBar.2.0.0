@@ -39,22 +39,21 @@ public class ActiveContentManager
             };
 
             var viewName = viewType.Name;
+            var registeredView = container.Resolve<object>(viewName);
 
-            var currentView = container.Resolve<object>(viewName);
-            if (currentView is FrameworkElement frameworkElement)
+            if (registeredView is FrameworkElement frameworkElement)
             {
-                MvvmHelpers.AutowireViewModel(currentView);
+                MvvmHelpers.AutowireViewModel(registeredView);
 
-                // NavigationParameters navigationParameters = new() { { "CurrentMenuItem", menuItem } };
                 if (navigationParameters is null)
                 {
                     navigationParameters = new NavigationParameters();
                 }
 
-                var navigationContext = new NavigationContext(regionNavigationService, new Uri(viewName, UriKind.RelativeOrAbsolute), navigationParameters);
+                NavigationContext navigationContext = new (regionNavigationService, new Uri(viewName, UriKind.RelativeOrAbsolute), navigationParameters);
 
                 Action<INavigationAware> action = (n) => n.OnNavigatedTo(navigationContext);
-                MvvmHelpers.ViewAndViewModelAction<INavigationAware>(currentView, action);
+                MvvmHelpers.ViewAndViewModelAction<INavigationAware>(registeredView, action);
 
                 contentInformation.ViewName = null;
                 contentInformation.ViewElement = frameworkElement;
@@ -68,7 +67,7 @@ public class ActiveContentManager
     #endregion
 
     #region Add View To Content Method
-    public async Task<string> AddViewToContentAsync(Infrastructure.MenuItem menuItem, ActiveContentViewModel activeContentViewModel, NavigationParameters navigationParameters = null)
+    public async Task<( bool IsAdd,string Nessage)> AddViewToContentAsync(Infrastructure.MenuItem menuItem, ActiveContentViewModel activeContentViewModel, NavigationParameters navigationParameters = null)
     {
         string viewTypeAssemblyQualifiedName = menuItem.ViewName;
         Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
@@ -81,7 +80,7 @@ public class ActiveContentManager
             {
                 // exceptionHandler?.Invoke($"Missing Type : {viewTypeAssemblyQualifiedName}");
                 // throw new ArgumentException($"Error:Missing Type {viewTypeAssemblyQualifiedName}");
-                return ($"{viewTypeAssemblyQualifiedName} is not find");
+                return (IsAdd: false, Nessage:$"{viewTypeAssemblyQualifiedName} is not find");
             }
 
             var currentView = activeContentViewModel.GetStoreViewElementByName(menuItem.Name);
@@ -101,14 +100,14 @@ public class ActiveContentManager
                 activeContentViewModel.Add(contentInformation);
             }
 
-            return null;
+            return (true,null);
         }
         else
         {
             // exceptionHandler?.Invoke($"Missing Type : {viewTypeAssemblyQualifiedName}");
             //throw new ArgumentException($"Error:Missing Type {viewTypeAssemblyQualifiedName}");
 
-            return ($"{viewTypeAssemblyQualifiedName} is not find");
+            return (IsAdd: false, Nessage: $"{viewTypeAssemblyQualifiedName} is not find");
         }
     }
     #endregion

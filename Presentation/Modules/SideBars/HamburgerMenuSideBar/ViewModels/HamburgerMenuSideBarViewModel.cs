@@ -33,7 +33,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
         #region Properties
         public ObservableCollection<HamburgerMenuSideBarItemViewModel> AllLeafHamburgerMenuSideBarItems { get; set; }
-        public HamburgerMenuSideBarItemViewModel LastHamburgerMenuSideBarItemEithNotSubMenu { get; set; }
+        public HamburgerMenuSideBarItemViewModel LastHamburgerMenuSideBarItemWithNotSubMenu { get; set; }
         public string WorkspaceViewEventName { get; set; }
 
         private HamburgerMenuSideBarItemViewModel _selectedHamburgerMenuSideBarItem;
@@ -44,9 +44,9 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             {
                 if (SetProperty(ref _selectedHamburgerMenuSideBarItem, value))
                 {
-                    if (!_selectedHamburgerMenuSideBarItem.HasSubMenu) 
+                    if (!_selectedHamburgerMenuSideBarItem.HasSubMenu && LastHamburgerMenuSideBarItemWithNotSubMenu != _selectedHamburgerMenuSideBarItem) 
                     {
-                        LastHamburgerMenuSideBarItemEithNotSubMenu= _selectedHamburgerMenuSideBarItem;
+                        LastHamburgerMenuSideBarItemWithNotSubMenu= _selectedHamburgerMenuSideBarItem;
                     }
                 }
             }

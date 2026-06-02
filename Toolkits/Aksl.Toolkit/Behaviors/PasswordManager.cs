@@ -7,31 +7,29 @@ namespace Aksl.Xaml.Behaviors
     {
         #region Attached Password Property
 
-        public static DependencyProperty PasswordProperty = 
+        public static DependencyProperty PasswordProperty =
                       DependencyProperty.RegisterAttached("Password", typeof(string), typeof(PasswordManager), new PropertyMetadata(defaultValue: null, propertyChangedCallback: null));
 
-        public static string GetPassword(DependencyObject obj) => (string)obj.GetValue(PasswordProperty);
+        public static string GetPassword(DependencyObject obj)
+            => (string)obj.GetValue(PasswordProperty);
 
-        public static void SetPassword(DependencyObject obj, string value) => obj.SetValue(PasswordProperty, value);
+        public static void SetPassword(DependencyObject obj, string value)
+            => obj.SetValue(PasswordProperty, value);
         #endregion
 
         #region Attached AutoPassword Property
 
         public static DependencyProperty AutoPasswordProperty =
              DependencyProperty.RegisterAttached("AutoPassword", typeof(bool), typeof(PasswordManager), new PropertyMetadata(defaultValue: false, propertyChangedCallback: OnAutoPasswordChanged));
-        public static bool GetAutoPassword(DependencyObject obj)
-        {
-            return (bool)obj.GetValue(AutoPasswordProperty);
-        }
+        public static bool GetAutoPassword(DependencyObject obj) =>
+            (bool)obj.GetValue(AutoPasswordProperty);
 
-        public static void SetAutoPassword(DependencyObject obj, bool value)
-        {
+        public static void SetAutoPassword(DependencyObject obj, bool value) =>
             obj.SetValue(AutoPasswordProperty, value);
-        }
 
         private static void OnAutoPasswordChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if ((bool) e.NewValue && d is PasswordBox passwordBox)
+            if ((bool)e.NewValue && d is PasswordBox passwordBox)
             {
                 passwordBox.PasswordChanged -= OnPasswordChanged;
 

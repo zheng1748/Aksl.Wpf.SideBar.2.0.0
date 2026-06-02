@@ -26,7 +26,7 @@ namespace Aksl.ActiveContents.ViewModels
         public ActiveContentViewModel()
         {
             ActiveContentItems = new();
-            StoreContentItems = new(); 
+            StoreContentItems = new();
             MoveContentItems = new();
         }
         #endregion
@@ -39,7 +39,7 @@ namespace Aksl.ActiveContents.ViewModels
         public ActiveContentItemViewModel SelectedContentItem
         {
             get => _selectedContentItem;
-            set 
+            set
             {
                 if (SetProperty<ActiveContentItemViewModel>(ref _selectedContentItem, value))
                 {
@@ -55,20 +55,20 @@ namespace Aksl.ActiveContents.ViewModels
             }
         }
 
-        private int _selectedIndex=-1;
+        private int _selectedIndex = -1;
         public int SelectedIndex
         {
             get => _selectedIndex;
             set => SetProperty<int>(ref _selectedIndex, value);
         }
 
-      //  public int MoveIndex { get; set; }
+        //  public int MoveIndex { get; set; }
 
         public bool CanMove
         {
             get
             {
-                return ActiveContentItems is not null && ActiveContentItems.Count>1 && SelectedIndex > 0;
+                return ActiveContentItems is not null && ActiveContentItems.Count > 1 && SelectedIndex > 0;
             }
         }
         #endregion
@@ -123,7 +123,7 @@ namespace Aksl.ActiveContents.ViewModels
 
             if (isActive)
             {
-                SetActiveContentItem(newActiveContentItemViewModel); 
+                SetActiveContentItem(newActiveContentItemViewModel);
             }
             else
             {
@@ -150,7 +150,7 @@ namespace Aksl.ActiveContents.ViewModels
                 {
                     activeContentItemViewModel.IsSelected = true;
                     SelectedContentItem = activeContentItemViewModel;
-                   // SelectedContentItem.IsSelected = true;
+                    // SelectedContentItem.IsSelected = true;
                 }
 
                 if (SelectedContentItem is not null && activeContentItemViewModel != SelectedContentItem)
@@ -161,7 +161,7 @@ namespace Aksl.ActiveContents.ViewModels
 
                     activeContentItemViewModel.IsSelected = true;
                     SelectedContentItem = activeContentItemViewModel;
-                  //  SelectedContentItem.IsSelected = true;
+                    //  SelectedContentItem.IsSelected = true;
                     //  SelectedTabContentItem.ViewElementVisibility = Visibility.Visible;
                 }
             }
@@ -179,7 +179,7 @@ namespace Aksl.ActiveContents.ViewModels
                 var storeContentItem = GetStoreContentItemViewModelByInfo(contentInformation);
                 if (storeContentItem is not null)
                 {
-                    AddCore(storeContentItem,true);
+                    AddCore(storeContentItem, true);
                 }
             }
         }
@@ -415,27 +415,27 @@ namespace Aksl.ActiveContents.ViewModels
             //var selectedIndex = GetIndexSelectedActiveContentItem();
             var previousActiveContentItem = ActiveContentItems[SelectedIndex - 1];
 
-          //  var previousIndex = ActiveContentItems.Count[MoveContentItems[i]];
+            //  var previousIndex = ActiveContentItems.Count[MoveContentItems[i]];
 
             SetActiveContentItem(previousActiveContentItem);
         }
 
         public bool CanMovePrevious()
         {
-           // var selectedIndex = GetIndexSelectedActiveContentItem();
+            // var selectedIndex = GetIndexSelectedActiveContentItem();
             return SelectedIndex > 0;
         }
 
         public void ExecuteMoveNext()
         {
-           // var selectedIndex = GetIndexSelectedActiveContentItem();
+            // var selectedIndex = GetIndexSelectedActiveContentItem();
             var nextActiveContentItem = ActiveContentItems[SelectedIndex + 1];
             SetActiveContentItem(nextActiveContentItem);
         }
 
         public bool CanMoveNext()
         {
-           // var selectedIndex = GetIndexSelectedActiveContentItem();
+            // var selectedIndex = GetIndexSelectedActiveContentItem();
             return SelectedIndex < ActiveContentItems.Count - 1;
         }
 
@@ -447,7 +447,7 @@ namespace Aksl.ActiveContents.ViewModels
             return selectedIndex;
         }
         #endregion
-       
+
         #region Contain Methods
         private bool IsExistsActivContentItems(string name, string title)
         {
@@ -470,10 +470,10 @@ namespace Aksl.ActiveContents.ViewModels
                 return false;
             }
 
-            var isEquals = (IsEqualsNameOrTitle(activeContentItemViewModel?.Name, otherActiveContentItemViewModel?.Name) ||
+            var isAny = (IsEqualsNameOrTitle(activeContentItemViewModel?.Name, otherActiveContentItemViewModel?.Name) ||
                             IsEqualsNameOrTitle(activeContentItemViewModel?.Title, otherActiveContentItemViewModel?.Title));
 
-            return isEquals;
+            return isAny;
         }
 
         private bool IsEqualsNameOrTitle(string nameOrTitle, string otherNameOrTitle)
@@ -483,10 +483,10 @@ namespace Aksl.ActiveContents.ViewModels
                 return false;
             }
 
-            var isEquals = (!string.IsNullOrEmpty(nameOrTitle) && nameOrTitle.Equals(otherNameOrTitle, StringComparison.InvariantCultureIgnoreCase)) ||
-                           (!string.IsNullOrEmpty(otherNameOrTitle) && otherNameOrTitle.Equals(nameOrTitle, StringComparison.InvariantCultureIgnoreCase));
+            var isAny = (!string.IsNullOrEmpty(nameOrTitle) && nameOrTitle.Equals(otherNameOrTitle, StringComparison.InvariantCultureIgnoreCase)) ||
+                        (!string.IsNullOrEmpty(otherNameOrTitle) && otherNameOrTitle.Equals(nameOrTitle, StringComparison.InvariantCultureIgnoreCase));
 
-            return isEquals;
+            return isAny;
         }
         #endregion
     }

@@ -260,11 +260,15 @@ namespace Aksl.Modules.Shell
                 //    }
                 //});
 
-              var dialogResult=await dialogViewService.ShowDialogAsync( contentName: "LoginPopupView",  parameters: parameters);
+                var dialogResult = await dialogViewService.ShowDialogAsync(contentName: "LoginPopupView");
+                if (dialogResult.Result == ButtonResult.Cancel)
+                {
+                   // Shutdown();
+                }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-               dialogViewService.ConfirmWhenAsync(message: $"Unable to find \"{ex.Message}\".", title: $"Error:Missing Type").Await();
+                dialogViewService.ConfirmWhenAsync(message: $"Unable to find \"{ex.Message}\".", title: $"Error:Missing Type").Await();
             }
          
             base.OnInitialized();
