@@ -27,16 +27,26 @@ public static class ActiveContentHelper
             navigationParameters = new() { { "CurrentMenuItem", menuItem } };
         }
 
-        var result = await activeContentManager.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
-        if (!result.IsAdd)
+        try
         {
-           // throw new ArgumentNullException(result.Nessage);
-            //System.Windows.Application.Current.Dispatcher.Invoke(() =>
-            //{
-            //    dialogViewService.AlertAsync(message: $"{result.Nessage} \".", title: $"Error:Add View").Await();
-            //});
-            dialogViewService.AlertAsync(message: $"{result.Nessage} \".", title: $"Error:Add View").Await();
+            await activeContentManager.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
         }
+        catch (Exception ex)
+        {
+            string msg = !string.IsNullOrEmpty(ex.InnerException?.Message) ? ex.InnerException.Message : ex.Message;
+
+            dialogViewService.AlertAsync(message: $"{msg} \".", title: $"Add View:\"{menuItem.Title}\"").Await();
+        }
+        //var result = await activeContentManager.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
+        //if (!result.IsAdd)
+        //{
+        //   // throw new ArgumentNullException(result.Nessage);
+        //    //System.Windows.Application.Current.Dispatcher.Invoke(() =>
+        //    //{
+        //    //    dialogViewService.AlertAsync(message: $"{result.Nessage} \".", title: $"Error:Add View").Await();
+        //    //});
+        //    dialogViewService.AlertAsync(message: $"{result.Message} \".", title: $"Error:Add View").Await();
+        //}
     }
     #endregion
 }

@@ -32,9 +32,9 @@ public static class HamburgerMenuSideBarHelper
             foreach (var mi in menuItems)
             {
                 HamburgerMenuSideBarItemViewModel virtualParent = new();
-                Func<MenuItem, HamburgerMenuSideBarItemViewModel, HamburgerMenuSideBarItemViewModel> constructorResolver = ((m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); });
+                Func<MenuItem, HamburgerMenuSideBarItemViewModel, HamburgerMenuSideBarItemViewModel> childResolver = ((m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); });
 
-                var topItem = await nodeResolver.GetTopItemByMenuItemAsync(mi, virtualParent, constructorResolver, false);
+                var topItem = await nodeResolver.GetTopItemByMenuItemAsync(mi, virtualParent, childResolver, false);
                 var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem);
                 allSideBarItemLeafs.AddRange(allTopItemLeafs);
             }
@@ -53,7 +53,8 @@ public static class HamburgerMenuSideBarHelper
         var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
         NodeResolver<HamburgerMenuSideBarItemViewModel> nodeResolver = new();
 
-        var sublLeafMenuItems = await topuSideBarItem.GetSubMenuAsync();
+       // var sublLeafMenuItems = await topuSideBarItem.GetSubMenuAsync();
+        var sublLeafMenuItems = await topuSideBarItem.MenuItem.GetNextSubMenuAsync();
 
         if (sublLeafMenuItems is not null && sublLeafMenuItems.Any())
         {
@@ -62,14 +63,14 @@ public static class HamburgerMenuSideBarHelper
             string topItemName = default;
             foreach (var smi in sublLeafMenuItems)
             {
-                var topItem = await nodeResolver.GetTopItemByMenuItemAsync(menuItem: smi, parent: topuSideBarItem, constructorResolver: (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, isKeepParent: true);
+                var topItem = await nodeResolver.GetTopItemByMenuItemAsync(menuItem: smi, parent: topuSideBarItem, childResolver: (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, isKeepParent: true);
                 topItemName = topItem.Path;
             }
 
             foreach (var topItem in topuSideBarItem.Children)
             {
-                var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem as HamburgerMenuSideBarItemViewModel);
-                allBarItemLeafs.AddRange(allTopItemLeafs);
+                var topItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem as HamburgerMenuSideBarItemViewModel);
+                allBarItemLeafs.AddRange(topItemLeafs);
             }
 
             var subHamburgerMenuSideBar = new HamburgerMenuSideBarViewModel
@@ -102,7 +103,8 @@ public static class HamburgerMenuSideBarHelper
         {
             foreach (var leafSideBarItem in currentMenuSideBar.AllLeafHamburgerMenuSideBarItems)
             {
-                var sublLeafMenuItems = await leafSideBarItem.GetSubMenuAsync();
+               // var sublLeafMenuItems = await leafSideBarItem.GetSubMenuAsync();
+                var sublLeafMenuItems = await leafSideBarItem.MenuItem.GetNextSubMenuAsync();
 
                 if (sublLeafMenuItems is not null && sublLeafMenuItems.Any())
                 {
@@ -111,7 +113,7 @@ public static class HamburgerMenuSideBarHelper
                     string topItemName = default;
                     foreach (var smi in sublLeafMenuItems)
                     {
-                        var topItem = await nodeResolver.GetTopItemByMenuItemAsync(menuItem: smi, parent: leafSideBarItem, constructorResolver: (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, isKeepParent: true);
+                        var topItem = await nodeResolver.GetTopItemByMenuItemAsync(menuItem: smi, parent: leafSideBarItem, childResolver: (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, isKeepParent: true);
                         topItemName = topItem.Path;
                     }
 

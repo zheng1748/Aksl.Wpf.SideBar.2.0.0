@@ -88,19 +88,23 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     {
         get
         {
-            return HasSubMenuInternal();
+           return _menuItem.HasNextSubMenu();
+          // return HasSubMenuInternal();
         }
     }
 
-    //public HamburgerMenuSideBarItemViewModel Parent { get; set; }
-    //public ObservableCollection<HamburgerMenuSideBarItemViewModel> Children => _children;
-    //public bool HasTitle => !string.IsNullOrEmpty(_menuItem.Title);
-    //public bool HasChildren => (_children is not null) && _children.Any();
-    //public bool IsLeaf => (_children is not null) && _children.Count <= 0;
-    //public bool IsTopLevelItem => (Parent is null) && IsLeaf;
-    //public bool IsTopLevelHeader => (Parent is null) && !IsLeaf;
-    //public bool IsSubmenuItem => (Parent is not null) && IsLeaf;
-    //public bool IsSubmenuHeader => (Parent is not null) && !IsLeaf;
+    public PackIconKind IconKind
+    {
+        get
+        {
+            return _menuItem.GetIconKind();
+            //PackIconKind kind = PackIconKind.None;
+
+            //_ = Enum.TryParse(_menuItem.IconKind, out kind);
+
+            //return kind;
+        }
+    }
 
     private bool _isSelected = false;
     public bool IsSelected
@@ -146,26 +150,14 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
 
                 bool IsAddViewToRightContent()
                 {
-                    return !HasSubMenu && IsLeaf && IsSelected;
+                    return !HasSubMenu && IsLeaf && IsSelected && !string.IsNullOrEmpty(_menuItem.ViewName);
                 }
 
                 bool IsSetActiveToLeftPaneActiveContent()
                 {
-                    return HasSubMenu && IsSelected;
+                    return HasSubMenu && IsSelected ;
                 }
             }
-        }
-    }
-
-    public PackIconKind IconKind
-    {
-        get
-        {
-            PackIconKind kind = PackIconKind.None;
-
-            _ = Enum.TryParse(_menuItem.IconKind, out kind);
-
-            return kind;
         }
     }
 

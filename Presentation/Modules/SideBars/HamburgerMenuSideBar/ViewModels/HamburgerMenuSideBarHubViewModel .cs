@@ -235,7 +235,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
                             if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is null)
                             {
-                              //  SelectedHamburgerMenuSideBarItem = null;
+                                //  SelectedHamburgerMenuSideBarItem = null;
 
                                 RightContentActiveContentViewModel.ClearSelectedItem();
                             }
@@ -246,17 +246,14 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                                     hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu != SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem)
                                 {
                                     // SelectedHamburgerMenuSideBarItem = hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu;
-                                    try
-                                    {
-                                        hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu.IsSelected=true;
 
-                                        //SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem = hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                       // RightContentActiveContentViewModel.ClearSelectedItem();
-                                        //_dialogViewService.AlertWhenAsync(message: $"{ex.Message}", title: "Failure:Move Previous").Await();
-                                    }
+                                    hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu.IsSelected = true;
+
+                                    //SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem = hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu;
+
+                                    // RightContentActiveContentViewModel.ClearSelectedItem();
+                                    //_dialogViewService.AlertWhenAsync(message: $"{ex.Message}", title: "Failure:Move Previous").Await();
+
                                     //HamburgerMenuSideBarHelper.AddViewToRightContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem).Await();
                                     //ActiveContentHelper.AddViewToContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await();
                                 }
@@ -276,10 +273,10 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                                     //    SelectedHamburgerMenuSideBarItem = SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem;
                                     //}
 
-                                   // if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem != SelectedHamburgerMenuSideBarItem)
+                                    // if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem != SelectedHamburgerMenuSideBarItem)
                                     //{
-                                        ActiveContentHelper.AddViewToContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await();
-                                   // }
+                                    ActiveContentHelper.AddViewToContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await();
+                                    // }
 
                                     // HamburgerMenuSideBarHelper.AddViewToRightContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem).Await();
                                 }
@@ -480,7 +477,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                     ViewElement = new HamburgerMenuSideBarView() { DataContext = TopHamburgerMenuSideBar }
                 }, true);
 
-                //var subMenuSideBas = await GetAllSubMenuSideBarViewModelsAsync(this.TopHamburgerMenuSideBar);
+               // var subMenuSideBas = await GetAllSubMenuSideBarViewModelsAsync(this.TopHamburgerMenuSideBar);
                 //foreach (var msb in subMenuSideBas)
                 //{
                 //    AddHamburgerMenuSideBarViewModelPropertyChanged(msb.MenuSideBar);
@@ -728,7 +725,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                         string topItemName = default;
                         foreach (var smi in sublLeafMenuItems)
                         {
-                            var topItem = await nodeResolver.GetTopItemByMenuItemAsync(menuItem: smi, parent: leafSideBarItem, constructorResolver: (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, isKeepParent: true);
+                            var topItem = await nodeResolver.GetTopItemByMenuItemAsync(menuItem: smi, parent: leafSideBarItem, childResolver: (m, p) => { return new HamburgerMenuSideBarItemViewModel(m, p); }, isKeepParent: true);
                             topItemName = topItem.Path;
                         }
 

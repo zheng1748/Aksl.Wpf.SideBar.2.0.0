@@ -264,8 +264,8 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                 foreach (var smi in subMenuItems)
                 {
                     MenuItemViewModel virtualParent = new();
-                    Func<MenuItem, MenuItemViewModel, MenuItemViewModel> constructorResolver = ((m, p) => { return new MenuItemViewModel(m, p); });
-                    var topItem = await nodeResolver.GetTopItemByMenuItemAsync(smi, virtualParent, constructorResolver, false);
+                    Func<MenuItem, MenuItemViewModel, MenuItemViewModel> childResolver = ((m, p) => { return new MenuItemViewModel(m, p); });
+                    var topItem = await nodeResolver.GetTopItemByMenuItemAsync(smi, virtualParent, childResolver, false);
                     var allTopItemLeafs = await nodeResolver.GetTopItemLeafsAsync(topItem);
 
                     if (HasLeafMenus())

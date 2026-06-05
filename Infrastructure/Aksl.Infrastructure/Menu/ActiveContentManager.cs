@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
-using System.Windows;
-
+﻿using Aksl.ActiveContents;
+using Aksl.ActiveContents.ViewModels;
 using Prism;
 using Prism.Common;
 using Prism.Ioc;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 using Prism.Unity;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Windows;
 using Unity;
-
-using Aksl.ActiveContents;
-using Aksl.ActiveContents.ViewModels;
 
 namespace Aksl.Infrastructure;
 
@@ -28,7 +27,8 @@ public class ActiveContentManager
         Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
         if (viewType is not null)
         {
-            var container = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
+            var unityContainerExtension = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<UnityContainerExtension>();
+            //var container = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
             var regionNavigationService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IRegionNavigationService>();
 
             ContentInformation contentInformation = new()
@@ -39,7 +39,9 @@ public class ActiveContentManager
             };
 
             var viewName = viewType.Name;
-            var registeredView = container.Resolve<object>(viewName);
+            var registeredView = unityContainerExtension.Instance.Resolve<object>(viewName);
+           // var registeredView = container.Resolve<object>(viewName);
+           // var registeredView = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<object>(viewName);
 
             if (registeredView is FrameworkElement frameworkElement)
             {
@@ -50,7 +52,7 @@ public class ActiveContentManager
                     navigationParameters = new NavigationParameters();
                 }
 
-                NavigationContext navigationContext = new (regionNavigationService, new Uri(viewName, UriKind.RelativeOrAbsolute), navigationParameters);
+                NavigationContext navigationContext = new(regionNavigationService, new Uri(viewName, UriKind.RelativeOrAbsolute), navigationParameters);
 
                 Action<INavigationAware> action = (n) => n.OnNavigatedTo(navigationContext);
                 MvvmHelpers.ViewAndViewModelAction<INavigationAware>(registeredView, action);
@@ -67,8 +69,11 @@ public class ActiveContentManager
     #endregion
 
     #region Add View To Content Method
-    public async Task<( bool IsAdd,string Nessage)> AddViewToContentAsync(Infrastructure.MenuItem menuItem, ActiveContentViewModel activeContentViewModel, NavigationParameters navigationParameters = null)
+    //Task<(bool IsAdd, string Message)>
+    public async Task AddViewToContentAsync(Infrastructure.MenuItem menuItem, ActiveContentViewModel activeContentViewModel, NavigationParameters navigationParameters = null)
     {
+        //try
+        //{
         string viewTypeAssemblyQualifiedName = menuItem.ViewName;
         Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
         if (viewType is not null)
@@ -80,7 +85,9 @@ public class ActiveContentManager
             {
                 // exceptionHandler?.Invoke($"Missing Type : {viewTypeAssemblyQualifiedName}");
                 // throw new ArgumentException($"Error:Missing Type {viewTypeAssemblyQualifiedName}");
-                return (IsAdd: false, Nessage:$"{viewTypeAssemblyQualifiedName} is not find");
+                // return (IsAdd: false, Message: $"{viewTypeAssemblyQualifiedName} is not find");
+                //throw new ArgumentException($"Unable to create ContentInformation:{contentInformation.Name}");
+                return;
             }
 
             var currentView = activeContentViewModel.GetStoreViewElementByName(menuItem.Name);
@@ -100,15 +107,27 @@ public class ActiveContentManager
                 activeContentViewModel.Add(contentInformation);
             }
 
-            return (true,null);
+            //return (true, null);
         }
         else
         {
             // exceptionHandler?.Invoke($"Missing Type : {viewTypeAssemblyQualifiedName}");
-            //throw new ArgumentException($"Error:Missing Type {viewTypeAssemblyQualifiedName}");
+            throw new ArgumentException($"Error:Missing Type {viewTypeAssemblyQualifiedName}");
 
-            return (IsAdd: false, Nessage: $"{viewTypeAssemblyQualifiedName} is not find");
+            //return (IsAdd: false, Message: $"{viewTypeAssemblyQualifiedName} is not find");
+            //throw new Exception($"{viewTypeAssemblyQualifiedName} is not find");
         }
+        //}
+        //catch (KeyNotFoundException knfex)
+        //{
+        //    // return (IsAdd: false, Message: $"{ex.Message} is not find");
+        //    throw new ArgumentException(knfex.Message);
+        //}
+        //catch (Exception ex)
+        //{
+        //   // return (IsAdd: false, Message: $"{ex.Message} is not find");
+        //    throw new ArgumentException(ex.Message);
+        //}
     }
     #endregion
 }

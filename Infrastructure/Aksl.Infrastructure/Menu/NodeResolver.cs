@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Prism;
+﻿using Prism;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Unity;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Aksl.Infrastructure;
 
@@ -25,7 +25,7 @@ public class NodeResolver<T> where T : NodeViewModel
     #endregion
 
     #region Get MenuItem Leafs Method
-    public async Task<IEnumerable<T>> GetMenuItemLeafsAsync(MenuItem menuItem, Func<MenuItem, T> constructorResolver)
+    public async Task<IEnumerable<T>> GetMenuItemLeafsAsync(MenuItem menuItem, Func<MenuItem, T> childResolver)
     {
         List<MenuItem> travelMenuItems = new();
         List<T> menuItemLeafs = new();
@@ -34,11 +34,11 @@ public class NodeResolver<T> where T : NodeViewModel
 
         async Task RecursiveSubMenuItem(MenuItem currentMenuItem)
         {
-            var isAddOnLeaf = IsLeaf(currentMenuItem) && (!HasNavigationName(currentMenuItem) || (HasNavigationName(currentMenuItem) && !IsNextNavigation(currentMenuItem)));
-            var isAddOnNotLeaf = !IsLeaf(currentMenuItem) && !IsNexOnNotLeaf(currentMenuItem);
+            var isAddOnLeaf = currentMenuItem.IsLeaf() && (!HasNavigationName(currentMenuItem) || (HasNavigationName(currentMenuItem) && !IsNextNavigation(currentMenuItem)));
+            var isAddOnNotLeaf = !currentMenuItem.IsLeaf() && !IsNexOnNotLeaf(currentMenuItem);
             if (!AnyEqualsMenuItems(travelMenuItems, currentMenuItem) && HasTitle(currentMenuItem) && (isAddOnLeaf || isAddOnNotLeaf))
             {
-                menuItemLeafs.Add(constructorResolver(currentMenuItem));
+                menuItemLeafs.Add(childResolver(currentMenuItem));
                 travelMenuItems.Add(currentMenuItem);
             }
 
@@ -47,7 +47,7 @@ public class NodeResolver<T> where T : NodeViewModel
                 currentMenuItem = await _menuService.GetMenuAsync(currentMenuItem.NavigationName);
             }
 
-            if (HasSubMenu(currentMenuItem) && IsNexOnNotLeaf(currentMenuItem))
+            if (currentMenuItem.HasSubMenu() && IsNexOnNotLeaf(currentMenuItem))
             {
                 foreach (var smi in currentMenuItem.SubMenus)
                 {
@@ -73,7 +73,7 @@ public class NodeResolver<T> where T : NodeViewModel
     #endregion
 
     #region Get TopMenuItem Leafs Method
-    public async Task<IEnumerable<T>> GetTopMenuItemLeafsAsync(MenuItem menuItem, T virtualParent, Func<MenuItem, T, T> constructorResolver)
+    public async Task<IEnumerable<T>> GetTopMenuItemLeafsAsync(MenuItem menuItem, T virtualParent, Func<MenuItem, T, T> childResolver)
     {
         List<MenuItem> travelMenuItems = new();
         List<T> topMenuItemLeafs = new();
@@ -88,7 +88,7 @@ public class NodeResolver<T> where T : NodeViewModel
             {
                 travelMenuItems.Add(currentMenuItem);
 
-                child = constructorResolver(currentMenuItem, paren);
+                child = childResolver(currentMenuItem, paren);
             }
 
             if (HasNavigationName(currentMenuItem) && IsNextNavigation(currentMenuItem))
@@ -96,7 +96,7 @@ public class NodeResolver<T> where T : NodeViewModel
                 currentMenuItem = await _menuService.GetMenuAsync(currentMenuItem.NavigationName);
             }
 
-            if (HasSubMenu(currentMenuItem) && IsNexOnNotLeaf(currentMenuItem))
+            if (currentMenuItem.HasSubMenu() && IsNexOnNotLeaf(currentMenuItem))
             {
                 foreach (var smi in currentMenuItem.SubMenus)
                 {
@@ -130,7 +130,7 @@ public class NodeResolver<T> where T : NodeViewModel
     #endregion
 
     #region Get TopItem By MenuItem Method
-    public async Task<T> GetTopItemByMenuItemAsync(MenuItem menuItem, T parent, Func<MenuItem, T, T> constructorResolver, bool isKeepParent = false)
+    public async Task<T> GetTopItemByMenuItemAsync(MenuItem menuItem, T parent, Func<MenuItem, T, T> childResolver, bool isKeepParent = false)
     {
         List<MenuItem> travelMenuItems = new();
 
@@ -144,7 +144,7 @@ public class NodeResolver<T> where T : NodeViewModel
             {
                 travelMenuItems.Add(currentMenuItem);
 
-                child = constructorResolver(currentMenuItem, paren);
+                child = childResolver(currentMenuItem, paren);
             }
 
             if (HasNavigationName(currentMenuItem) && IsNextNavigation(currentMenuItem))
@@ -152,7 +152,7 @@ public class NodeResolver<T> where T : NodeViewModel
                 currentMenuItem = await _menuService.GetMenuAsync(currentMenuItem.NavigationName);
             }
 
-            if (HasSubMenu(currentMenuItem) && IsNexOnNotLeaf(currentMenuItem))
+            if (currentMenuItem.HasSubMenu() && IsNexOnNotLeaf(currentMenuItem))
             {
                 foreach (var smi in currentMenuItem.SubMenus)
                 {

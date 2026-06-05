@@ -15,6 +15,7 @@ namespace Aksl.Infrastructure
 
         public string Name { get; set; }
         public string Title { get; set; }
+        public string IconKind { get; set; }
         public MenuItemType ItemType { get; set; }
 
         public bool IsSelectedOnInitialize { get; set; } = false;
@@ -23,13 +24,7 @@ namespace Aksl.Infrastructure
 
         public bool IsCacheable { get; set; } = false;
 
-        //public bool IsSecurityable { get; set; } = false;
         public int Level { get; set; }
-
-        //public string Glyph { get; set; } 
-        //<FontIcon Glyph="{Binding FontIcon}"/>
-        //public string IconPath { get; set; }
-        public string IconKind { get; set; }
 
         public string ModuleName { get; set; }
 
@@ -45,8 +40,6 @@ namespace Aksl.Infrastructure
         public bool IsNexOnNotLeaf { get; set; } = true;
         public bool IsNextNavigation { get; set; } = true;
         public string NavigationName { get; set; }
-
-        //public string RequrePermissons { get; set; }
 
         public bool CanRun { get; set; }
 
