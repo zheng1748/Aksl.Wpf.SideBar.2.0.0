@@ -108,7 +108,7 @@ namespace Aksl.Modules.Thermometer.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Temperature Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Temperature Failure:");
             }
 
             IsLoading = false;

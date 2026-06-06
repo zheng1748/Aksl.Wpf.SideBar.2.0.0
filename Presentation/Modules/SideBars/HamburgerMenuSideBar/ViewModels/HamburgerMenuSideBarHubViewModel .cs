@@ -1,4 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using Aksl.ActiveContents.ViewModels;
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Infrastructure.Events;
+using Aksl.Modules.HamburgerMenuSideBar.Views;
+using Prism;
+using Prism.Commands;
+using Prism.Events;
+using Prism.Ioc;
+using Prism.Mvvm;
+using Prism.Regions;
+using Prism.Unity;
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -10,24 +23,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
-
-using Prism;
-using Prism.Commands;
-using Prism.Events;
-using Prism.Ioc;
-using Prism.Mvvm;
-using Prism.Regions;
-using Prism.Unity;
-using System;
 using Unity;
-
-using Aksl.ActiveContents.ViewModels;
-using Aksl.Dialogs.Services;
-
-using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
-
-using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 {
@@ -246,8 +242,20 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                                     hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu != SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem)
                                 {
                                     // SelectedHamburgerMenuSideBarItem = hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu;
+                                    try
+                                    {
+                                        hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu.IsSelected = true;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        string msg = !string.IsNullOrEmpty(ex.InnerException?.Message) ? ex.InnerException.Message : ex.Message;
 
-                                    hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu.IsSelected = true;
+                                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                                        {
+                                           _dialogViewService.AlertAsync(message: $"{msg} \".", title: $"Error:Add View").Await();
+                                        });
+                                    }
+
 
                                     //SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem = hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu;
 
@@ -524,7 +532,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync(message:$"{ex.Message}",title: "Failure:Move Previous");
+                await _dialogViewService.AlertAsync(message:$"{ex.Message}",title: "Failure:Move Previous");
             }
         }
 

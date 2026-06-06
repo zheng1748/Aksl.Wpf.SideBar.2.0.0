@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.5.11723.231 stable
+VisualStudioVersion = 18.5.11723.231
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Toolkits", "Toolkits", "{8B68315F-10BA-4E2B-AF2E-312DCD160766}"
 EndProject
@@ -80,6 +80,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Radars", "Radars", "{A30244A7-BBFC-42B6-9F06-1C1080A51BAF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadarMapView", "Presentation\Modules\Radars\RadarMapView.csproj", "{07265A59-A71B-9907-D6CF-C989CF8167CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aksl.Dialogs", "Toolkits\Aksl.Dialogs\Aksl.Dialogs.csproj", "{CF4845A2-1BF9-63EC-D392-922A2CBB2A0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -297,6 +299,14 @@ Global
 		{07265A59-A71B-9907-D6CF-C989CF8167CC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{07265A59-A71B-9907-D6CF-C989CF8167CC}.Release|x86.ActiveCfg = Release|Any CPU
 		{07265A59-A71B-9907-D6CF-C989CF8167CC}.Release|x86.Build.0 = Release|Any CPU
+		{CF4845A2-1BF9-63EC-D392-922A2CBB2A0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF4845A2-1BF9-63EC-D392-922A2CBB2A0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF4845A2-1BF9-63EC-D392-922A2CBB2A0E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CF4845A2-1BF9-63EC-D392-922A2CBB2A0E}.Debug|x86.Build.0 = Debug|Any CPU
+		{CF4845A2-1BF9-63EC-D392-922A2CBB2A0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF4845A2-1BF9-63EC-D392-922A2CBB2A0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF4845A2-1BF9-63EC-D392-922A2CBB2A0E}.Release|x86.ActiveCfg = Release|Any CPU
+		{CF4845A2-1BF9-63EC-D392-922A2CBB2A0E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -337,6 +347,7 @@ Global
 		{5123BC68-C6F7-4BA3-88CC-4249C437FF81} = {8BDDEAC2-103F-47CF-9A02-79B0BC55742B}
 		{A30244A7-BBFC-42B6-9F06-1C1080A51BAF} = {4A762C57-26E8-49A3-BD83-CA0911C96AE4}
 		{07265A59-A71B-9907-D6CF-C989CF8167CC} = {A30244A7-BBFC-42B6-9F06-1C1080A51BAF}
+		{CF4845A2-1BF9-63EC-D392-922A2CBB2A0E} = {8B68315F-10BA-4E2B-AF2E-312DCD160766}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D877B086-37FD-4AA5-8AB3-CF7E87E27425}

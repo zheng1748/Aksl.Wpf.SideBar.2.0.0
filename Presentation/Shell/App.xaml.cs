@@ -95,7 +95,7 @@ namespace Aksl.Modules.Shell
             containerRegistry.RegisterDialogWindow<Dialogs.Views.FixedSizeDialogWindow>(name: nameof(Dialogs.Views.FixedSizeDialogWindow));
             containerRegistry.RegisterSingleton(typeof(Aksl.Dialogs.Services.IDialogViewService), typeof(Aksl.Dialogs.Services.DialogViewService));
             containerRegistry.RegisterDialog<Dialogs.Views.ConfirmView, Dialogs.ViewModels.ConfirmViewModel>();
-            containerRegistry.RegisterDialog<LoginPopupView, LoginPopupViewModel>();
+            //containerRegistry.RegisterDialog<LoginPopupView, LoginPopupViewModel>();
 
             RegisterMenuFactoryAsync(containerRegistry).Await();
 
@@ -197,80 +197,9 @@ namespace Aksl.Modules.Shell
 
         protected override async void OnInitialized()
         {
-            var dialogService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<Dialogs.Services.DialogService>();
             var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+            await dialogViewService.ShowLoginDialogAsync();
 
-            var loginPopupView = Container.Resolve<LoginPopupView>();
-            var loginPopupViewModel = loginPopupView.DataContext as LoginPopupViewModel;
-
-            try
-            {
-                //loginPopupViewModel.RequestClose += (result) =>
-                //{
-                //    if (result.Result == ButtonResult.Cancel)
-                //    {
-                //        Shutdown();
-                //    }
-                //    if (result.Parameters.TryGetValue("LoginPopupViewModel", out LoginPopupViewModel loginPopupViewModel))
-                //    {
-                //        if (!loginPopupViewModel.IsSuccessful)
-                //        {
-                //            Shutdown();
-                //        }
-                //    }
-                //};
-                var parameters = new DialogParameters { { "UserNameWater", "用户名" }, { "PasswordWater", "密码" } };
-
-                //dialogService.Show<LoginPopupView>(parameters: parameters);
-                // dialogService.ShowDialog(loginPopupView);
-                //dialogService.Show<LoginPopupView>(parameters: parameters, callBack: (result) =>
-                //{
-                //    if (result.Result == ButtonResult.Cancel)
-                //    {
-                //        Shutdown();
-                //    }
-
-                //    if (result.Parameters.TryGetValue("LoginPopupViewModel", out LoginPopupViewModel loginPopupViewModel))
-                //    {
-                //        if (!loginPopupViewModel.IsSuccessful)
-                //        {
-                //            Shutdown();
-                //        }
-                //    }
-                //});
-
-                //var parameters = new DialogParameters { { "Title", "登   陆" }, { "WindowCloseButtonVisibility", "Visible" }, { "Width", "670" }, { "Height", "380" }, 
-                //                                        { "OkText", "确定" }, { "OkIconKind", "AccountAdd" }, { "OkToolTip", "登  陆" }, { "CancelText", "取消" },
-                //                                        { "UserNameWater", "用户名" }, { "PasswordWater", "密码" } };
-                //dialogService.ShowDialog(loginPopupView, parameters: parameters);
-
-                //dialogService.ShowDialog(dialogContent: loginPopupView, callBack: (result) =>
-                //{
-                //    if (result.Result == ButtonResult.Cancel)
-                //    {
-                //        Shutdown();
-                //    }
-
-                //    if (result.Parameters.TryGetValue("LoginPopupViewModel", out LoginPopupViewModel loginPopupViewModel))
-                //    {
-                //        if (!loginPopupViewModel.IsSuccessful)
-                //        {
-                //            Shutdown();
-                //        }
-                //    }
-                //});
-
-                var dialogResult = await dialogViewService.ShowDialogAsync(contentName: "LoginPopupView");
-                if (dialogResult.Result == ButtonResult.Cancel)
-                {
-                   // Shutdown();
-                }
-            }
-            catch (Exception ex)
-            {
-                dialogViewService.ConfirmWhenAsync(message: $"Unable to find \"{ex.Message}\".", title: $"Error:Missing Type").Await();
-            }
-         
             base.OnInitialized();
         }
     }

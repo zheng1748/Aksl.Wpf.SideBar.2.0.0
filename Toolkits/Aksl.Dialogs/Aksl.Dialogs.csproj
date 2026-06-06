@@ -1,24 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
     <!--<Nullable>enable</Nullable>-->
     <UseWPF>true</UseWPF>
     <!--<ImplicitUsings>enable</ImplicitUsings-->
-	<RootNamespace>Aksl.Toolkit</RootNamespace>
-    <Description>Use xaml behaviors.</Description>
-	<PackageTags>xaml</PackageTags>
+	<RootNamespace>Aksl.Dialogs</RootNamespace>
+    <Description>Use Wpf Dialogs.</Description>
     <Authors>zheng ming</Authors>
 	<Company>Aksl</Company>
-	<Product>Wpf Behaviors,Converters</Product>
+	<Product>Wpf Dialogs</Product>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Dialogs\**" />
-    <EmbeddedResource Remove="Dialogs\**" />
-    <None Remove="Dialogs\**" />
-    <Page Remove="Dialogs\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
@@ -29,6 +21,15 @@
     <ProjectReference Include="..\Prism Library\Prism.Core\Prism.Core.csproj" />
     <ProjectReference Include="..\Prism Library\Prism.Unity.Wpf\Prism.Unity.Wpf.csproj" />
     <ProjectReference Include="..\Prism Library\Prism.Wpf\Prism.Wpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Dialogs\FixedSizeDialogWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\FixedSizeDialogWindowIconButtonView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

@@ -20,7 +20,7 @@ public static class ActiveContentHelper
         var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
         var contentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: activeContentNames);
 
-        ActiveContentManager activeContentManager = new();
+        //ActiveContentManager activeContentManager = new();
 
         if (navigationParameters is null)
         {
@@ -29,13 +29,15 @@ public static class ActiveContentHelper
 
         try
         {
-            await activeContentManager.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
+            // await activeContentManager.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
+            await ActiveContentManager.Instance.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
         }
         catch (Exception ex)
         {
             string msg = !string.IsNullOrEmpty(ex.InnerException?.Message) ? ex.InnerException.Message : ex.Message;
 
-            dialogViewService.AlertAsync(message: $"{msg} \".", title: $"Add View:\"{menuItem.Title}\"").Await();
+            //dialogViewService.AlertAsync(message: $"{msg} \".", title: $"Add View:\"{menuItem.Title}\"").Await();
+            throw new Exception(msg);
         }
         //var result = await activeContentManager.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
         //if (!result.IsAdd)

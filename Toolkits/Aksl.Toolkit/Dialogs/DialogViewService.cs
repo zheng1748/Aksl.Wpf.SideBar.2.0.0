@@ -1,10 +1,12 @@
-using Aksl.Dialogs.Views;
-using Prism.Services.Dialogs;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml.Linq;
+
+using Prism.Services.Dialogs;
+
+using Aksl.Dialogs.Views;
 
 namespace Aksl.Dialogs.Services
 {
@@ -48,8 +50,8 @@ namespace Aksl.Dialogs.Services
 
         public Task ConfirmAsync(string message, string title = null, string windowCloseButtonVisibility = "Visible", double width = 650d, double height = 300d, string okText = "确 定", string cancelText = "取 消", string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null)
         {
-            var parameters = new DialogParameters {{ "IsConfirm",true },  {"Title",  title },{ "WindowCloseButtonVisibility", windowCloseButtonVisibility}, { "Width", width }, { "Height", height },
-                                                    { "OkText",  okText },{"CancelText",cancelText  },  { "Message", message } };
+            var parameters = new DialogParameters {{"IsConfirm",true },  {"Title",  title },{ "WindowCloseButtonVisibility", windowCloseButtonVisibility}, { "Width", width }, { "Height", height },
+                                                  {"OkText",  okText },{"CancelText",cancelText  },{ "Message", message } };
 
             _dialogService.ShowDialog(dialogContentName: nameof(Views.ConfirmView), parameters: parameters, windowName: windowName, callBack: callBack);
 

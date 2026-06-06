@@ -127,13 +127,13 @@ namespace Aksl.Modules.Account.ViewModels
         {
             base.OnDialogOpened(parameters);
 
-            Title = parameters.GetValue<string>("Title") ?? "登  陆";
+            Title = parameters.GetValue<string>("Title") ?? "请 登 陆";
             WindowCloseButtonVisibility = GetWindowCloseButtonVisibility(parameters.GetValue<string>("WindowCloseButtonVisibility"),Visibility.Visible);
             Width = GetDoubleValue(parameters.GetValue<string>("Width"), 650d);
             Height = GetDoubleValue(parameters.GetValue<string>("Height"), 350d);
             OkText = parameters.GetValue<string>("OkText") ?? "登陆";
             OkIconKind = GetPackIconKind(parameters.GetValue<string>("OkIconKind"), PackIconKind.AccountAdd);
-            OkToolTip = parameters.GetValue<string>("OkToolTip") ?? "登陆";
+            OkToolTip = parameters.GetValue<string>("OkToolTip") ?? "登 陆";
             CancelText = parameters.GetValue<string>("CancelText") ?? "Cancel";
 
             UserNameWater = parameters.GetValue<string>("UserNameWater") ?? "用户名";
@@ -163,7 +163,7 @@ namespace Aksl.Modules.Account.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Login In Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Login In Failure:");
             }
 
             IsLoading = false;
@@ -199,7 +199,7 @@ namespace Aksl.Modules.Account.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Close Failure:");
+                    await _dialogViewService.AlertAsync(message: $"{ex.Message}", title: "Close Failure:");
                 }
 
                 IsLoading = false;
@@ -229,7 +229,7 @@ namespace Aksl.Modules.Account.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"Please userName and  password", "Login Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Login In Failure:");
             }
 
             IsLoading = false;

@@ -124,7 +124,7 @@ namespace Aksl.Modules.Account.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Sign In Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Sign In Failure:");
             }
 
              IsSignIning = false;
@@ -167,7 +167,7 @@ namespace Aksl.Modules.Account.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Sign In Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Sign In Failure:");
             }
 
             IsSignIning = false;

@@ -1,12 +1,4 @@
-﻿using Aksl.ActiveContents;
-using Aksl.ActiveContents.ViewModels;
-using Prism;
-using Prism.Common;
-using Prism.Ioc;
-using Prism.Regions;
-using Prism.Services.Dialogs;
-using Prism.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -14,12 +6,29 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using System.Windows;
+
+using Aksl.ActiveContents;
+using Aksl.ActiveContents.ViewModels;
+using Prism;
+using Prism.Common;
+using Prism.Ioc;
+using Prism.Regions;
+using Prism.Services.Dialogs;
+using Prism.Unity;
 using Unity;
 
 namespace Aksl.Infrastructure;
 
 public class ActiveContentManager
 {
+    #region Constructors
+    public static ActiveContentManager Instance { get; }
+    static ActiveContentManager()
+    {
+        Instance = new ActiveContentManager();
+    }
+    #endregion
+
     #region Create ContentInformation Method
     public async Task<ContentInformation> CreateContentInformationAsync(Infrastructure.MenuItem menuItem, NavigationParameters navigationParameters = null)
     {
@@ -40,8 +49,8 @@ public class ActiveContentManager
 
             var viewName = viewType.Name;
             var registeredView = unityContainerExtension.Instance.Resolve<object>(viewName);
-           // var registeredView = container.Resolve<object>(viewName);
-           // var registeredView = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<object>(viewName);
+            // var registeredView = container.Resolve<object>(viewName);
+            // var registeredView = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<object>(viewName);
 
             if (registeredView is FrameworkElement frameworkElement)
             {

@@ -110,7 +110,7 @@ namespace Aksl.Modules.Pipeline.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Turn Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Turn Failure:");
             }
 
             IsLoading = false;
@@ -152,7 +152,7 @@ namespace Aksl.Modules.Pipeline.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Pause Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Pause Failure:");
             }
 
             IsLoading = false;

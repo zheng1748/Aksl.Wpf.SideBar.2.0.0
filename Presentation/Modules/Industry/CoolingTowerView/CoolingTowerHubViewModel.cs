@@ -106,7 +106,7 @@ namespace Aksl.Modules.CoolingTower.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Normal Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Normal Failure:");
             }
 
             IsLoading = false;
@@ -148,7 +148,7 @@ namespace Aksl.Modules.CoolingTower.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Error Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Error Failure:");
             }
 
             IsLoading = false;

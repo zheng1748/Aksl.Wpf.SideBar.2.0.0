@@ -1,19 +1,19 @@
-﻿using Aksl.ActiveContents.ViewModels;
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Toolkit.Controls;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Unity;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Unity;
+
+using Aksl.Infrastructure;
+using Aksl.Toolkit.Controls;
 
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 {

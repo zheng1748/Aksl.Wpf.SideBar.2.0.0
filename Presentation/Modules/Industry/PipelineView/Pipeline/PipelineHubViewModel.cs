@@ -123,7 +123,7 @@ namespace Aksl.Modules.Pipeline.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "West To East Flow Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "West To East Flow Failure:");
             }
 
             IsLoading = false;

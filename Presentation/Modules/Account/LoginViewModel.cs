@@ -153,7 +153,7 @@ namespace Aksl.Modules.Account.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Login In Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Login In Failure:");
             }
 
             IsLoading = false;
@@ -192,7 +192,7 @@ namespace Aksl.Modules.Account.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Close Failure:");
+                    await _dialogViewService.AlertAsync($"{ex.Message}", "Close Failure:");
                 }
 
                 IsLoading = false;
@@ -233,7 +233,7 @@ namespace Aksl.Modules.Account.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"Please userName and  password", "Login Failure:");
+                await _dialogViewService.AlertAsync($"Please userName and  password", "Login Failure:");
             }
 
             IsLoading = false;

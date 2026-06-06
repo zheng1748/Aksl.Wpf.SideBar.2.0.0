@@ -18,6 +18,7 @@ using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Xml.Linq;
 using Unity;
 
@@ -27,6 +28,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
 {
     #region Members
     protected readonly IEventAggregator _eventAggregator;
+    private readonly IDialogViewService _dialogViewService;
     private readonly IMenuService _menuService;
     //protected readonly HamburgerMenuSideBarItemViewModel _parent;
     //protected ObservableCollection<HamburgerMenuSideBarItemViewModel> _children;
@@ -37,6 +39,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     public HamburgerMenuSideBarItemViewModel() : base()
     {
         _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+        _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
         _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
         _menuItem = null;
         //Parent = null;
@@ -47,6 +50,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     public HamburgerMenuSideBarItemViewModel(MenuItem menuItem, HamburgerMenuSideBarItemViewModel parent) : base(menuItem.Name, menuItem.Title, parent)
     {
         _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+        _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
         _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
 
         _menuItem = menuItem;
@@ -129,7 +133,14 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                     //activeContentManager.AddViewToContentAsync(_menuItem, rightContentActiveContentViewModel, exceptionHandler).Await();
 
                     //HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
-                    ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await();
+
+                    ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(errorCallback: (ex) =>
+                    {
+                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View").Await();
+                        });
+                    });
                 }
 
                 //if (HasSubMenu && _isSelected)
@@ -155,7 +166,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
 
                 bool IsSetActiveToLeftPaneActiveContent()
                 {
-                    return HasSubMenu && IsSelected ;
+                    return HasSubMenu && IsSelected;
                 }
             }
         }

@@ -1,9 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Xml.Linq;
 
 using Prism;
 using Prism.Common;
@@ -21,17 +25,15 @@ namespace Aksl.Dialogs.Services
         void Show<T>(IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true);
         void Show(string contentName, IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true);
 
-        void ShowDialog(string dialogContentName, IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true);
-
-        void ShowDialog(FrameworkElement dialogContent, IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true);
+        void Show(FrameworkElement dialogContent, IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true);
     }
 
-    public class DialogService: Aksl.Dialogs.Services.IDialogService
-    { 
+    public class DialogService : Aksl.Dialogs.Services.IDialogService
+    {
         #region Members
         private readonly IUnityContainer _container;
         #endregion
-      
+
         #region Constructors
         public DialogService()
         {
@@ -42,6 +44,10 @@ namespace Aksl.Dialogs.Services
         #region Show Methods
         public void Show<T>(IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true)
         {
+            //var typeName = typeof(T).Name;
+            //var containerExtension = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IContainerExtension>();
+            //var content = containerExtension.Resolve<object>(typeName); 
+
             var content = _container.Resolve<T>();
             if (!(content is FrameworkElement dialogContent))
             {
@@ -62,23 +68,12 @@ namespace Aksl.Dialogs.Services
             ShowDialogInternal(dialogContent: dialogContent, parameters: parameters, windowName: windowName, callBack: callBack, isModal: isModal);
         }
 
-        public void ShowDialog(string dialogContentName, IDialogParameters parameters = null, string windowName = nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true)
+        public void Show(FrameworkElement dialogContent, IDialogParameters parameters = null, string windowName = "FixedSizeDialogWindow", Action<IDialogResult> callBack = null, bool isModal = true)
         {
-            var content = _container.Resolve<object>(dialogContentName);
-            if (!(content is FrameworkElement dialogContent))
-            {
-                throw new NullReferenceException("A dialog's content must be a FrameworkElement");
-            }
-
             ShowDialogInternal(dialogContent: dialogContent, parameters: parameters, windowName: windowName, callBack: callBack, isModal: isModal);
         }
 
-        public void ShowDialog(FrameworkElement dialogContent,IDialogParameters parameters=null, string windowName= nameof(FixedSizeDialogWindow), Action<IDialogResult> callBack = null, bool isModal = true)
-        {
-            ShowDialogInternal(dialogContent:dialogContent, parameters: parameters, windowName: windowName, callBack: callBack,isModal: isModal);
-        }
-
-        private void ShowDialogInternal(FrameworkElement dialogContent, IDialogParameters parameters, string windowName , Action<IDialogResult> callBack, bool isModal)
+        private void ShowDialogInternal(FrameworkElement dialogContent, IDialogParameters parameters, string windowName, Action<IDialogResult> callBack, bool isModal)
         {
             if (parameters is null)
             {

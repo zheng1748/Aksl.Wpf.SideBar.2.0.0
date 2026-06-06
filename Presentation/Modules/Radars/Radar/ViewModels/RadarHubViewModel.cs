@@ -226,7 +226,7 @@ namespace Aksl.Modules.RadarMap.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Play Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Play Failure:");
             }
 
             IsLoading = false;
@@ -269,7 +269,7 @@ namespace Aksl.Modules.RadarMap.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogViewService.AlertWhenAsync($"{ex.Message}", "Pause Failure:");
+                await _dialogViewService.AlertAsync($"{ex.Message}", "Pause Failure:");
             }
 
             IsLoading = false;
