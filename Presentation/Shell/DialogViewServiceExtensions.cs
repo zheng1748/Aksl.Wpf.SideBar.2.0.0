@@ -1,7 +1,11 @@
-﻿using Aksl.Dialogs.Services;
-using Aksl.Modules.Account.ViewModels;
-using Aksl.Modules.Account.Views;
-using Aksl.Toolkit.Controls;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Interop;
+
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
@@ -9,13 +13,11 @@ using Prism.Modularity;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using Prism.Unity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Interop;
+
+using Aksl.Dialogs.Services;
+using Aksl.Modules.Account.ViewModels;
+using Aksl.Modules.Account.Views;
+using Aksl.Toolkit.Controls;
 
 namespace Aksl.Modules.Shell
 {
@@ -24,7 +26,7 @@ namespace Aksl.Modules.Shell
         public static async Task ShowLoginDialogAsync(this IDialogViewService dialogViewService)
         {
             var parameters = new DialogParameters {{"Title",  "请 登 陆" },{ "WindowCloseButtonVisibility", "Visible"}, { "Width",650d }, { "Height", 350d },
-                                                  { "OkText",  "登 陆" },{"OkIconKind",PackIconKind.AccountBoxes},{"OkToolTip","登陆"  },{"CancelText","Cancel"  },{"UserNameWater","用户名"  },{"PasswordWater","密码"  }};
+                                                  { "OkText",  "登 陆" },{"OkIconKind",PackIconKind.AccountAdd},{"OkToolTip","登陆"  },{"CancelText","Cancel"  },{"UserNameWater","用户名"  },{"PasswordWater","密码"  }};
 
             #region Method
             //var loginPopupView = Container.Resolve<LoginPopupView>();
@@ -69,9 +71,9 @@ namespace Aksl.Modules.Shell
 
                 if (dialogResult.Result == ButtonResult.Cancel)
                 {
-                    dialogViewService.AlertAsync(message: "登录取消", title: "登 录").Await();
+                   //dialogViewService.AlertAsync(message: "登录取消", title: "登 录").Await();
 
-                    System.Windows.Application.Current.Shutdown();
+                   // System.Windows.Application.Current.Shutdown();
                 }
                 else if (dialogResult.Result == ButtonResult.OK)
                 {
@@ -79,13 +81,13 @@ namespace Aksl.Modules.Shell
                     {
                         if (!loginPopupViewModel.IsSuccessful)
                         {
-                            App.Current.Shutdown();
+                           // App.Current.Shutdown();
                         }
                         if (loginPopupViewModel.IsSuccessful)
                         {
                             string userName = loginPopupViewModel.UserName;
 
-                            dialogViewService.AlertAsync(message: "登录成功", title: "登 录").Await();
+                            //dialogViewService.AlertAsync(message: "登录成功", title: "登 录").Await();
                         }
                     }
                 }
@@ -93,14 +95,14 @@ namespace Aksl.Modules.Shell
             catch (OperationCanceledException ocex)
             {
                 await dialogViewService.AlertAsync(message: $"{ocex.Message}", title: "登录");
-                App.Current.Shutdown();
+               // App.Current.Shutdown();
             }
             catch (Exception ex)
             {
                 string msg = !string.IsNullOrEmpty(ex.InnerException?.Message) ? ex.InnerException.Message : ex.Message;
                 await dialogViewService.AlertAsync(message: msg, title: "登录");
 
-                System.Windows.Application.Current.Shutdown();
+                //System.Windows.Application.Current.Shutdown();
             }
             #endregion
         }

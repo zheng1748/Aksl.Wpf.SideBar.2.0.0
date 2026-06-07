@@ -36,11 +36,11 @@ namespace Aksl.Modules.Shell.ViewModels
         #region Constructors
         public ShellViewModel()
         {
-            _container = (Application.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
-            _serviceProvider = (Application.Current as PrismApplicationBase).Container.Resolve<IServiceProvider>();
-            _regionManager = (Application.Current as PrismApplicationBase).Container.Resolve<IRegionManager>();
-            _eventAggregator = (Application.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
-            _dialogViewService = (Application.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+            _container = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
+            _serviceProvider = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IServiceProvider>();
+            _regionManager = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IRegionManager>();
+            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+            _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
             RegisterActiveContents();
 

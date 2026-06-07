@@ -38,24 +38,36 @@ namespace Aksl.Modules.Account.ViewModels
         #endregion
 
         #region Properties
-        public string WindownTitle { get; private set; } = "Sign In";
-
-        private string _userName;
+        private string _userName;/*\n\r*/
         [Required(ErrorMessage = "用户名不能为空")]
-        [RegularExpression("^[a-zA-Z]{1}([a-zA-Z0-9]){3,15}$", ErrorMessage = "用户名必须是4到16个字母或者\n\r数字,且以字母开头.")]
+        [RegularExpression("^[a-zA-Z]{1}([a-zA-Z0-9]){3,15}$", ErrorMessage = "用户名必须是4到16个字母或者数字,且以字母开头.")]
         public string UserName
         {
             get => _userName;
             set => SetProperty<string>(ref _userName, value);
         }
 
+        private string _userNameWater = "UserName";
+        public string UserNameWater
+        {
+            get => _userNameWater;
+            set => SetProperty(ref _userNameWater, value);
+        }
+
         private string _password;
         [Required(ErrorMessage = "密码不能为空")]
-        [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*\d)(?=.*[$@$!%#?&])[a-zA-Z\d$@$!%#?&]{8,}$", ErrorMessage = "密码至少8个字符,必须包含一个字母,\n\r一个数字,一个特殊字符.")]
+        [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*\d)(?=.*[$@$!%#?&])[a-zA-Z\d$@$!%#?&]{8,}$", ErrorMessage = "密码至少8个字符,必须包含一个字母,一个数字,一个特殊字符.")]
         public string Password
         {
             get => _password;
             set => SetProperty<string>(ref _password, value);
+        }
+
+        private string _passwordWater = "Password";
+        public string PasswordWater
+        {
+            get => _passwordWater;
+            set => SetProperty(ref _passwordWater, value);
         }
 
         private bool _isLoading = false;
@@ -63,12 +75,6 @@ namespace Aksl.Modules.Account.ViewModels
         {
             get => _isLoading;
             set => SetProperty<bool>(ref _isLoading, value);
-            //{
-            //    if (SetProperty<bool>(ref _isLoading, value))
-            //    {
-            //        (LoginCommand as DelegateCommand)?.RaiseCanExecuteChanged();
-            //    }
-            //}
         }
 
         private string _statusMessage;
@@ -105,19 +111,6 @@ namespace Aksl.Modules.Account.ViewModels
         #endregion
 
         #region Properties
-        private string _userNameWater = "UserName";
-        public string UserNameWater
-        {
-            get => _userNameWater;
-            set => SetProperty(ref _userNameWater, value);
-        }
-
-        private string _passwordWater = "Password";
-        public string PasswordWater
-        {
-            get => _passwordWater;
-            set => SetProperty(ref _passwordWater, value);
-        }
         #endregion
 
         #region IDialogAware
@@ -148,7 +141,9 @@ namespace Aksl.Modules.Account.ViewModels
 
             try
             {
-                IsSuccessful = true;
+                StatusMessage = "Logining....";
+
+                 IsSuccessful = true;
 
                 ButtonResult buttonResult = ButtonResult.None;
                 DialogParameters parameters = new()
@@ -165,6 +160,8 @@ namespace Aksl.Modules.Account.ViewModels
             {
                 await _dialogViewService.AlertAsync($"{ex.Message}", "Login In Failure:");
             }
+
+            StatusMessage = "";
 
             IsLoading = false;
         }
