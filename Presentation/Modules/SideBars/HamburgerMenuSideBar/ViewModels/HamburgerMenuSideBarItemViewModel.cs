@@ -189,26 +189,6 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                 await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View To RightContent");
             });
         });
-        //var contentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: activeContentNames);
-
-        //if (navigationParameters is null)
-        //{
-        //    navigationParameters = new() { { "CurrentMenuItem", menuItem } };
-        //}
-
-        //try
-        //{
-        //    await ActiveContentManager.Instance.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
-        //}
-        //catch (Exception ex)
-        //{
-        //    string msg = !string.IsNullOrEmpty(ex.InnerException?.Message) ? ex.InnerException.Message : ex.Message;
-
-        //    System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
-        //    {
-        //        await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
-        //    });
-        //}
     }
     #endregion
 
