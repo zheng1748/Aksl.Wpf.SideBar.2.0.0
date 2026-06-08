@@ -36,7 +36,7 @@
 			  IconKind="ThermometerAlert"
 			  ModuleName=""
 			  ViewName="" 
-			  IsNextNavigation="False"
+			  IsNextNavigation="True"
 			  NavigationName="Thermometers">
 	</MenuItem>
 	<MenuItem Id="1"

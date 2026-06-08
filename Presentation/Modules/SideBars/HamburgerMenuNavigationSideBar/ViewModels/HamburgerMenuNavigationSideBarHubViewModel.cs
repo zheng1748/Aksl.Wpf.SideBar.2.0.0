@@ -83,7 +83,15 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                     {
                         if (gmvm.SelectedMenuItem is not null)
                         {
-                            ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
+                            //ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
+
+                            ActiveContentManagerExtensions.AddViewToContentAsync(gmvm.SelectedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+                            {
+                                System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+                                {
+                                    await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
+                                });
+                            });
                             //var result = await ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
                             //if (!result)
                             //{
@@ -97,7 +105,15 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                         if (gmvm.SelectedNoGroupedMenuItem is not null)
                         {
                             //ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedNoGroupedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, _dialogViewService).Await();
-                            ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedNoGroupedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
+                          //  ActiveContentHelper.AddViewToContentAsync(gmvm.SelectedNoGroupedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
+
+                            ActiveContentManagerExtensions.AddViewToContentAsync(gmvm.SelectedNoGroupedMenuItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+                            {
+                                System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+                                {
+                                    await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
+                                });
+                            });
                         }
                     }
                 }

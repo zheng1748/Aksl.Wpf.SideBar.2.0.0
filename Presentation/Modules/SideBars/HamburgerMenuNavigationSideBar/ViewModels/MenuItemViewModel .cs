@@ -14,6 +14,7 @@ using Unity;
 
 using Aksl.Infrastructure;
 using Aksl.Toolkit.Controls;
+using Aksl.Dialogs.Services;
 
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 {
@@ -75,7 +76,7 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                 {
                     if (IsLeaf && _isSelected)
                     {
-                        //var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+                        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
                         //var rightContentActiveContentViewModel = (System.Windows.Application.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
 
                         //// var contentInformation = activeContentManager.CreateContentInformationAsync(_menuItem);
@@ -91,7 +92,15 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
                         //var contentInformation = ActiveContentHelper.CreateContentInformationAsync(_menuItem);
                         //ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, dialogViewService).Await();
 
-                       ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
+                       //ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
+
+                        ActiveContentManagerExtensions.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+                        {
+                            System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+                            {
+                                await dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
+                            });
+                        });
                     }
                 }
             }

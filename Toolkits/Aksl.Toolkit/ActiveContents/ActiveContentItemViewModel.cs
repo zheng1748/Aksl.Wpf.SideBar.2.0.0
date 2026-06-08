@@ -59,7 +59,6 @@ namespace Aksl.ActiveContents.ViewModels
                     if (ViewElementType is not null)
                     {
                         _viewElement = Activator.CreateInstance(ViewElementType) as DependencyObject;
-                       // _viewElement = (PrismApplication.Current as PrismApplicationBase).Container.Resolve(ViewElementType) as DependencyObject;
                     }
                 }
 

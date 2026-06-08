@@ -1,19 +1,22 @@
-﻿using Aksl.ActiveContents;
-using Aksl.ActiveContents.ViewModels;
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Modules.HamburgerMenuSideBar.ViewModels;
-using Aksl.Modules.HamburgerMenuSideBar.Views;
-using Prism;
-using Prism.Ioc;
-using Prism.Regions;
-using Prism.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Interop;
+
+using Prism;
+using Prism.Ioc;
+using Prism.Regions;
+using Prism.Unity;
+using Unity;
+
+using Aksl.ActiveContents;
+using Aksl.ActiveContents.ViewModels;
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+
+using Aksl.Modules.HamburgerMenuSideBar.ViewModels;
+using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.HamburgerMenuSideBar;
 
@@ -49,8 +52,7 @@ public static class HamburgerMenuSideBarHelper
     #region Add Views To LeftPane Method
     public static async Task AddViewsToLeftPaneAsync(HamburgerMenuSideBarItemViewModel topuSideBarItem)
     {
-        var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
-        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+        var leftPaneActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
         NodeResolver<HamburgerMenuSideBarItemViewModel> nodeResolver = new();
 
        // var sublLeafMenuItems = await topuSideBarItem.GetSubMenuAsync();
@@ -217,7 +219,7 @@ public static class HamburgerMenuSideBarHelper
        //     await dialogViewService.AlertAsync(message: $"message \".", title: $"Error:Missing ViewType");
        // }
 
-          ActiveContentHelper.AddViewToContentAsync(menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await();
+          //ActiveContentHelper.AddViewToContentAsync(menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await();
         //activeContentManager.AddViewToContentAsync(menuItem, rightContentActiveContentViewModel, navigationParameters, exceptionHandler).Await();
 
         //string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;

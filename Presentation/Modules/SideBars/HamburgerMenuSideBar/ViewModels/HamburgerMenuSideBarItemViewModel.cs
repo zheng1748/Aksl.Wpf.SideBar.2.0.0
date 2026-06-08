@@ -1,17 +1,4 @@
-﻿using Aksl.ActiveContents;
-using Aksl.ActiveContents.ViewModels;
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
-using Aksl.Modules.HamburgerMenuSideBar.Views;
-using Aksl.Toolkit.Controls;
-using Prism;
-using Prism.Events;
-using Prism.Ioc;
-using Prism.Mvvm;
-using Prism.Regions;
-using Prism.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
@@ -20,7 +7,23 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Xml.Linq;
+
+using Prism;
+using Prism.Events;
+using Prism.Ioc;
+using Prism.Mvvm;
+using Prism.Regions;
+using Prism.Unity;
 using Unity;
+
+using Aksl.ActiveContents;
+using Aksl.ActiveContents.ViewModels;
+using Aksl.Dialogs.Services;
+using Aksl.Toolkit.Controls;
+
+using Aksl.Infrastructure;
+using Aksl.Infrastructure.Events;
+using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels;
 
@@ -32,26 +35,27 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     private readonly IMenuService _menuService;
     //protected readonly HamburgerMenuSideBarItemViewModel _parent;
     //protected ObservableCollection<HamburgerMenuSideBarItemViewModel> _children;
-    private readonly MenuItem _menuItem;
+    private readonly Aksl.Infrastructure.MenuItem _menuItem;
     #endregion
 
     #region Constructors
     public HamburgerMenuSideBarItemViewModel() : base()
     {
-        _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
-        _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
-        _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
+        _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
+        _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
+        _menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
+
         _menuItem = null;
         //Parent = null;
 
         //_children = new();
     }
 
-    public HamburgerMenuSideBarItemViewModel(MenuItem menuItem, HamburgerMenuSideBarItemViewModel parent) : base(menuItem.Name, menuItem.Title, parent)
+    public HamburgerMenuSideBarItemViewModel(Aksl.Infrastructure.MenuItem menuItem, HamburgerMenuSideBarItemViewModel parent) : base(menuItem.Name, menuItem.Title, parent)
     {
-        _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
-        _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
-        _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
+        _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
+        _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
+        _menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
 
         _menuItem = menuItem;
 
@@ -80,7 +84,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     #endregion
 
     #region Properties
-    public MenuItem MenuItem => _menuItem;
+    public Aksl.Infrastructure.MenuItem MenuItem => _menuItem;
     //public string IconPath => _menuItem.IconPath;
     //public string Name => _menuItem.Name;
     public bool HasViewName => !string.IsNullOrEmpty(_menuItem.ViewName);
@@ -118,45 +122,32 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
         {
             if (SetProperty<bool>(ref _isSelected, value))
             {
-                // if (!HasSubMenu && IsLeaf && _isSelected)
                 if (IsAddViewToRightContent())
                 {
-                    //var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
-                    //var rightContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
+                    AddViewToRightContentAsync();
 
-                    //ActiveContentManager activeContentManager = new();
-                    //Action<string> exceptionHandler = (message) =>
+                    //ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
                     //{
-                    //    dialogViewService.AlertAsync(message: $"\"{message}\".", title: $"Error:Add View");
-                    //};
-                    //NavigationParameters navigationParameters = new() { { "CurrentMenuItem", menuItem } };
-                    //activeContentManager.AddViewToContentAsync(_menuItem, rightContentActiveContentViewModel, exceptionHandler).Await();
-
-                    //HamburgerMenuSideBarHelper.AddViewToRightContentAsync(_menuItem).Await();
-
-                    ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(errorCallback: (ex) =>
-                    {
-                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View").Await();
-                        });
-                    });
+                    //    System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+                    //    {
+                    //        await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
+                    //    });
+                    //});
                 }
 
-                //if (HasSubMenu && _isSelected)
-                if (IsSetActiveToLeftPaneActiveContent())
+                if (IsSetLeftPaneActiveContentItem())
                 {
-                    var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+                    SetLeftPaneActiveContentItem();
+                    //var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
 
-                    if (leftPaneActiveContentViewModel.ContainItemByName(this.Path))
-                    {
-                        leftPaneActiveContentViewModel.SetContentItemByName(this.Path);
-                    }
-                    else
-                    {
-                        HamburgerMenuSideBarHelper.AddViewsToLeftPaneAsync(this).Await();
-                    }
-                    //AddViewToLeftPaneAsync().Await();
+                    //if (leftPaneActiveContentViewModel.ContainItemByName(this.Path))
+                    //{
+                    //    leftPaneActiveContentViewModel.SetContentItemByName(this.Path);
+                    //}
+                    //else
+                    //{
+                    //    HamburgerMenuSideBarHelper.AddViewsToLeftPaneAsync(this).Await();
+                    //}
                 }
 
                 bool IsAddViewToRightContent()
@@ -164,7 +155,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                     return !HasSubMenu && IsLeaf && IsSelected && !string.IsNullOrEmpty(_menuItem.ViewName);
                 }
 
-                bool IsSetActiveToLeftPaneActiveContent()
+                bool IsSetLeftPaneActiveContentItem()
                 {
                     return HasSubMenu && IsSelected;
                 }
@@ -185,6 +176,61 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
         get => _isEnabled;
 
         set => SetProperty<bool>(ref _isEnabled, value);
+    }
+    #endregion
+
+    #region Add View To RightContent Method
+    public void AddViewToRightContentAsync()
+    {
+        ActiveContentManagerExtensions.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+        {
+            System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+            {
+                await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
+            });
+        });
+        //var contentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: activeContentNames);
+
+        //if (navigationParameters is null)
+        //{
+        //    navigationParameters = new() { { "CurrentMenuItem", menuItem } };
+        //}
+
+        //try
+        //{
+        //    await ActiveContentManager.Instance.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
+        //}
+        //catch (Exception ex)
+        //{
+        //    string msg = !string.IsNullOrEmpty(ex.InnerException?.Message) ? ex.InnerException.Message : ex.Message;
+
+        //    System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+        //    {
+        //        await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
+        //    });
+        //}
+    }
+    #endregion
+
+    #region Set LeftPane Active ContentItem Method
+    public void SetLeftPaneActiveContentItem()
+    {
+        var leftPaneActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+
+        if (leftPaneActiveContentViewModel.ContainItemByName(this.Path))
+        {
+            leftPaneActiveContentViewModel.SetContentItemByName(this.Path);
+        }
+        else
+        {
+            HamburgerMenuSideBarHelper.AddViewsToLeftPaneAsync(this).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+            {
+                System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+                {
+                    await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
+                });
+            });
+        }
     }
     #endregion
 

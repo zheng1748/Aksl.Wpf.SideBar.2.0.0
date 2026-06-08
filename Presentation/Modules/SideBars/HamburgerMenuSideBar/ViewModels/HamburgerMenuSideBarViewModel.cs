@@ -10,6 +10,7 @@ using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Unity;
+using Unity;
 
 using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
@@ -25,7 +26,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         #region Constructors
         public HamburgerMenuSideBarViewModel()
         {
-            _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
+            _menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
 
             AllLeafHamburgerMenuSideBarItems = new();
         }

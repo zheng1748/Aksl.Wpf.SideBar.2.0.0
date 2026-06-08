@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Aksl.Infrastructure
 {
@@ -39,13 +40,26 @@ namespace Aksl.Infrastructure
         }
         #endregion
 
-        #region Get Type By ViewName Method
-        public static Type GetTypeByViewName(this Infrastructure.MenuItem menuItem)
+        #region Get ViewTypeName Method
+        public static Type GetViewType(this Infrastructure.MenuItem menuItem)
         {
             string viewTypeAssemblyQualifiedName = menuItem.ViewName;
             Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
 
             return viewType;
+        }
+
+        public static string GetViewTypeName(this Infrastructure.MenuItem menuItem)
+        {
+            string viewTypeAssemblyQualifiedName = menuItem.ViewName;
+            Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
+
+            if (viewType is null)
+            {
+                throw new ArgumentException($"Missing Type {menuItem.ViewName}");
+            }
+
+            return viewType.Name;
         }
         #endregion
 

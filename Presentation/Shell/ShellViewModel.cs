@@ -42,7 +42,7 @@ namespace Aksl.Modules.Shell.ViewModels
             _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
             _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
 
-            RegisterActiveContents();
+            using var _ = RegisterActiveContents();
 
             //RegisterContentChangedEvents();
         }
@@ -73,7 +73,7 @@ namespace Aksl.Modules.Shell.ViewModels
         #endregion
 
         #region Register ActiveContent Method
-        private void RegisterActiveContents()
+        private async Task RegisterActiveContents()
         {
             try
             {
@@ -129,7 +129,7 @@ namespace Aksl.Modules.Shell.ViewModels
             }
             catch (Exception ex)
             {
-                _dialogViewService.AlertAsync(message: $"Registering Message \"{ex.Message}\"", title: "Error:Register ActiveContents").Await();
+                await _dialogViewService.AlertAsync(message: $"Registering Message \"{ex.Message}\"", title: "Error:Register ActiveContents");
             }
         }
         #endregion

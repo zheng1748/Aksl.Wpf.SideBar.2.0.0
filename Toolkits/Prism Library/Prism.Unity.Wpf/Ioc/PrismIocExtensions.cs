@@ -27,5 +27,17 @@ namespace Prism.Unity
         {
             return ((IContainerExtension<IUnityContainer>)containerRegistry).Instance;
         }
+
+        public static UnityContainerExtension GetUnityContainerExtension()
+        {
+            var unityContainerExtension = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<UnityContainerExtension>("CurrentContainer");
+            return unityContainerExtension;
+        }
+
+        public static IUnityContainer GetContainer()
+        {
+            var unityContainerExtension = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<UnityContainerExtension>("CurrentContainer");
+            return unityContainerExtension.Instance;
+        }
     }
 }
