@@ -124,7 +124,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
             {
                 if (IsAddViewToRightContent())
                 {
-                    AddViewToRightContentAsync();
+                    AddViewToRightContent();
 
                     //ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
                     //{
@@ -180,13 +180,13 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     #endregion
 
     #region Add View To RightContent Method
-    public void AddViewToRightContentAsync()
+    public void AddViewToRightContent()
     {
         ActiveContentManagerExtensions.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
         {
             System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
             {
-                await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
+                await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View To RightContent");
             });
         });
         //var contentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: activeContentNames);

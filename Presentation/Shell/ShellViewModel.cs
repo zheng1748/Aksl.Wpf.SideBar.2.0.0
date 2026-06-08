@@ -77,11 +77,11 @@ namespace Aksl.Modules.Shell.ViewModels
         {
             try
             {
-                RegisterShellContentActiveContent();
-                void RegisterShellContentActiveContent()
+                RegisterShellActiveContent();
+                void RegisterShellActiveContent()
                 {
                     _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.ShellContent);
-                    ShellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+                    ShellContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
 
                     RegisterShellContentActiveContent();
                     void RegisterShellContentActiveContent()
@@ -115,7 +115,7 @@ namespace Aksl.Modules.Shell.ViewModels
                     void RegisterLoginActiveContent()
                     {
                         _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.LoginContent);
-                        LoginActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LoginContent);
+                        LoginActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: ActiveContentNames.LoginContent);
 
                         LoginActiveContentViewModel.Add(new()
                         {

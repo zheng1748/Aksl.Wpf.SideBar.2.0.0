@@ -1,15 +1,18 @@
-﻿using Aksl.Toolkit.Controls;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Controls;
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Unity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+
+using Unity;
+
+using Aksl.Toolkit.Controls;
 
 namespace Aksl.Infrastructure
 {
@@ -66,7 +69,7 @@ namespace Aksl.Infrastructure
         #region Get Next SubMenu Method
         public static async Task<IEnumerable<Infrastructure.MenuItem>> GetNextSubMenuAsync(this Infrastructure.MenuItem menuItem)
         {
-            var menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
+            var menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
 
             IEnumerable<Infrastructure.MenuItem> subMenuItems = new List<Infrastructure.MenuItem>();
 
@@ -93,7 +96,7 @@ namespace Aksl.Infrastructure
         #region Get LeafMenuItems Method
         public static async Task<IEnumerable<Infrastructure.MenuItem>> GetLeafMenuItems(this Infrastructure.MenuItem menuItem)
         {
-            var menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
+            var menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
             List<Infrastructure.MenuItem> leafMenuItems = new();
 
             await RecursiveSubMenuItem(menuItem);
