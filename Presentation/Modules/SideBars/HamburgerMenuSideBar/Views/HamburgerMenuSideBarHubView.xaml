@@ -955,11 +955,11 @@
                         <DockPanel>
                             <StackPanel DockPanel.Dock="Top"
                                         Orientation="Horizontal"
-                                        Height="30"
+                                        Height="32"
                                         Visibility="{Binding Path=MoveButtonVisibility}">
                                 <Button Command="{Binding Path=MovePreviousCommand,Mode=OneWay}"
                                         CommandParameter="{Binding Path=DataContext.SelectedContentItem,ElementName=LeftPaneHamburgerMenuSideBarActiveContentView}"
-                                        Content="{materialDesign:PackIcon Kind=ArrowLeft,Size=30}"
+                                        Content="{materialDesign:PackIcon Kind=ArrowLeft,Size=32}"
                                         Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                                         Width="{Binding Path=Content.Width,RelativeSource={RelativeSource Mode=Self}}"
                                         Height="{Binding Path=Content.Height,RelativeSource={RelativeSource Mode=Self}}"
