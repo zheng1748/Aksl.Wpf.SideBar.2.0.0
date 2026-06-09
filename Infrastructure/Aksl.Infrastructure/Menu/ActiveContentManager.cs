@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using System.Windows;
 
-using Aksl.ActiveContents;
-using Aksl.ActiveContents.ViewModels;
 using Prism;
 using Prism.Common;
 using Prism.Ioc;
@@ -16,6 +15,9 @@ using Prism.Regions;
 using Prism.Services.Dialogs;
 using Prism.Unity;
 using Unity;
+
+using Aksl.ActiveContents;
+using Aksl.ActiveContents.ViewModels;
 
 namespace Aksl.Infrastructure;
 
@@ -73,22 +75,23 @@ public class ActiveContentManager
     {
         var viewName = menuItem.GetViewTypeName();
 
-        ActiveContents.ContentInformation contentInformation = await CreateContentInformationAsync(menuItem, navigationParameters);
-
         var currentView = activeContentViewModel.GetStoreViewElementByName(menuItem.Name);
         if (currentView is not null)
         {
             if (menuItem.IsCacheable)
             {
-                activeContentViewModel.SetContentItem(contentInformation);
+               // activeContentViewModel.SetContentItem(contentInformation);
+                activeContentViewModel.SetContentItemByName(menuItem.Name);
             }
             else
             {
+                ActiveContents.ContentInformation contentInformation = await CreateContentInformationAsync(menuItem, navigationParameters);
                 activeContentViewModel.RetsetContentItem(contentInformation);
             }
         }
         else
         {
+            ActiveContents.ContentInformation contentInformation = await CreateContentInformationAsync(menuItem, navigationParameters);
             activeContentViewModel.Add(contentInformation);
         }
     }

@@ -8,16 +8,15 @@ using Prism.Unity;
 using Unity;
 
 using Aksl.ActiveContents.ViewModels;
-using Aksl.Dialogs.Services;
 
 namespace Aksl.Infrastructure;
 
 public static class ActiveContentManagerExtensions
 {
     #region Add View To Content Method
-    public static async Task AddViewToContentAsync(Infrastructure.MenuItem menuItem, string activeContentNames, NavigationParameters navigationParameters = null)
+    public static async Task AddViewToContentAsync(Infrastructure.MenuItem menuItem, string activeContentName, NavigationParameters navigationParameters = null)
     {
-        var contentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: activeContentNames);
+        var contentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: activeContentName);
 
         if (navigationParameters is null)
         {

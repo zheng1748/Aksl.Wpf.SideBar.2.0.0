@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 using Prism;
 using Prism.Events;
@@ -81,6 +82,20 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         {
             get => _isLoading;
             set => SetProperty<bool>(ref _isLoading, value);
+        }
+        #endregion
+
+        #region SelectionChanged Event
+        //private event System.Windows.Controls.SelectionChangedEventHandler _selectionChangedEventHandler;
+        //public event System.Windows.Controls.SelectionChangedEventHandler SelectionItemChanged
+        //{
+        //    add { _selectionChangedEventHandler += value; }
+        //    remove { _selectionChangedEventHandler -= value; }
+        //}
+
+        public void ExecuteSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+           // _selectionChangedEventHandler?.Invoke(sender, e);
         }
         #endregion
 

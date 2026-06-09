@@ -512,11 +512,11 @@
                        Margin="0,1,0,0"
                        Height="8"
                        BorderBrush="#193441" />
-            
+
             <acviews:ActiveContentView x:Name="ShellContentActiveContentView"
-                                        Grid.Row="2"
-                                        Margin="1"
-                                        DataContext="{Binding Path=ShellContentActiveContentViewModel}">
+                                       Grid.Row="2"
+                                       Margin="1"
+                                       DataContext="{Binding Path=ShellContentActiveContentViewModel}">
                 <ContentControl.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform />

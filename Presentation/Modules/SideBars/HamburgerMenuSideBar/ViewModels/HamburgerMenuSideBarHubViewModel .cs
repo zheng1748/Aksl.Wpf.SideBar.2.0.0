@@ -26,6 +26,7 @@ using Aksl.ActiveContents.ViewModels;
 using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
 using Aksl.Infrastructure.Events;
+
 using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
@@ -99,6 +100,17 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             get
             {
                 return LeftPaneActiveContentViewModel.CanMove;
+            }
+        }
+
+        private Visibility _moveButtonVisibility = Visibility.Visible;
+        public Visibility MoveButtonVisibility
+        {
+            get
+            {
+                var isAllAddView =  TopHamburgerMenuSideBar.AllLeafHamburgerMenuSideBarItems.All(msi => msi.IsLeaf && !msi.HasSubMenu && msi.HasViewName);
+                _moveButtonVisibility = isAllAddView ? Visibility.Collapsed : Visibility.Visible;
+                return _moveButtonVisibility;
             }
         }
         #endregion
@@ -227,14 +239,16 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                                 RightContentActiveContentViewModel.ClearSelectedItem();
                             }
 
-                            if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is not null && IsSetLeftPaneActiveContentItem(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem))
+                            //if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is not null && IsSetLeftPaneActiveContentItem(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem))
+                            if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is not null &&
+                                SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.IsSetLeftPaneActiveContentItem)
                             {
                                 if (hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu is not null &&
                                     hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu != SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem)
                                 {
                                     // SelectedHamburgerMenuSideBarItem = hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu;
-      
-                                       hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu.IsSelected = true;
+
+                                    hamburgerMenuSideBarViewModel.LastHamburgerMenuSideBarItemWithNotSubMenu.IsSelected = true;
                                 }
                                 else
                                 {
@@ -243,7 +257,9 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                             }
                             else
                             {
-                                if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is not null && IsAddViewToRightContent(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem))
+                                //if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is not null && IsAddViewToRightContent(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem))
+                                if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is not null &&
+                                    SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.IsAddViewToRightContent)
                                 {
                                     ActiveContentManagerExtensions.AddViewToContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
                                     {
@@ -272,7 +288,8 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         #endregion
 
         #region HamburgerMenu Properties
-        private Brush _paneBackground = new SolidColorBrush(Colors.White);
+      //  private Brush _paneBackground = new SolidColorBrush(Colors.Transparent);
+        private Brush _paneBackground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D3D3D3"));
         public Brush PaneBackground
         {
             get => _paneBackground;
@@ -510,7 +527,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
             var lastIndex = activeContentItemViewModel.Name.LastIndexOf(new string("."));
             return lastIndex >= -1;
-            // return LeftPaneActiveContentViewModel.CanMovePrevious();
         }
 
         private void ExecuteBackByName(ActiveContentItemViewModel activeContentItemViewModel)
@@ -526,8 +542,9 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                 }
 
                 var parentName = activeContentItemViewModel.Name.Substring(0, lastIndex);
-                var contentItem = LeftPaneActiveContentViewModel.GetActiveContentItemByName(parentName);
-                if (contentItem is null)
+                //var contentItem = LeftPaneActiveContentViewModel.GetActiveContentItemByName(parentName);
+                //if (contentItem is null)
+                if (!LeftPaneActiveContentViewModel.ContainItemByName(parentName))
                 {
                     RecursiveSubActiveContentItemViewModel(parentName);
                 }

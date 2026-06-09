@@ -43,6 +43,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Unity;
 
 namespace Aksl.Modules.Shell
 {
@@ -197,10 +198,9 @@ namespace Aksl.Modules.Shell
 
         protected override async void OnInitialized()
         {
-            var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
-            await dialogViewService.ShowLoginDialogAsync();
-
             base.OnInitialized();
+
+            await PrismIocExtensions.GetContainer().Resolve<IDialogViewService>().ShowLoginDialogAsync();
         }
     }
 }

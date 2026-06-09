@@ -33,8 +33,6 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     protected readonly IEventAggregator _eventAggregator;
     private readonly IDialogViewService _dialogViewService;
     private readonly IMenuService _menuService;
-    //protected readonly HamburgerMenuSideBarItemViewModel _parent;
-    //protected ObservableCollection<HamburgerMenuSideBarItemViewModel> _children;
     private readonly Aksl.Infrastructure.MenuItem _menuItem;
     #endregion
 
@@ -46,9 +44,6 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
         _menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
 
         _menuItem = null;
-        //Parent = null;
-
-        //_children = new();
     }
 
     public HamburgerMenuSideBarItemViewModel(Aksl.Infrastructure.MenuItem menuItem, HamburgerMenuSideBarItemViewModel parent) : base(menuItem.Name, menuItem.Title, parent)
@@ -58,36 +53,12 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
         _menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
 
         _menuItem = menuItem;
-
-        //Parent = parent;
-        //Parent?.Children.Add(this);
-
-        //_children = new();
     }
-
-    //public HamburgerMenuSideBarItemViewModel(IEventAggregator eventAggregator, MenuItem menuItem) : this(eventAggregator, menuItem, null)
-    //{
-    //    RaisePropertyChanged(nameof(IsLeaf));
-    //}
-
-    //public HamburgerMenuSideBarItemViewModel(IEventAggregator eventAggregator, MenuItem menuItem, HamburgerMenuSideBarItemViewModel parent)
-    //{
-    //    _eventAggregator = eventAggregator;
-    //    _menuItem = menuItem;
-    //    _parent = parent;
-
-    //    _children = new((from child in _menuItem.SubMenus
-    //                     select new HamburgerMenuSideBarItemViewModel(eventAggregator, child, this)).ToList<HamburgerMenuSideBarItemViewModel>());
-
-    //    RaisePropertyChanged(nameof(IsLeaf));
-    //}
     #endregion
 
     #region Properties
     public Aksl.Infrastructure.MenuItem MenuItem => _menuItem;
-    //public string IconPath => _menuItem.IconPath;
-    //public string Name => _menuItem.Name;
-    public bool HasViewName => !string.IsNullOrEmpty(_menuItem.ViewName);
+  //  public bool HasViewName => !string.IsNullOrEmpty(_menuItem.ViewName);
     public string WorkspaceViewEventName { get; set; }
     //public int Level => _menuItem.Level;
     public string NavigationName => _menuItem.NavigationName;
@@ -96,10 +67,15 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     {
         get
         {
-           return _menuItem.HasNextSubMenu();
-          // return HasSubMenuInternal();
+            return _menuItem.HasNextSubMenu();
+            // return HasSubMenuInternal();
         }
     }
+
+
+
+    public bool HasViewName =>
+        _menuItem.HasViewName();// return HasSubMenuInternal();
 
     public PackIconKind IconKind
     {
@@ -114,6 +90,13 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
         }
     }
 
+    public bool IsAddViewToRightContent => 
+           IsSelected && IsLeaf && !HasSubMenu && HasViewName;
+
+
+    public bool IsSetLeftPaneActiveContentItem => 
+          IsSelected && HasSubMenu;
+
     private bool _isSelected = false;
     public bool IsSelected
     {
@@ -122,7 +105,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
         {
             if (SetProperty<bool>(ref _isSelected, value))
             {
-                if (IsAddViewToRightContent())
+                if (IsAddViewToRightContent)
                 {
                     AddViewToRightContent();
 
@@ -135,7 +118,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                     //});
                 }
 
-                if (IsSetLeftPaneActiveContentItem())
+                if (IsSetLeftPaneActiveContentItem)
                 {
                     SetLeftPaneActiveContentItem();
                     //var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
@@ -150,15 +133,16 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                     //}
                 }
 
-                bool IsAddViewToRightContent()
-                {
-                    return !HasSubMenu && IsLeaf && IsSelected && !string.IsNullOrEmpty(_menuItem.ViewName);
-                }
+                //bool IsAddViewToRightContent()
+                //{
+                //    //return !HasSubMenu && IsLeaf && IsSelected && !string.IsNullOrEmpty(_menuItem.ViewName);
+                //    return IsSelected && IsLeaf && !HasSubMenu && HasViewName;
+                //}
 
-                bool IsSetLeftPaneActiveContentItem()
-                {
-                    return HasSubMenu && IsSelected;
-                }
+                //bool IsSetLeftPaneActiveContentItem()
+                //{
+                //    return IsSelected && HasSubMenu;
+                //}
             }
         }
     }
@@ -207,7 +191,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
             {
                 System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
                 {
-                    await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
+                    await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View To LeftContent");
                 });
             });
         }

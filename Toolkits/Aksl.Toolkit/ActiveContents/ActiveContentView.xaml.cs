@@ -19,5 +19,16 @@ namespace Aksl.ActiveContents.Views
         {
             InitializeComponent();
         }
+
+        #region Background Property
+        public static readonly DependencyProperty ActiveBackgroundProperty =
+            DependencyProperty.Register(nameof(ActiveBackground), typeof(System.Windows.Media.Brush), typeof(ActiveContentView), new PropertyMetadata(defaultValue: System.Windows.Media.Brushes.WhiteSmoke));
+
+        public System.Windows.Media.Brush ActiveBackground
+        {
+            get => (System.Windows.Media.Brush)GetValue(ActiveBackgroundProperty);
+            set => SetValue(ActiveBackgroundProperty, value);
+        }
+        #endregion
     }
 }

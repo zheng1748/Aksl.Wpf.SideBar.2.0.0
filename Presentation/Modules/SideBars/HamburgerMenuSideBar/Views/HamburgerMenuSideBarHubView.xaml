@@ -918,15 +918,15 @@
                                             UseTransitions="True" />
                     </ei:DataTrigger>
                 </ei:Interaction.Triggers>
-                
+
                 <Grid x:Name="ContentRoot"
                       Grid.ColumnSpan="2">
                     <Border>
                         <acview:ActiveContentView x:Name="RightContentHamburgerMenuSideBarActiveContentView"
-                                                   DataContext="{Binding Path=RightContentActiveContentViewModel}"
-                                                   HorizontalAlignment="Stretch"
-                                                   VerticalAlignment="Stretch"
-                                                   Margin="0,0,0,0">
+                                                  DataContext="{Binding Path=RightContentActiveContentViewModel}"
+                                                  HorizontalAlignment="Stretch"
+                                                  VerticalAlignment="Stretch"
+                                                  Margin="0,0,0,0">
                             <ContentControl.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
@@ -936,20 +936,6 @@
                                 </TransformGroup>
                             </ContentControl.RenderTransform>
                         </acview:ActiveContentView>
-                        <!--<ContentControl x:Name="hamburgerMenuSideBarWorkspaceRegion"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        Margin="0,0,0,0"
-                                        prism:RegionManager.RegionName="{Binding Path=WorkspaceRegionName,Mode=OneWay}">-->
-                            <!--<ContentControl.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform />
-                                    <SkewTransform />
-                                    <RotateTransform />
-                                    <TranslateTransform />
-                                </TransformGroup>
-                            </ContentControl.RenderTransform>-->
-                        <!--</ContentControl>-->
                     </Border>
                     <Rectangle x:Name="LightDismissLayer"
                                Fill="Transparent"
@@ -965,32 +951,32 @@
                       Width="320">
                     <Grid x:Name="InnerPane"
                           HorizontalAlignment="Left"
-                          Background="{StaticResource PrimaryThemeBrush}"
                           Width="320">
-                        <!--Visibility="{Binding Path=CanMove,Converter={StaticResource booleanToVisibilityConverter}}"-->
                         <DockPanel>
                             <StackPanel DockPanel.Dock="Top"
                                         Orientation="Horizontal"
-                                        Height="24">
+                                        Height="30"
+                                        Visibility="{Binding Path=MoveButtonVisibility}">
                                 <Button Command="{Binding Path=MovePreviousCommand,Mode=OneWay}"
                                         CommandParameter="{Binding Path=DataContext.SelectedContentItem,ElementName=LeftPaneHamburgerMenuSideBarActiveContentView}"
-                                        Content="{materialDesign:PackIcon Kind=ArrowLeft,Size=32}"
+                                        Content="{materialDesign:PackIcon Kind=ArrowLeft,Size=30}"
                                         Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                                         Width="{Binding Path=Content.Width,RelativeSource={RelativeSource Mode=Self}}"
                                         Height="{Binding Path=Content.Height,RelativeSource={RelativeSource Mode=Self}}"
                                         HorizontalAlignment="Left"
-                                        Margin="0,0,0,0" Padding="0,0,3,0"
+                                        Margin="0,0,0,0"
+                                        Padding="0,0,3,0"
                                         ToolTip="Back"
                                         Cursor="Arrow"
                                         IsEnabled="{Binding Path=CanMove}">
                                 </Button>
                             </StackPanel>
                             <acview:ActiveContentView x:Name="LeftPaneHamburgerMenuSideBarActiveContentView"
-                                                       DataContext="{Binding Path=LeftPaneActiveContentViewModel}"
-                                                       HorizontalAlignment="Stretch"
-                                                       VerticalAlignment="Stretch"
-                                                       Margin="0,2,2,2"
-                                                       RenderTransformOrigin="0.5,0.5">
+                                                      DataContext="{Binding Path=LeftPaneActiveContentViewModel}"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch"
+                                                      Margin="0,2,2,2"
+                                                      RenderTransformOrigin="0.5,0.5">
                                 <ContentControl.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform />
@@ -999,24 +985,8 @@
                                         <TranslateTransform />
                                     </TransformGroup>
                                 </ContentControl.RenderTransform>
-                                </acview:ActiveContentView>
-                           
+                            </acview:ActiveContentView>
                         </DockPanel>
-                        <!--<ContentControl Grid.Column="0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        Margin="0,2,2,2"
-                                        RenderTransformOrigin="0.5,0.5">
-                            <views:HamburgerMenuSideBarView DataContext="{Binding Path=HamburgerMenuSideBar}" />
-                            --><!--<ContentControl.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform />
-                                    <SkewTransform />
-                                    <RotateTransform />
-                                    <TranslateTransform />
-                                </TransformGroup>
-                            </ContentControl.RenderTransform>--><!--
-                        </ContentControl>-->
                         <Rectangle x:Name="HCPaneBorder"
                                    Fill="Transparent"
                                    HorizontalAlignment="Right"
