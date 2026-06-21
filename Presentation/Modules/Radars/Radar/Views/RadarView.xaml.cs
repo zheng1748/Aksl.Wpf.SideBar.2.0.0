@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
+//using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -173,7 +173,7 @@ namespace Aksl.Modules.RadarMap.Views
         /// <summary>
         /// 每圈的颜色设置,可以设置一个,但是需要使用unioncolor.可以多个颜色配合每圈.
         /// </summ
-        public ObservableCollection<Brush> CircelColors
+        public ObservableCollection<System.Windows.Media.Brush> CircelColors
         {
             get => (ObservableCollection<Brush>)GetValue(CircelColorsProperty);
             set => SetValue(CircelColorsProperty, value);

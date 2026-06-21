@@ -93,6 +93,27 @@ namespace Aksl.Infrastructure
         }
         #endregion
 
+        #region Get IconKind Method
+        public static PackIconKind GetIconKind(this Infrastructure.MenuItem menuItem)
+        {
+            PackIconKind kind = PackIconKind.None;
+
+            _ = Enum.TryParse(menuItem.IconKind, out kind);
+
+            return kind;
+        }
+        #endregion
+
+        #region Has SubMenu Method
+        public static bool HasSubMenu(this Infrastructure.MenuItem menuItem) =>
+                                  (menuItem is not null) && menuItem.SubMenus.Any();
+        #endregion
+
+        #region Is Leaf Method
+        public static bool IsLeaf(this Infrastructure.MenuItem menuItem) =>
+                                  (menuItem is not null) && menuItem.SubMenus.Count <= 0;
+        #endregion
+
         #region Get LeafMenuItems Method
         public static async Task<IEnumerable<Infrastructure.MenuItem>> GetLeafMenuItems(this Infrastructure.MenuItem menuItem)
         {
@@ -138,27 +159,6 @@ namespace Aksl.Infrastructure
 
             return leafMenuItems;
         }
-        #endregion
-
-        #region Get IconKind Method
-        public static PackIconKind GetIconKind(this Infrastructure.MenuItem menuItem)
-        {
-            PackIconKind kind = PackIconKind.None;
-
-            _ = Enum.TryParse(menuItem.IconKind, out kind);
-
-            return kind;
-        }
-        #endregion
-
-        #region Has SubMenu Method
-        public static bool HasSubMenu(this Infrastructure.MenuItem menuItem) =>
-                                  (menuItem is not null) && menuItem.SubMenus.Any();
-        #endregion
-
-        #region Is Leaf Method
-        public static bool IsLeaf(this Infrastructure.MenuItem menuItem) =>
-                                  (menuItem is not null) && menuItem.SubMenus.Count <= 0;
         #endregion
 
         #region Is Current Method

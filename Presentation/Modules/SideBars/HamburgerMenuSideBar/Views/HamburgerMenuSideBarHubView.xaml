@@ -961,7 +961,7 @@
                                         CommandParameter="{Binding Path=DataContext.SelectedContentItem,ElementName=LeftPaneHamburgerMenuSideBarActiveContentView}"
                                         Content="{materialDesign:PackIcon Kind=ArrowLeft,Size=32}"
                                         Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                                        Width="{Binding Path=Content.Width,RelativeSource={RelativeSource Mode=Self}}"
+                                        Width="38"
                                         Height="{Binding Path=Content.Height,RelativeSource={RelativeSource Mode=Self}}"
                                         HorizontalAlignment="Left"
                                         Margin="0,0,0,0"

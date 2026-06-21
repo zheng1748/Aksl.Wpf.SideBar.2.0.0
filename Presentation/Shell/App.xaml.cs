@@ -38,11 +38,15 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Unity;
 
 namespace Aksl.Modules.Shell
@@ -60,7 +64,10 @@ namespace Aksl.Modules.Shell
         {
             #region Initialize
             var services = new ServiceCollection();
+
             services.AddOptions();
+            //services.AddDistributedMemoryCache();
+
 
             string basePath = Directory.GetCurrentDirectory();
             string configPath = Path.Combine(basePath, "Configuration");
@@ -69,6 +76,42 @@ namespace Aksl.Modules.Shell
                                                                                    .AddJsonFile(path: appSettingsPath, optional: true, reloadOnChange: false);
 
             var configuration = configurationBuilder.Build();
+
+            services.AddHttpClient();
+            //services.AddHttpClient<HttpClient>(client =>
+            //{
+            //    client.BaseAddress = new Uri($"{configuration["WebApi:BaseAddress"]}");
+            //});
+
+            services.AddScoped<WebApiProvider>((sp) =>
+            {
+                var logFactory = sp.GetRequiredService<ILoggerFactory>();
+                var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+
+                WebApiProvider webApiProvider = new(httpClientFactory, logFactory.CreateLogger<WebApiProvider>());
+                return webApiProvider;
+            });
+
+            services.AddScoped<JwtTokenProvider>((sp) =>
+            {
+                var logFactory = sp.GetRequiredService<ILoggerFactory>();
+                var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+
+                JwtTokenProvider jwtTokenProvider = new(httpClientFactory, logFactory.CreateLogger<JwtTokenProvider>());
+                return jwtTokenProvider;
+            });
+
+            services.AddScoped<LoginResolver>((sp) =>
+            {
+                var webApiProvider = sp.GetRequiredService<WebApiProvider>();
+                var jwtTokenProvider = sp.GetRequiredService<JwtTokenProvider>();
+
+                LoginResolver loginResolver = new(webApiProvider, jwtTokenProvider)
+                {
+                    LoginUrl = $"{configuration["WebApi:BaseAddress"]}/api/account/login"
+                };
+                return loginResolver;
+            });
             #endregion
 
             #region Logging
@@ -199,6 +242,10 @@ namespace Aksl.Modules.Shell
         protected override async void OnInitialized()
         {
             base.OnInitialized();
+
+            var webApiProvider = HttpClientExtensions.GetWebApiProvider();
+            var lwtTokenProvider = HttpClientExtensions.GetJwtTokenProvider();
+            var loginResolver = HttpClientExtensions.GetLoginResolver();
 
             await PrismIocExtensions.GetContainer().Resolve<IDialogViewService>().ShowLoginDialogAsync();
         }

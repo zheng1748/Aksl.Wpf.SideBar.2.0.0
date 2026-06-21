@@ -1,4 +1,12 @@
-﻿using System;
+﻿using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Toolkit.Controls;
+using Prism;
+using Prism.Commands;
+using Prism.Ioc;
+using Prism.Services.Dialogs;
+using Prism.Unity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -6,16 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-
-using Prism;
-using Prism.Commands;
-using Prism.Ioc;
-using Prism.Services.Dialogs;
-using Prism.Unity;
 using Unity;
-
-using Aksl.Dialogs.Services;
-using Aksl.Toolkit.Controls;
 
 namespace Aksl.Modules.Account.ViewModels
 {
@@ -143,7 +142,11 @@ namespace Aksl.Modules.Account.ViewModels
             {
                 StatusMessage = "Logining....";
 
-                 IsSuccessful = true;
+                var loginResolver= HttpClientExtensions.GetLoginResolver(); 
+
+                await loginResolver.LoginAsync(userName: UserName, password: Password);
+
+                IsSuccessful = true;
 
                 ButtonResult buttonResult = ButtonResult.None;
                 DialogParameters parameters = new()
