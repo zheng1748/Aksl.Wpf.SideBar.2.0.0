@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Interop;
-
+﻿using Aksl.Dialogs.Services;
+using Aksl.Toolkit.Controls;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
@@ -13,23 +10,42 @@ using Prism.Modularity;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using Prism.Unity;
-
-using Aksl.Dialogs.Services;
-using Aksl.Toolkit.Controls;
-using Unity;
-using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Interop;
+using Unity;
 
 namespace Aksl.Infrastructure;
 
-public static class HttpClientExtensions
+public static class ServiceExtensions
 {
-    public static LoginResolver GetLoginResolver()
+    public static LoginHandler GetLoginHandler()
     {
-        var loginResolver = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
-                                                             ?.GetRequiredService<LoginResolver>();
+        var loginHandler = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
+                                                             ?.GetRequiredService<LoginHandler>();
 
-        return loginResolver;
+        return loginHandler;
+    }
+
+    public static IOptions<WebApiAddressSettings> GetWebApiAddressSettings()
+    {
+        var webApiAddressSettings = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
+                                                             ?.GetRequiredService<IOptions<WebApiAddressSettings>>();
+
+        return webApiAddressSettings;
+    }
+
+    public static IDistributedCache GetMemoryDistributedCache()
+    {
+        var distributedCache = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
+                                                             ?.GetRequiredService<IDistributedCache>();
+
+        return distributedCache;
     }
 
     public static Task<WebApiProvider> GetWebApiProviderAsync()
@@ -110,11 +126,5 @@ public static class HttpClientExtensions
 
         return header;
     }
-    //public static Task<HttpClient> SetBaseAddressAsync(this HttpClient httpClient, string baseAddress)
-    //{
-    //    httpClient.DefaultRequestHeaders = new Uri(baseAddress);
-
-    //    return Task.FromResult(httpClient);
-    //}
 }
 

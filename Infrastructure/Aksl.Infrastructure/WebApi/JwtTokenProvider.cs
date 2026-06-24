@@ -1,4 +1,4 @@
-﻿using Aksl.Infrastructure.Models;
+﻿
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -27,14 +27,14 @@ namespace Aksl.Infrastructure;
 public class JwtTokenProvider
 {
     #region Members
-    private IHttpClientFactory _httpClientFactory;
+    private WebApiProvider _webApiProvider;
     private ILogger<JwtTokenProvider> _logger;
     #endregion
 
     #region Constructors
-    public JwtTokenProvider(IHttpClientFactory httpClientFactory , ILogger<JwtTokenProvider> logger)
+    public JwtTokenProvider( WebApiProvider webApiProvider, ILogger<JwtTokenProvider> logger)
     {
-        _httpClientFactory = httpClientFactory ?? throw new ArgumentException("HttpClientFactory is not null");
+        _webApiProvider = webApiProvider;
         _logger = logger ?? NullLoggerFactory.Instance.CreateLogger<JwtTokenProvider>();
     }
     #endregion
@@ -45,50 +45,51 @@ public class JwtTokenProvider
     public string RefreshToken { get; set; }
     #endregion
 
-    public Dictionary<string, string> SetBearer()
-    {
-        Dictionary<string, string> header = new()
-            {
-              { "Authorization",string.Format("Bearer {0}", AccessToken )}
-            };
-
-        return header;
-    }
-
     #region Post Method
-    public async Task<bool> GetTokenAsync(string url, string userName, string password)
+    public async Task<LoginResponse> GetTokenAsync(string url, string userName, string password)
     {
         //try
         //{
-        using var httpClient = _httpClientFactory.CreateClient();
-        httpClient.DefaultRequestHeaders.Accept.Clear();
-        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        // using var httpClient = _httpClientFactory.CreateClient();
+        //// HttpClient httpClient = new HttpClient();
+        // httpClient.DefaultRequestHeaders.Accept.Clear();
+        // httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        LoginRequest loginRequest = new() { UserName = userName, Password = password };
+        var loginResponse = await _webApiProvider.PostAsync<LoginResponse, LoginRequest>(url, new LoginRequest() { UserName = userName, Password = password });
+       
+        AccessToken = loginResponse.AccessToken;
+        RefreshToken = loginResponse.RefreshToken;
 
-        var loginRequestJosn = await JsonSerializerHelper.SerializeStringAsync<LoginRequest>(loginRequest);
-        HttpContent content = new StringContent(loginRequestJosn);
-      
-        var response = await httpClient.PostAsJsonAsync<LoginRequest>(url, loginRequest);
+        if (loginResponse.Succeeded && !string.IsNullOrEmpty(loginResponse.AccessToken))
+        {
+            //_webApiProvider.HeaderProperties.SetString("Authorization", $"Bearer {_jwtTokenProvider.AccessToken}");
+            _webApiProvider.SetBearer(loginResponse.AccessToken);
+        }
+
+        return loginResponse;
+        //var loginRequestJosn = await JsonSerializerHelper.SerializeStringAsync<LoginRequest>(loginRequest);
+        //HttpContent content = new StringContent(loginRequestJosn);
         //var response = await httpClient.PostAsync(url, content);
-        //  response.EnsureSuccessStatusCode();
-        if (response.IsSuccessStatusCode)
-        {
-            var stream = await response.Content.ReadAsStreamAsync();
-            var loginResponse = await JsonSerializer.DeserializeAsync<LoginResponse>(stream);
 
-            AccessToken = loginResponse.AccessToken;
-            RefreshToken = loginResponse.RefreshToken;
+        //var response = await httpClient.PostAsJsonAsync<LoginRequest>(url, loginRequest);
+        ////  response.EnsureSuccessStatusCode();
+        //if (response.IsSuccessStatusCode)
+        //{
+        //    var stream = await response.Content.ReadAsStreamAsync();
+        //    var loginResponse = await JsonSerializer.DeserializeAsync<LoginResponse>(stream);
 
-            return true;
-        }
-        else
-        {
-            //return false;
-            throw new HttpRequestException(response.StatusCode.ToString());
-        }
+        //    AccessToken = loginResponse.AccessToken;
+        //    RefreshToken = loginResponse.RefreshToken;
 
-       // _logger.LogInformation($"GenerateAccessToken:{AccessToken},GenerateRefreshToken:{RefreshToken}");
+        //    return true;
+        //}
+        //else
+        //{
+        //    //return false;
+        //    throw new HttpRequestException(response.StatusCode.ToString());
+        //}
+
+        // _logger.LogInformation($"GenerateAccessToken:{AccessToken},GenerateRefreshToken:{RefreshToken}");
         //}
         //catch (Exception ex)
         //{

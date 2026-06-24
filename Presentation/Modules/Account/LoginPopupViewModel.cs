@@ -1,5 +1,6 @@
 ﻿using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
+using Aksl.Infrastructure.Events;
 using Aksl.Toolkit.Controls;
 using Prism;
 using Prism.Commands;
@@ -10,7 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,7 +40,7 @@ namespace Aksl.Modules.Account.ViewModels
         #endregion
 
         #region Properties
-        private string _userName;/*\n\r*/
+        private string _userName="zhengming";
         [Required(ErrorMessage = "用户名不能为空")]
         [RegularExpression("^[a-zA-Z]{1}([a-zA-Z0-9]){3,15}$", ErrorMessage = "用户名必须是4到16个字母或者数字,且以字母开头.")]
         public string UserName
@@ -109,9 +112,6 @@ namespace Aksl.Modules.Account.ViewModels
         }
         #endregion
 
-        #region Properties
-        #endregion
-
         #region IDialogAware
         public override event Action<IDialogResult> RequestClose;
 
@@ -142,22 +142,37 @@ namespace Aksl.Modules.Account.ViewModels
             {
                 StatusMessage = "Logining....";
 
-                var loginResolver= HttpClientExtensions.GetLoginResolver(); 
+                //var loginHandler = ServiceExtensions.GetLoginHandler();
+                //var loginResponse= await loginHandler.LoginAsync(userName: UserName, password: Password);
 
-                await loginResolver.LoginAsync(userName: UserName, password: Password);
+                //var resetLockoutResponse = await ServiceExtensions.GetLoginHandler().ExecuteResetLockoutAsync(UserName);
 
-                IsSuccessful = true;
-
-                ButtonResult buttonResult = ButtonResult.None;
-                DialogParameters parameters = new()
+                var loginResponse = await ServiceExtensions.GetLoginHandler().ExecuteLoginActionAsync(UserName, Password);
+                if (loginResponse.Succeeded)
                 {
-                    { "LoginPopupViewModel", this }
-                };
-                buttonResult = ButtonResult.OK;
+                    var webApiProvider = ServiceExtensions.GetWebApiProvider();
+                    Debug.Assert(webApiProvider.HeaderProperties.GetString("Authorization").Contains("Bearer"));
 
-                RequestClose?.Invoke(new DialogResult(buttonResult, parameters));
+                    var generateEmailTokenResponse = await ServiceExtensions.GetLoginHandler().
+                                                              ExecuteGetEmailConfirmationTokenActionAsync(new Dictionary<string, string>(){{ "email","13529805@qq.com"}});
 
-                //await Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false);
+
+                    IsSuccessful = true;
+
+                    ButtonResult buttonResult = ButtonResult.OK;
+                    DialogParameters parameters = new()
+                    {
+                        { "LoginPopupViewModel", this }
+                    };
+
+                    RequestClose?.Invoke(new DialogResult(buttonResult, parameters));
+
+                    await Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false);
+                }
+                else
+                {
+                    await _dialogViewService.AlertAsync($"{loginResponse.ToString()}", "Login In Failure:");
+                }
             }
             catch (Exception ex)
             {

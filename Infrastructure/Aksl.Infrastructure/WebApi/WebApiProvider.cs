@@ -9,13 +9,17 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
+using System.Security.Policy;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Resources;
 using System.Xml;
 
 namespace Aksl.Infrastructure;
+
 //Wrapper
 public class WebApiProvider
 {
@@ -36,27 +40,100 @@ public class WebApiProvider
 
     #region Properties
     public HeaderProperties HeaderProperties { get; set; }
+
+    public void SetBearer(string accessToken)
+    {
+        //HeaderProperties.SetString("Authorization", $"Bearer {accessToken}");
+        SetHeader("Authorization", $"Bearer {accessToken}");
+    }
+
+    public void SetHeader(string key, string value)
+    {
+        HeaderProperties.SetString(key, value);
+    }
+    #endregion
+
+    #region Get Method
+    public async Task<TResponse> GetAsync<TResponse>(string requestUrl,int timeoutSecond = 180, CancellationToken cancellationToken = default)
+    {
+        var httpClient = CreateHttpClient(HeaderProperties, timeoutSecond);
+
+        var response = await httpClient.GetAsync(requestUrl);
+        if (response.IsSuccessStatusCode)
+        {
+            return await  response.Content.ReadFromJsonAsync<TResponse>();
+        }
+        else
+        {
+            _logger.LogError($"HttpGet:{requestUrl} StatusCode:{response.StatusCode}");
+
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
+        }
+    }
     #endregion
 
     #region Post Method
-    public async Task<T> PostAsync<T, V>(V v, string requestUrl, HeaderProperties headerProperties = null, int timeoutSecond = 180,CancellationToken cancellationToken = default)
+    public async Task<TResponse> PostAsync<TResponse, TValue>( string requestUrl, TValue value, int timeoutSecond = 180, CancellationToken cancellationToken = default)
     {
-        T t = default;
+        var httpClient = CreateHttpClient(HeaderProperties, timeoutSecond);
+        var response = await httpClient.PostAsJsonAsync<TValue>(requestUrl, value, cancellationToken);
 
-        try
+        //response.EnsureSuccessStatusCode();
+       // return await response.Content.ReadFromJsonAsync<T>(cancellationToken);
+
+        if (response.IsSuccessStatusCode)
         {
-            HttpClient client = CreateHttpClient(HeaderProperties, timeoutSecond);
-            var response = await client.PostAsJsonAsync<V>(requestUrl, v);
-            response.EnsureSuccessStatusCode();
+            //var stream = await response.Content.ReadAsStreamAsync();
+            //var loginResponse = await JsonSerializer.DeserializeAsync<V>(stream);
 
-            t = await response.Content.ReadFromJsonAsync<T>(cancellationToken);
-            return t;
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError($"HttpPost:{requestUrl},body:{v} Error:{ex.ToString()}");
+            //var apiResult = await response.Content.ReadFromJsonAsync<T>(cancellationToken) as ApiResult;
+            //throw new HttpRequestException($"Error:{apiResult.ToString()}");
 
-            throw new Exception($"HttpPost:{requestUrl} Error", ex);
+            _logger.LogError($"HttpGet:{requestUrl} StatusCode:{response.StatusCode}");
+
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
+        }
+    }
+    #endregion
+
+    #region Put Method
+    public async Task<TResponse> PutAsync<TResponse, TValue>(string requestUrl, TValue value, int timeoutSecond = 180, CancellationToken cancellationToken = default)
+    {
+        var httpClient = CreateHttpClient(HeaderProperties, timeoutSecond);
+        var response = await httpClient.PutAsJsonAsync<TValue>(requestUrl, value, cancellationToken);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
+        }
+        else
+        {
+            _logger.LogError($"HttpGet:{requestUrl} StatusCode:{response.StatusCode}");
+
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
+        }
+    }
+    #endregion
+
+    #region Delete Method
+    public async Task<TResponse> DeleteAsync<TResponse, TValue>(string requestUrl, TValue value, int timeoutSecond = 180, CancellationToken cancellationToken = default)
+    {
+        var httpClient = CreateHttpClient(HeaderProperties, timeoutSecond);
+        var response = await httpClient.DeleteAsync(requestUrl,cancellationToken);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
+        }
+        else
+        {
+            _logger.LogError($"HttpGet:{requestUrl} StatusCode:{response.StatusCode}");
+
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
         }
     }
     #endregion
@@ -64,9 +141,10 @@ public class WebApiProvider
     #region CreateHttpClient Methods
     private HttpClient CreateHttpClient(HeaderProperties headerProperties = null, int? timeoutSecond = null)
     {
-        var httpClient = _httpClientFactory.CreateClient();
+        var httpClient = _httpClientFactory.CreateClient("WebApi");
         httpClient.DefaultRequestHeaders.Clear();
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
         if (headerProperties is not null && headerProperties.Parameters.Any())
         {
             foreach (var headerItem in headerProperties.Parameters)

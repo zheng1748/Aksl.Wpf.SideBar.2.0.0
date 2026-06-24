@@ -18,14 +18,18 @@ using Aksl.Modules.Home;
 using Aksl.Modules.MenuSub;
 using Aksl.Modules.Others;
 using Aksl.Modules.Pipeline;
+using Aksl.Modules.Shell.Configuration;
 using Aksl.Modules.Shell.ViewModels;
 using Aksl.Modules.Shell.Views;
 using Aksl.Modules.TabBar;
 using Aksl.Modules.Thermometer;
+using Aksl.Toolkit;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Options;
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
@@ -41,6 +45,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,11 +69,8 @@ namespace Aksl.Modules.Shell
         {
             #region Initialize
             var services = new ServiceCollection();
-
             services.AddOptions();
-            //services.AddDistributedMemoryCache();
-
-
+          
             string basePath = Directory.GetCurrentDirectory();
             string configPath = Path.Combine(basePath, "Configuration");
             string appSettingsPath = Path.Combine(configPath, "appsettings.json");
@@ -77,41 +79,64 @@ namespace Aksl.Modules.Shell
 
             var configuration = configurationBuilder.Build();
 
-            services.AddHttpClient();
-            //services.AddHttpClient<HttpClient>(client =>
+            services.AddDistributedMemoryCache(option =>
+            {
+                option.ExpirationScanFrequency = TimeSpan.FromMinutes(1);
+            });
+
+            //services.AddHttpClient("WebApi");
+            //services.AddHttpClient<HttpClient>("WebApi",client =>
             //{
             //    client.BaseAddress = new Uri($"{configuration["WebApi:BaseAddress"]}");
+            //    // client.BaseAddress = new Uri("http://localhost:5249/api/account/");
             //});
 
-            services.AddScoped<WebApiProvider>((sp) =>
-            {
-                var logFactory = sp.GetRequiredService<ILoggerFactory>();
-                var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+            //services.AddSingleton<WebApiProvider>((sp) =>
+            //{
+            //    var logFactory = sp.GetRequiredService<ILoggerFactory>();
+            //    var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
 
-                WebApiProvider webApiProvider = new(httpClientFactory, logFactory.CreateLogger<WebApiProvider>());
-                return webApiProvider;
+            //    WebApiProvider webApiProvider = new(httpClientFactory, logFactory.CreateLogger<WebApiProvider>());
+            //    return webApiProvider;
+            //});
+
+            //services.AddScoped<JwtTokenProvider>((sp) =>
+            //{
+            //    var logFactory = sp.GetRequiredService<ILoggerFactory>();
+            //    var webApiProvider = sp.GetRequiredService<WebApiProvider>();
+
+            //    JwtTokenProvider jwtTokenProvider = new(webApiProvider, logFactory.CreateLogger<JwtTokenProvider>());
+            //    return jwtTokenProvider;
+            //});
+
+            //services.AddTransient<LoginHandler>((sp) =>
+            //{
+            //    var webApiProvider = sp.GetRequiredService<WebApiProvider>();
+            //    var jwtTokenProvider = sp.GetRequiredService<JwtTokenProvider>();
+
+            //    LoginHandler loginResolver = new(webApiProvider, jwtTokenProvider)
+            //    {
+            //       // LoginUrl = $"{configuration["WebApi:BaseAddress"]}/api/account/login"
+            //         LoginUrl = $"api/account/login"
+            //    };
+
+            //    return loginResolver;
+            //});
+            #endregion
+
+            #region Account
+            services.Configure<WebApiAddressSettings>(wa=>
+            {
+                wa.BaseAddress =$"{configuration["WebApi:BaseAddress"]}";
+                wa.LoginUrl = $"{wa.BaseAddress}/login";
+                wa.ResetLockoutUrl = $"{wa.BaseAddress}/resetlockout";
+                wa.CreateUserUrl = $"{wa.BaseAddress}/register";
+                wa.RefreshTokenUrl = $"{wa.BaseAddress}/refreshtoken";
+                wa.GetEmailConfirmationTokenUrl = $"{wa.BaseAddress}/getemailconfirmationtoken";
+                wa.ConfirmEmailTokenUrl = $"{wa.BaseAddress}/confirmemail";
             });
 
-            services.AddScoped<JwtTokenProvider>((sp) =>
-            {
-                var logFactory = sp.GetRequiredService<ILoggerFactory>();
-                var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
-
-                JwtTokenProvider jwtTokenProvider = new(httpClientFactory, logFactory.CreateLogger<JwtTokenProvider>());
-                return jwtTokenProvider;
-            });
-
-            services.AddScoped<LoginResolver>((sp) =>
-            {
-                var webApiProvider = sp.GetRequiredService<WebApiProvider>();
-                var jwtTokenProvider = sp.GetRequiredService<JwtTokenProvider>();
-
-                LoginResolver loginResolver = new(webApiProvider, jwtTokenProvider)
-                {
-                    LoginUrl = $"{configuration["WebApi:BaseAddress"]}/api/account/login"
-                };
-                return loginResolver;
-            });
+            services.AddLoginHandler();
             #endregion
 
             #region Logging
@@ -243,9 +268,17 @@ namespace Aksl.Modules.Shell
         {
             base.OnInitialized();
 
-            var webApiProvider = HttpClientExtensions.GetWebApiProvider();
-            var lwtTokenProvider = HttpClientExtensions.GetJwtTokenProvider();
-            var loginResolver = HttpClientExtensions.GetLoginResolver();
+            var distributedCache = ServiceExtensions.GetMemoryDistributedCache();
+            var webApiAddressSettings = ServiceExtensions.GetWebApiAddressSettings().Value;
+
+            var webApiProvider = ServiceExtensions.GetWebApiProvider();
+          //  var lwtTokenProvider = ServiceExtensions.GetJwtTokenProvider();
+            var loginHandler = ServiceExtensions.GetLoginHandler();
+
+            var refreshTokenDateTime = DateTime.UtcNow.AddHours(1);
+            var refreshTokenExpirationTicks = refreshTokenDateTime.ConvertToLong();
+            var refreshTokenDateTime1 = refreshTokenExpirationTicks.ConvertToDateTime();
+            //Debug.Assert((refreshTokenDateTime==refreshTokenDateTime1));
 
             await PrismIocExtensions.GetContainer().Resolve<IDialogViewService>().ShowLoginDialogAsync();
         }

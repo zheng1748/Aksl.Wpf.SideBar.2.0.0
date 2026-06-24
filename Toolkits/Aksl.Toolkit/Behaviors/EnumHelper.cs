@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Aksl.Toolkit
+namespace Aksl.Toolkit;
+
+public sealed class EnumHelper<T>
 {
-    public sealed class EnumHelper<T>
+    public static List<T> ToList()
     {
-        public static List<T> ToList()
-        {
-            return Enum.GetValues(typeof(T)).Cast<T>().ToList();
-        }
+        return Enum.GetValues(typeof(T)).Cast<T>().ToList();
     }
 }
+
