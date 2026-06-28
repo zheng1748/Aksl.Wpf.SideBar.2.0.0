@@ -245,7 +245,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
                     <RowDefinition Height="60" />
-                    <RowDefinition Height="15" />
+                    <RowDefinition Height="18" />
                     <RowDefinition Height="60" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>

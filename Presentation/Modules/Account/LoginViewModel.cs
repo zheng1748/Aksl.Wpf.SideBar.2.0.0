@@ -57,7 +57,7 @@ namespace Aksl.Modules.Account.ViewModels
 
         private string _userName;
         [Required(ErrorMessage = "用户名不能为空")]
-        [RegularExpression("^[a-zA-Z]{1}([a-zA-Z0-9]){3,15}$", ErrorMessage = "用户名必须是4到16个字母或者\n\r数字,且以字母开头.")]
+        [RegularExpression("^[a-zA-Z]{1}([a-zA-Z0-9]){3,15}$", ErrorMessage = "用户名必须是4到16个字母或者数字,且以字母开头.")]
         public string UserName
         {
             get => _userName;
@@ -66,7 +66,7 @@ namespace Aksl.Modules.Account.ViewModels
 
         private string _password;
         [Required(ErrorMessage = "密码不能为空")]
-        [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*\d)(?=.*[$@$!%#?&])[a-zA-Z\d$@$!%#?&]{8,}$", ErrorMessage = "密码至少8个字符,必须包含一个字母,\n\r一个数字,一个特殊字符.")]
+        [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*\d)(?=.*[$@$!%#?&])[a-zA-Z\d$@$!%#?&]{8,}$", ErrorMessage = "密码至少8个字符,必须包含一个字母,一个数字,一个特殊字符.")]
         public string Password
         {
             get => _password;

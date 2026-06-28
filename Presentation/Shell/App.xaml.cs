@@ -274,7 +274,7 @@ namespace Aksl.Modules.Shell
             var refreshTokenDateTime1 = refreshTokenExpirationTicks.ConvertToDateTime();
             //Debug.Assert((refreshTokenDateTime==refreshTokenDateTime1));
 
-            //await PrismIocExtensions.GetContainer().Resolve<IDialogViewService>().ShowLoginDialogAsync();
+            await PrismIocExtensions.GetContainer().Resolve<IDialogViewService>().ShowLoginDialogAsync();
         }
     }
 }

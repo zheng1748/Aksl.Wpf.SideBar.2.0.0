@@ -52,7 +52,7 @@
                                Foreground="Red"
                                FontSize="10"
                                VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding ElementName=Placeholder, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}"
+                    <TextBlock Text="{Binding ElementName=Placeholder,Path=AdornedElement.(Validation.Errors)[0].ErrorContent}"
                                Foreground="Red"
                                FontSize="13"
                                TextWrapping="Wrap"
@@ -240,7 +240,7 @@
  </ei:Interaction.Triggers>-->
     <Grid Margin="20,20,20,20"
           Width="650"
-          Height="350">
+          Height="360">
 
         <!--<aksl:WindowTitle Title="{Binding Path=Title}" />-->
 
@@ -268,7 +268,7 @@
                     <RowDefinition Height="32" />
                     <RowDefinition Height="10" />
                     <RowDefinition Height="60" />
-                    <RowDefinition Height="20" />
+                    <RowDefinition Height="15" />
                     <RowDefinition Height="60" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
