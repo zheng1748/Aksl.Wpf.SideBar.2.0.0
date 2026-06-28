@@ -200,8 +200,6 @@ namespace Aksl.Modules.Account.ViewModels
                 {
                     StatusMessage = "Closing.......";
 
-                    //RemoveLoginView();
-
                     SetShellActiveItem();
 
                     _eventAggregator.GetEvent<OnSignInedEvent>().Publish(new OnSignInedEvent { UserName = "", IsSuccessful = false });
@@ -261,8 +259,9 @@ namespace Aksl.Modules.Account.ViewModels
         #region Set Shell ActiveItem Method
         public void SetShellActiveItem()
         {
-            var shellContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContents.ViewModels.ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
-            shellContentActiveContentViewModel.SetSelectedItemByName(ActiveContentNames.HamburgerMenuSideBarName);
+            var shellContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContents.ViewModels.RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+            //shellContentActiveContentViewModel.SetSelectedItemByName(ActiveContentNames.HamburgerMenuSideBarName);
+            shellContentActiveContentViewModel.ClearSelectedItem();
         }
         #endregion
 

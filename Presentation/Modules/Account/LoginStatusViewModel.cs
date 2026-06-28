@@ -41,6 +41,8 @@ namespace Aksl.Modules.Account.ViewModels
 
             RegisterPropertyChanged();
 
+            IsSignIning = true;
+
             Title = "Please Login";
         }
         #endregion
@@ -92,6 +94,7 @@ namespace Aksl.Modules.Account.ViewModels
                     if (e.PropertyName == nameof(IsSignIning))
                     {
                         (SignInCommand as DelegateCommand)?.RaiseCanExecuteChanged();
+                        (SignOutCommand as DelegateCommand)?.RaiseCanExecuteChanged();
                     }
                 }
             };
@@ -108,7 +111,6 @@ namespace Aksl.Modules.Account.ViewModels
                 UserName = siet.UserName;
                 IsAuthenticated = siet.IsSuccessful;
 
-                //RaisePropertyChanged(nameof(Title));
                 Title = null;
                 Title = IsAuthenticated ? $"{UserName} Login" : "Please Login";
 
@@ -139,7 +141,7 @@ namespace Aksl.Modules.Account.ViewModels
             try
             {
                 var shellContentActiveContentViewModel = PrismIocExtensions.GetContainer().
-                                                           Resolve<ActiveContents.ViewModels.ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+                                                           Resolve<ActiveContents.ViewModels.RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
                 shellContentActiveContentViewModel.SetSelectedItemByName(nameof(LoginView));
             }
             catch (Exception ex)

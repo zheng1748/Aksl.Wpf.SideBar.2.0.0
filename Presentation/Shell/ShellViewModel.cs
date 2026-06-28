@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
-using System.Xml.Linq;
-
+﻿using Aksl.ActiveContents.ViewModels;
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Infrastructure.Events;
+using Aksl.Modules.HamburgerMenuSideBar.ViewModels;
+using Aksl.Modules.HamburgerMenuSideBar.Views;
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Unity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Xml.Linq;
 using Unity;
-
-using Aksl.ActiveContents.ViewModels;
-using Aksl.Dialogs.Services;
-
-using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
 
 namespace Aksl.Modules.Shell.ViewModels
 {
@@ -42,22 +42,29 @@ namespace Aksl.Modules.Shell.ViewModels
             _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
             _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
 
+            RegisterSignInedEvent();
             RegisterActiveContents().Await(configureAwait:true);
         }
         #endregion
 
         #region Properties
-        //private ActiveContentViewModel _shellContentActiveContentViewModel;
-        //public ActiveContentViewModel ShellContentActiveContentViewModel
-        //{
-        //    get => _shellContentActiveContentViewModel;
-        //    set => SetProperty<ActiveContentViewModel>(ref _shellContentActiveContentViewModel, value);
-        //}
+        private RandomActiveContentViewModel _shellContentActiveContentViewModel;
+        public RandomActiveContentViewModel ShellContentActiveContentViewModel
+        {
+            get => _shellContentActiveContentViewModel;
+            set => SetProperty<RandomActiveContentViewModel>(ref _shellContentActiveContentViewModel, value);
+        }
 
-        public RandomActiveContentViewModel ShellContentActiveContentViewModel { get; set; }
+       // public RandomActiveContentViewModel ShellContentActiveContentViewModel { get; set; }
 
         //   public ActiveContentViewModel LoginActiveContentViewModel { get; set; }
-        public RandomActiveContentViewModel LoginActiveContentViewModel { get; set; }
+       // public RandomActiveContentViewModel LoginActiveContentViewModel { get; set; }
+        private RandomActiveContentViewModel _loginActiveContentViewModel;
+        public RandomActiveContentViewModel LoginActiveContentViewModel
+        {
+            get => _loginActiveContentViewModel;
+            set => SetProperty<RandomActiveContentViewModel>(ref _loginActiveContentViewModel, value);
+        }
 
         private bool _isPaneOpen = true;
         public bool IsPaneOpen
@@ -73,59 +80,70 @@ namespace Aksl.Modules.Shell.ViewModels
         }
         #endregion
 
+        #region Register SignIned Event
+        private void RegisterSignInedEvent()
+        {
+            _eventAggregator.GetEvent<OnSignInedEvent>().Subscribe((siet) =>
+            {
+                if (siet.IsSuccessful) 
+                {
+                    var hamburgerMenuSideBarHubView = ShellContentActiveContentViewModel.GetStoreViewElementByName("HamburgerMenuSideBarHubView") as HamburgerMenuSideBarHubView;
+                    var hamburgerMenuSideBarHubViewModel = hamburgerMenuSideBarHubView.DataContext as HamburgerMenuSideBarHubViewModel;
+                    ShellContentActiveContentViewModel.SetContentItemByName("HamburgerMenuSideBarHubView");
+                }
+            }, ThreadOption.UIThread, true);
+        }
+        #endregion
+
         #region Register ActiveContent Method
         private async Task RegisterActiveContents()
         {
             try
             {
-                RegisterShellActiveContent();
-                void RegisterShellActiveContent()
+                _container.RegisterSingleton(from: typeof(RandomActiveContentViewModel), to: typeof(RandomActiveContentViewModel), name: ActiveContentNames.ShellContent);
+                ShellContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+
+                RegisterShellContentActiveContent();
+                void RegisterShellContentActiveContent()
                 {
-                    _container.RegisterSingleton(from: typeof(RandomActiveContentViewModel), to: typeof(RandomActiveContentViewModel), name: ActiveContentNames.ShellContent);
-                    ShellContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
-
-                    RegisterShellContentActiveContent();
-                    void RegisterShellContentActiveContent()
+                    ShellContentActiveContentViewModel.Add(new()
                     {
-                        ShellContentActiveContentViewModel.Add(new()
-                        {
-                            Name = "LoginView",
-                            Title = "LoginView",
-                            ViewName = "Aksl.Modules.Account.Views.LoginView,Aksl.Modules.Account",
-                            //ViewElement = new LoginView(),
-                        }, false);
+                        Name = "LoginView",
+                        Title = "LoginView",
+                        ViewName = "Aksl.Modules.Account.Views.LoginView,Aksl.Modules.Account",
+                        //ViewElement = new LoginView(),
+                    }, true);
 
-                        ShellContentActiveContentViewModel.Add(new()
-                        {
-                            Name = "HamburgerMenuSideBarHubView",
-                            Title = "HamburgerMenuSideBarHubView",
-                            ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarHubView,Aksl.Modules.HamburgerMenuSideBar",
-                            //ViewElement = new HamburgerMenuSideBarHubView()
-                        }, true);
-
-                        //ShellContentActiveContentViewModel.Add(new()
-                        //{
-                        //    Name = "HamburgerMenuNavigationSideBarHubView",
-                        //    Title = "NavigationSideBarHubView",
-                        //    ViewName = "Aksl.Modules.HamburgerMenuNavigationSideBar.Views.HamburgerMenuNavigationSideBarHubView,Aksl.Modules.HamburgerMenuNavigationSideBar",
-                        //    //ViewElement = new HamburgerMenuSideBarHubView()
-                        //}, false);
-                    }
-
-                    RegisterLoginActiveContent();
-                    void RegisterLoginActiveContent()
+                    ShellContentActiveContentViewModel.Add(new()
                     {
-                        _container.RegisterSingleton(from: typeof(RandomActiveContentViewModel), to: typeof(RandomActiveContentViewModel), name: ActiveContentNames.LoginContent);
-                        LoginActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: ActiveContentNames.LoginContent);
+                        Name = "HamburgerMenuSideBarHubView",
+                        Title = "HamburgerMenuSideBarHubView",
+                        ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarHubView,Aksl.Modules.HamburgerMenuSideBar",
+                        //ViewElement = new HamburgerMenuSideBarHubView()
+                    }, false);
 
-                        LoginActiveContentViewModel.Add(new()
-                        {
-                            Name = "LoginStatusView",
-                            Title = "LoginStatusView",
-                            ViewName = "Aksl.Modules.Account.Views.LoginStatusView,Aksl.Modules.Account",
-                            // ViewElement = new LoginStatusView(),
-                        });
-                    }
+                    //ShellContentActiveContentViewModel.Add(new()
+                    //{
+                    //    Name = "HamburgerMenuNavigationSideBarHubView",
+                    //    Title = "NavigationSideBarHubView",
+                    //    ViewName = "Aksl.Modules.HamburgerMenuNavigationSideBar.Views.HamburgerMenuNavigationSideBarHubView,Aksl.Modules.HamburgerMenuNavigationSideBar",
+                    //    //ViewElement = new HamburgerMenuSideBarHubView()
+                    //}, false);
+                }
+
+                RegisterLoginActiveContent();
+                void RegisterLoginActiveContent()
+                {
+                    _container.RegisterSingleton(from: typeof(RandomActiveContentViewModel), to: typeof(RandomActiveContentViewModel), name: ActiveContentNames.LoginContent);
+                    LoginActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: ActiveContentNames.LoginContent);
+                 
+                    LoginActiveContentViewModel.Add(new()
+                    {
+                        Name = "LoginStatusView",
+                        Title = "LoginStatusView",
+                        ViewName = "Aksl.Modules.Account.Views.LoginStatusView,Aksl.Modules.Account",
+                        // ViewElement = new LoginStatusView(),
+                    },true);
                 }
             }
             catch (Exception ex)

@@ -552,6 +552,69 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                 }
             }
         }
+
+        private async Task MovePreviousName()
+        {
+            string previousContentItemName = default;
+
+            //if (!RightContentActiveContentViewModel.HasActiveItem())
+            //{
+            //    RightContentActiveContentViewModel.SetActiveItemToLast();
+
+            //    previousContentItemName = RightContentActiveContentViewModel.SelectedContentItem.Name;
+            //}
+            //else
+            //{
+            //    //previousContentItemName = RightContentActiveContentViewModel.GetActiveContentItemByName();
+
+            //    //if (RightContentActiveContentViewModel.CanMovePrevious())
+            //    //{
+            //    //    RightContentActiveContentViewModel.ExecuteMovePrevious();
+            //    //    previousContentItemName = RightContentActiveContentViewModel.SelectedContentItem.Name;
+            //    //}
+            //}
+
+            //if (string.IsNullOrEmpty(name))
+            //{
+            //    if (LeftPaneActiveContentViewModel.CanMove)
+            //    {
+            //        LeftPaneActiveContentViewModel.ExecuteMovePrevious();
+            //        var currentActiveContentItem = LeftPaneActiveContentViewModel.ActiveContentItems[LeftPaneActiveContentViewModel.SelectedIndex];
+            //    }
+            //    return;
+            //}
+
+            Debug.Assert(SelectedLeftPaneActiveContentItem== LeftPaneActiveContentViewModel.SelectedContentItem);
+
+           await RecursiveSubActiveContent(LeftPaneActiveContentViewModel.SelectedContentItem);
+
+            async Task RecursiveSubActiveContent(ActiveContentItemViewModel currentActiveContentItem)
+            {
+                var currentMenuSideBarView = currentActiveContentItem.ViewElement as HamburgerMenuSideBarView;
+                var currentMenuSideBarViewModel = currentMenuSideBarView.DataContext as HamburgerMenuSideBarViewModel;
+
+                var currentMenuSideBarItem = currentMenuSideBarViewModel.AllLeafHamburgerMenuSideBarItems.FirstOrDefault(msbi => msbi.Name == previousContentItemName);
+                if (currentMenuSideBarItem is not null)
+                {
+                    if (currentMenuSideBarItem != currentMenuSideBarViewModel.SelectedHamburgerMenuSideBarItem && !currentMenuSideBarViewModel.SelectedHamburgerMenuSideBarItem.HasSubMenu)
+                    {
+                        SelectedHamburgerMenuSideBarItem = currentMenuSideBarItem;
+                        currentMenuSideBarViewModel.SelectedHamburgerMenuSideBarItem = currentMenuSideBarItem;
+                    }
+                }
+                else
+                {
+                    if (LeftPaneActiveContentViewModel.CanMovePrevious())
+                    {
+                       // LeftPaneActiveContentViewModel.SelectedIndex >= 1
+                        //var previousContentItem = LeftPaneActiveContentViewModel.ActiveContentItems[LeftPaneActiveContentViewModel.SelectedIndex - 1];
+                        LeftPaneActiveContentViewModel.ExecuteMovePrevious();
+
+                        await RecursiveSubActiveContent(LeftPaneActiveContentViewModel.SelectedContentItem);
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Register HamburgerMenuBarPaneOpen Event

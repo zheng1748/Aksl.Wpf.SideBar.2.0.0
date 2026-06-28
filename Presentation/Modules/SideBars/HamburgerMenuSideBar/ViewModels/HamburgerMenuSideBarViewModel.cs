@@ -13,7 +13,6 @@ using Prism.Regions;
 using Prism.Unity;
 using Unity;
 
-using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
 
 namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
@@ -46,7 +45,8 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             {
                 if (SetProperty(ref _selectedHamburgerMenuSideBarItem, value))
                 {
-                    if (!_selectedHamburgerMenuSideBarItem.HasSubMenu && LastHamburgerMenuSideBarItemWithNotSubMenu != _selectedHamburgerMenuSideBarItem) 
+                    if (LastHamburgerMenuSideBarItemWithNotSubMenu != _selectedHamburgerMenuSideBarItem &&
+                     (_selectedHamburgerMenuSideBarItem.IsAddViewToRightContent || _selectedHamburgerMenuSideBarItem.IsNavigationToRightContent))
                     {
                         LastHamburgerMenuSideBarItemWithNotSubMenu= _selectedHamburgerMenuSideBarItem;
                     }

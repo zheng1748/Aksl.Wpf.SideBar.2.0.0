@@ -415,11 +415,11 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Window.Triggers>
+    <!--<Window.Triggers>
         <EventTrigger RoutedEvent="Loaded">
             <BeginStoryboard Storyboard="{StaticResource ContentRegionStoryboard}" />
         </EventTrigger>
-    </Window.Triggers>
+    </Window.Triggers>-->
     <Border BorderThickness="1"
             CornerRadius="2">
         <!--<Border.BorderBrush>
@@ -475,7 +475,7 @@
                            Foreground="{Binding Path=(Window.Foreground),RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}}">
                 </TextBlock>
 
-                <acviews:RandomActiveContentView x:Name="LoginActiveContentView"
+                <acviews:ActiveContentItemView x:Name="LoginActiveContentView"
                                                 Grid.Column="2"
                                                 WindowChrome.IsHitTestVisibleInChrome="True"
                                                 Margin="0,0,30,0"
@@ -488,22 +488,7 @@
                             <TranslateTransform />
                         </TransformGroup>
                     </ContentControl.RenderTransform>
-                </acviews:RandomActiveContentView>
-
-                <!--<ContentControl x:Name="loginRegion"
-                                Grid.Column="2"
-                                WindowChrome.IsHitTestVisibleInChrome="True"
-                                Margin="0,0,30,0"
-                                prism:RegionManager.RegionName="{x:Static inf:RegionNames.ShellLoginRegion}">
-                    <ContentControl.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform />
-                            <SkewTransform />
-                            <RotateTransform />
-                            <TranslateTransform />
-                        </TransformGroup>
-                    </ContentControl.RenderTransform>
-                </ContentControl>-->
+                </acviews:ActiveContentItemView>
 
                 <views:WindowIconButtonView Grid.Column="3" />
             </Grid>
