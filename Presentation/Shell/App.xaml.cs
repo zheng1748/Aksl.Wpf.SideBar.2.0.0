@@ -35,6 +35,7 @@ using Prism.Events;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Mvvm;
+using Prism.Regions;
 using Prism.Services.Dialogs;
 using Prism.Unity;
 using System;
@@ -77,85 +78,66 @@ namespace Aksl.Modules.Shell
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder().SetBasePath(basePath)
                                                                                    .AddJsonFile(path: appSettingsPath, optional: true, reloadOnChange: false);
 
-            var configuration = configurationBuilder.Build();
+            var configurationRoot = configurationBuilder.Build();
+           // services.AddSingleton(configuration);
 
-            services.AddDistributedMemoryCache(option =>
-            {
-                option.ExpirationScanFrequency = TimeSpan.FromMinutes(1);
-            });
-
-            //services.AddHttpClient("WebApi");
-            //services.AddHttpClient<HttpClient>("WebApi",client =>
+            //services.AddHttpClient<HttpClient>("WebApi", client =>
             //{
             //    client.BaseAddress = new Uri($"{configuration["WebApi:BaseAddress"]}");
             //    // client.BaseAddress = new Uri("http://localhost:5249/api/account/");
             //});
-
-            //services.AddSingleton<WebApiProvider>((sp) =>
-            //{
-            //    var logFactory = sp.GetRequiredService<ILoggerFactory>();
-            //    var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
-
-            //    WebApiProvider webApiProvider = new(httpClientFactory, logFactory.CreateLogger<WebApiProvider>());
-            //    return webApiProvider;
-            //});
-
-            //services.AddScoped<JwtTokenProvider>((sp) =>
-            //{
-            //    var logFactory = sp.GetRequiredService<ILoggerFactory>();
-            //    var webApiProvider = sp.GetRequiredService<WebApiProvider>();
-
-            //    JwtTokenProvider jwtTokenProvider = new(webApiProvider, logFactory.CreateLogger<JwtTokenProvider>());
-            //    return jwtTokenProvider;
-            //});
-
-            //services.AddTransient<LoginHandler>((sp) =>
-            //{
-            //    var webApiProvider = sp.GetRequiredService<WebApiProvider>();
-            //    var jwtTokenProvider = sp.GetRequiredService<JwtTokenProvider>();
-
-            //    LoginHandler loginResolver = new(webApiProvider, jwtTokenProvider)
-            //    {
-            //       // LoginUrl = $"{configuration["WebApi:BaseAddress"]}/api/account/login"
-            //         LoginUrl = $"api/account/login"
-            //    };
-
-            //    return loginResolver;
-            //});
-            #endregion
-
-            #region Account
-            services.Configure<WebApiAddressSettings>(wa=>
-            {
-                wa.BaseAddress =$"{configuration["WebApi:BaseAddress"]}";
-                wa.LoginUrl = $"{wa.BaseAddress}/login";
-                wa.ResetLockoutUrl = $"{wa.BaseAddress}/resetlockout";
-                wa.CreateUserUrl = $"{wa.BaseAddress}/register";
-                wa.RefreshTokenUrl = $"{wa.BaseAddress}/refreshtoken";
-                wa.GetEmailConfirmationTokenUrl = $"{wa.BaseAddress}/getemailconfirmationtoken";
-                wa.ConfirmEmailTokenUrl = $"{wa.BaseAddress}/confirmemail";
-            });
-
-            services.AddLoginHandler();
             #endregion
 
             #region Logging
             services.AddLogging(builder =>
             {
-                var loggingSection = configuration.GetSection("Logging");
-                var includeScopes = loggingSection.GetValue<bool>("IncludeScopes");
+                var loggingSection = configurationRoot.GetSection("Logging");
+                var consoleIncludeScopes = loggingSection.GetValue<bool>("Console:IncludeScopes");
 
                 builder.AddConfiguration(loggingSection);
+   
+                builder.AddSimpleConsole(simpleConsoleFormatterOptions =>
+                {
+                    simpleConsoleFormatterOptions.IncludeScopes = consoleIncludeScopes;
+                    simpleConsoleFormatterOptions.SingleLine = true;
+                    simpleConsoleFormatterOptions.TimestampFormat = "hh:mm:ss ";
+                });
 
-                //加入一个ConsoleLoggerProvider
-                //builder.AddConsole(consoleLoggerOptions =>
-                //{
-                //    consoleLoggerOptions.IncludeScopes = includeScopes;
-                //});
+                //builder.AddFilter("System.Net.Http.HttpClient", LogLevel.Debug)
+                //       .AddFilter("Aksl.Infrastructure.LoginHandler", LogLevel.Debug);
 
-                //加入一个DebugLoggerProvider
+                builder.AddFilter((provider, category, logLevel) =>
+                {
+                    return provider.Contains("ConsoleLoggerProvider") &&
+                           (category.Contains("System.Net.Http.HttpClient") || category.Contains("Aksl.Infrastructure.LoginHandler")) &&
+                           logLevel >= LogLevel.Information;
+                });
+
                 builder.AddDebug();
             });
+            #endregion
+
+            #region MemoryCache
+            //services.AddDistributedMemoryCache(option =>
+            //{
+            //    option.ExpirationScanFrequency = TimeSpan.FromMinutes(1);
+            //});
+            #endregion
+
+            #region Account
+            services.Configure<WebApiAddressSettings>(address =>
+            {
+                address.BaseAddress =$"{configurationRoot["WebApi:BaseAddress"]}";
+                address.LoginUrl = $"{address.BaseAddress}/login";
+                address.LoginOutUrl = $"{address.BaseAddress}/loginout";
+                address.RefreshTokenUrl = $"{address.BaseAddress}/refreshtoken";
+                address.ResetLockoutUrl = $"{address.BaseAddress}/resetlockout";
+                address.CreateUserUrl = $"{address.BaseAddress}/register";
+                address.GetEmailConfirmationTokenUrl = $"{address.BaseAddress}/getemailconfirmationtoken";
+                address.ConfirmEmailTokenUrl = $"{address.BaseAddress}/confirmemail";
+            });
+
+            services.AddLoginHandler();
             #endregion
 
             var serviceProvider = services.BuildServiceProvider();
@@ -173,7 +155,7 @@ namespace Aksl.Modules.Shell
 
         protected async Task RegisterMenuFactoryAsync(IContainerRegistry containerRegistry)
         {
-            var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+            var dialogViewService = Container.Resolve<IDialogViewService>();
 
             try
             {
@@ -204,14 +186,17 @@ namespace Aksl.Modules.Shell
             {
                 var eventAggregator = Container.Resolve<IEventAggregator>();
 
+                _ = eventAggregator.GetEvent<OnHamburgerMenuBarPaneOpenEvent>();
+                _ = eventAggregator.GetEvent<OnSignInedEvent>();
+
                 //SideBar
-                _ = eventAggregator.GetEvent<OnBuildHamburgerMenuSideBarWorkspaceViewEvent>();
-                _ = eventAggregator.GetEvent<OnBuildHamburgerMenuNavigationSideBarWorkspaceViewEvent>();
-                _ = eventAggregator.GetEvent<OnBuildHamburgerMenuTreeSideBarWorkspaceViewEvent>();
+                //_ = eventAggregator.GetEvent<OnBuildHamburgerMenuSideBarWorkspaceViewEvent>();
+                //_ = eventAggregator.GetEvent<OnBuildHamburgerMenuNavigationSideBarWorkspaceViewEvent>();
+                //_ = eventAggregator.GetEvent<OnBuildHamburgerMenuTreeSideBarWorkspaceViewEvent>();
 
-                _ = eventAggregator.GetEvent<OnBuildHamburgerMenuPopupSideBarWorkspaceViewEvent>();
+                //_ = eventAggregator.GetEvent<OnBuildHamburgerMenuPopupSideBarWorkspaceViewEvent>();
 
-                _ = eventAggregator.GetEvent<OnBuildIndustryMenuSubWorkspaceViewEvent>();
+                _ = eventAggregator.GetEvent<OnBuildRadarsManagerMenuSubWorkspaceViewEvent>();
 
             }
             catch (Exception ex)
@@ -268,7 +253,16 @@ namespace Aksl.Modules.Shell
         {
             base.OnInitialized();
 
-            var distributedCache = ServiceExtensions.GetMemoryDistributedCache();
+           //var regionManager = PrismUnityExtensions.GetRegionManager();
+
+           // var regionManager = Container.Resolve<IRegionManager>();
+            //regionManager.RegisterViewWithRegion("RadarsManagerMenuSubWorkspaceRegion", typeof(Aksl.Modules.MenuSub.Views.RadarsManagerMenuSubHubView));
+
+            #region ILoggerFactory
+            var loggerFactory = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
+                                         ?.GetRequiredService<ILoggerFactory>();
+            #endregion
+            //var distributedCache = ServiceExtensions.GetMemoryDistributedCache();
             var webApiAddressSettings = ServiceExtensions.GetWebApiAddressSettings().Value;
 
             var webApiProvider = ServiceExtensions.GetWebApiProvider();
@@ -280,7 +274,7 @@ namespace Aksl.Modules.Shell
             var refreshTokenDateTime1 = refreshTokenExpirationTicks.ConvertToDateTime();
             //Debug.Assert((refreshTokenDateTime==refreshTokenDateTime1));
 
-            await PrismIocExtensions.GetContainer().Resolve<IDialogViewService>().ShowLoginDialogAsync();
+            //await PrismIocExtensions.GetContainer().Resolve<IDialogViewService>().ShowLoginDialogAsync();
         }
     }
 }

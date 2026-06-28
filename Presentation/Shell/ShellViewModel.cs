@@ -47,14 +47,17 @@ namespace Aksl.Modules.Shell.ViewModels
         #endregion
 
         #region Properties
-        private ActiveContentViewModel _shellContentActiveContentViewModel;
-        public ActiveContentViewModel ShellContentActiveContentViewModel
-        {
-            get => _shellContentActiveContentViewModel;
-            set => SetProperty<ActiveContentViewModel>(ref _shellContentActiveContentViewModel, value);
-        }
+        //private ActiveContentViewModel _shellContentActiveContentViewModel;
+        //public ActiveContentViewModel ShellContentActiveContentViewModel
+        //{
+        //    get => _shellContentActiveContentViewModel;
+        //    set => SetProperty<ActiveContentViewModel>(ref _shellContentActiveContentViewModel, value);
+        //}
 
-        public ActiveContentViewModel LoginActiveContentViewModel { get; set; }
+        public RandomActiveContentViewModel ShellContentActiveContentViewModel { get; set; }
+
+        //   public ActiveContentViewModel LoginActiveContentViewModel { get; set; }
+        public RandomActiveContentViewModel LoginActiveContentViewModel { get; set; }
 
         private bool _isPaneOpen = true;
         public bool IsPaneOpen
@@ -78,8 +81,8 @@ namespace Aksl.Modules.Shell.ViewModels
                 RegisterShellActiveContent();
                 void RegisterShellActiveContent()
                 {
-                    _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.ShellContent);
-                    ShellContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+                    _container.RegisterSingleton(from: typeof(RandomActiveContentViewModel), to: typeof(RandomActiveContentViewModel), name: ActiveContentNames.ShellContent);
+                    ShellContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
 
                     RegisterShellContentActiveContent();
                     void RegisterShellContentActiveContent()
@@ -100,20 +103,20 @@ namespace Aksl.Modules.Shell.ViewModels
                             //ViewElement = new HamburgerMenuSideBarHubView()
                         }, true);
 
-                        ShellContentActiveContentViewModel.Add(new()
-                        {
-                            Name = "HamburgerMenuNavigationSideBarHubView",
-                            Title = "NavigationSideBarHubView",
-                            ViewName = "Aksl.Modules.HamburgerMenuNavigationSideBar.Views.HamburgerMenuNavigationSideBarHubView,Aksl.Modules.HamburgerMenuNavigationSideBar",
-                            //ViewElement = new HamburgerMenuSideBarHubView()
-                        }, false);
+                        //ShellContentActiveContentViewModel.Add(new()
+                        //{
+                        //    Name = "HamburgerMenuNavigationSideBarHubView",
+                        //    Title = "NavigationSideBarHubView",
+                        //    ViewName = "Aksl.Modules.HamburgerMenuNavigationSideBar.Views.HamburgerMenuNavigationSideBarHubView,Aksl.Modules.HamburgerMenuNavigationSideBar",
+                        //    //ViewElement = new HamburgerMenuSideBarHubView()
+                        //}, false);
                     }
 
                     RegisterLoginActiveContent();
                     void RegisterLoginActiveContent()
                     {
-                        _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.LoginContent);
-                        LoginActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: ActiveContentNames.LoginContent);
+                        _container.RegisterSingleton(from: typeof(RandomActiveContentViewModel), to: typeof(RandomActiveContentViewModel), name: ActiveContentNames.LoginContent);
+                        LoginActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: ActiveContentNames.LoginContent);
 
                         LoginActiveContentViewModel.Add(new()
                         {

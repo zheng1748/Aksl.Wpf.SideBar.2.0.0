@@ -41,6 +41,9 @@ namespace Aksl.Infrastructure
 
             return hasNextSubMenu;
         }
+
+        public static bool IsNexApplication(this Infrastructure.MenuItem menuItem) => 
+                                       (menuItem is not null) && menuItem.IsNexApplication();
         #endregion
 
         #region Get ViewTypeName Method

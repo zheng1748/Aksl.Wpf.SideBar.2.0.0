@@ -63,7 +63,7 @@ public class JwtTokenProvider
         if (loginResponse.Succeeded && !string.IsNullOrEmpty(loginResponse.AccessToken))
         {
             //_webApiProvider.HeaderProperties.SetString("Authorization", $"Bearer {_jwtTokenProvider.AccessToken}");
-            _webApiProvider.SetBearer(loginResponse.AccessToken);
+            _webApiProvider.SetBearer(loginResponse.AccessToken, loginResponse.RefreshToken);
         }
 
         return loginResponse;

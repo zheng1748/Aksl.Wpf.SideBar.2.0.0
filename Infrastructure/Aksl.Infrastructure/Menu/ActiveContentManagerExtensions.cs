@@ -1,22 +1,21 @@
-﻿using System;
-using System.Threading.Tasks;
-
+﻿using Aksl.ActiveContents.ViewModels;
 using Prism;
 using Prism.Ioc;
 using Prism.Regions;
 using Prism.Unity;
+using System;
+using System.Threading.Tasks;
+using System.Windows.Controls;
 using Unity;
-
-using Aksl.ActiveContents.ViewModels;
 
 namespace Aksl.Infrastructure;
 
 public static class ActiveContentManagerExtensions
 {
-    #region Add View To Content Method
-    public static async Task AddViewToContentAsync(Infrastructure.MenuItem menuItem, string activeContentName, NavigationParameters navigationParameters = null)
+    #region Add View To Random Content Method
+    public static async Task AddViewToRandomContentAsync(Infrastructure.MenuItem menuItem, string activeContentName, NavigationParameters navigationParameters = null)
     {
-        var contentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: activeContentName);
+        var randomActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: activeContentName);
 
         if (navigationParameters is null)
         {
@@ -25,7 +24,7 @@ public static class ActiveContentManagerExtensions
 
         try
         {
-            await ActiveContentManager.Instance.AddViewToContentAsync(menuItem, contentActiveContentViewModel, navigationParameters);
+            await ActiveContentManager.Instance.AddViewToRandomContentAsync(menuItem, randomActiveContentViewModel, navigationParameters);
         }
         catch (Exception ex)
         {
@@ -33,6 +32,26 @@ public static class ActiveContentManagerExtensions
 
             throw new Exception(msg);
         }
+    }
+    #endregion
+
+    #region Navigation To Random Content Method
+    public static async Task NavigationToRandomContentAsync(Infrastructure.MenuItem menuItem, string activeContentName, NavigationParameters navigationParameters = null)
+    {
+        await AddViewToRandomContentAsync(menuItem, activeContentName, navigationParameters);
+
+        //var randomActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: activeContentName);
+
+        //try
+        //{
+        //    await ActiveContentManager.Instance.AddViewToRandomContentAsync(menuItem, randomActiveContentViewModel, navigationParameters);
+        //}
+        //catch (Exception ex)
+        //{
+        //    string msg = !string.IsNullOrEmpty(ex.InnerException?.Message) ? ex.InnerException.Message : ex.Message;
+
+        //    throw new Exception(msg);
+        //}
     }
     #endregion
 }

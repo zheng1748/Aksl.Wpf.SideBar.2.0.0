@@ -48,13 +48,6 @@ public static class ServiceExtensions
         return distributedCache;
     }
 
-    public static Task<WebApiProvider> GetWebApiProviderAsync()
-    {
-        var webApiProvider = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
-                                                             ?.GetRequiredService<WebApiProvider>();
-
-        return Task.FromResult(webApiProvider);
-    }
     public static WebApiProvider GetWebApiProvider()
     {
         var webApiProvider = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
@@ -62,54 +55,13 @@ public static class ServiceExtensions
 
         return webApiProvider;
     }
+
     public static JwtTokenProvider GetJwtTokenProvider()
     {
         var jwtTokenProvider = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
                                                              ?.GetRequiredService<JwtTokenProvider>();
 
         return jwtTokenProvider;
-    }
-
-    public static Task<JwtTokenProvider> GetJwtTokenProviderAsync()
-    {
-        var jwtTokenProvider = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
-                                                             ?.GetRequiredService<JwtTokenProvider>();
-
-        return Task.FromResult(jwtTokenProvider);
-    }
-
-    public static Task<IHttpClientFactory> GetHttpClientFactoryAsync(string name)
-    {
-        var httpClientFactory = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
-                                                                ?.GetRequiredService<IHttpClientFactory>();
-
-        return Task.FromResult(httpClientFactory);
-    }
-
-    public static async Task<HttpClient> GetWebApiClientAsync()
-    {
-        var httpClient = await CreateClientAsync("WebApi");
-
-        return httpClient;
-
-    }
-
-    public static Task<HttpClient> CreateClientAsync()
-    {
-        var httpClient = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
-                                                          ?.GetRequiredService<IHttpClientFactory>()
-                                                          ?.CreateClient();
-
-        return Task.FromResult(httpClient);
-
-    }
-    public static Task<HttpClient> CreateClientAsync(string name)
-    {
-        var httpClient = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
-                                                          ?.GetRequiredService<IHttpClientFactory>()
-                                                          ?.CreateClient(name);
-
-        return Task.FromResult(httpClient);
     }
 
     public static Task<HttpClient> SetBaseAddressAsync(this HttpClient httpClient, string baseAddress)

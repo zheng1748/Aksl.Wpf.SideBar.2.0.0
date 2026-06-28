@@ -74,7 +74,7 @@ namespace Aksl.Modules.Shell
                 {
                    //dialogViewService.AlertAsync(message: "登录取消", title: "登 录").Await();
 
-                    System.Windows.Application.Current.Shutdown();
+                   //System.Windows.Application.Current.Shutdown();
                 }
                 else if (dialogResult.Result == ButtonResult.OK)
                 {

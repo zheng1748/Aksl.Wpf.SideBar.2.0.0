@@ -27,7 +27,7 @@ namespace Aksl.Modules.MenuSub
         {
             containerRegistry.RegisterForNavigation<MenuSubHubView>();
 
-            containerRegistry.RegisterForNavigation<IndustryMenuSubHubView>();
+            containerRegistry.RegisterForNavigation<RadarsManagerMenuSubHubView>();
         }
 
         public void OnInitialized(IContainerProvider containerProvider)
@@ -35,8 +35,8 @@ namespace Aksl.Modules.MenuSub
             ViewModelLocationProvider.Register(typeof(MenuSubHubView).ToString(),
                                                 () => this._container.Resolve<MenuSubHubViewModel>());
 
-            ViewModelLocationProvider.Register(typeof(IndustryMenuSubHubView).ToString(),
-                                                 () => this._container.Resolve<IndustryMenuSubHubViewModel>());
+            ViewModelLocationProvider.Register(typeof(RadarsManagerMenuSubHubView).ToString(),
+                                                 () => this._container.Resolve<RadarsManagerMenuSubHubViewModel>());
         }
         #endregion
     }

@@ -11,7 +11,7 @@
              xmlns:views="clr-namespace:Aksl.Modules.HamburgerMenuNavigationSideBar.Views"
              xmlns:a="clr-namespace:Aksl.Modules.HamburgerMenuNavigationSideBar"
              xmlns:sv="clr-namespace:Aksl.Modules.HamburgerMenuNavigationSideBar"
-             xmlns:acview="clr-namespace:Aksl.ActiveContents.Views;assembly=Aksl.Toolkit"
+             xmlns:acview="clr-namespace:Aksl.ActiveContents.Views;assembly=Aksl.ActiveContents"
              mc:Ignorable="d"
              x:Name="HamburgerMenuNavigationSideBarHuber"
              prism:ViewModelLocator.AutoWireViewModel="True">

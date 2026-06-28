@@ -1,4 +1,17 @@
-﻿using System;
+﻿using Aksl.ActiveContents.ViewModels;
+using Aksl.ActiveContents.Views;
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Infrastructure.Events;
+using Aksl.Modules.HamburgerMenuSideBar.Views;
+using Prism;
+using Prism.Commands;
+using Prism.Events;
+using Prism.Ioc;
+using Prism.Mvvm;
+using Prism.Regions;
+using Prism.Unity;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
@@ -12,22 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
-
-using Prism;
-using Prism.Commands;
-using Prism.Events;
-using Prism.Ioc;
-using Prism.Mvvm;
-using Prism.Regions;
-using Prism.Unity;
 using Unity;
-
-using Aksl.ActiveContents.ViewModels;
-using Aksl.Dialogs.Services;
-using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
-
-using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 {
@@ -63,9 +61,9 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         #endregion
 
         #region Properties
-        public ActiveContentViewModel LeftPaneActiveContentViewModel { get; set; }
+        public SequenceActiveContentViewModel LeftPaneActiveContentViewModel { get; set; }
 
-        public ActiveContentViewModel RightContentActiveContentViewModel { get; set; }
+        public RandomActiveContentViewModel RightContentActiveContentViewModel { get; set; }
         public HamburgerMenuSideBarViewModel TopHamburgerMenuSideBar { get; set; }
 
         private ActiveContentItemViewModel _selectedLeftPaneActiveContentItem;
@@ -198,21 +196,21 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         {
             LeftPaneActiveContentViewModel.PropertyChanged += (sender, e) =>
             {
-                if (sender is ActiveContentViewModel avm)
+                if (sender is SequenceActiveContentViewModel savm)
                 {
-                    if (e.PropertyName == nameof(ActiveContentViewModel.SelectedContentItem))
+                    if (e.PropertyName == nameof(SequenceActiveContentViewModel.SelectedContentItem))
                     {
                         if (SelectedLeftPaneActiveContentItem is null)
                         {
-                            SelectedLeftPaneActiveContentItem = avm.SelectedContentItem;
+                            SelectedLeftPaneActiveContentItem = savm.SelectedContentItem;
 
                             SetMenuSideBar();
                         }
 
-                        if (SelectedLeftPaneActiveContentItem is not null && SelectedLeftPaneActiveContentItem != avm.SelectedContentItem)
+                        if (SelectedLeftPaneActiveContentItem is not null && SelectedLeftPaneActiveContentItem != savm.SelectedContentItem)
                         {
                             SelectedLeftPaneActiveContentItem = null;
-                            SelectedLeftPaneActiveContentItem = avm.SelectedContentItem;
+                            SelectedLeftPaneActiveContentItem = savm.SelectedContentItem;
 
                             SetMenuSideBar();
                         }
@@ -226,7 +224,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
                     void SetMenuSideBar()
                     {
-                        var hamburgerMenuSideBarView = avm.SelectedContentItem.ViewElement as HamburgerMenuSideBarView;
+                        var hamburgerMenuSideBarView = savm.SelectedContentItem.ViewElement as HamburgerMenuSideBarView;
                         var hamburgerMenuSideBarViewModel = hamburgerMenuSideBarView.DataContext as HamburgerMenuSideBarViewModel;
 
                         if (SelectedHamburgerMenuSideBar != hamburgerMenuSideBarViewModel)
@@ -261,7 +259,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                                 if (SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem is not null &&
                                     SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.IsAddViewToRightContent)
                                 {
-                                    ActiveContentManagerExtensions.AddViewToContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+                                    ActiveContentManagerExtensions.AddViewToRandomContentAsync(SelectedHamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem.MenuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
                                     {
                                         System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
                                         {
@@ -444,8 +442,8 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             RegisterRightContentActiveContent();
             void RegisterRightContentActiveContent()
             {
-                _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.RightContentHamburgerMenuSideBar);
-                var rightContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
+                _container.RegisterSingleton(from: typeof(RandomActiveContentViewModel), to: typeof(RandomActiveContentViewModel), name: ActiveContentNames.RightContentHamburgerMenuSideBar);
+                var rightContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
 
                 RightContentActiveContentViewModel = rightContentActiveContentViewModel;
             }
@@ -453,8 +451,8 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             await RegisterLeftPaneActiveContentAsync();
             async Task RegisterLeftPaneActiveContentAsync()
             {
-                _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
-                LeftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+                _container.RegisterSingleton(from: typeof(SequenceActiveContentViewModel), to: typeof(SequenceActiveContentViewModel), name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+                LeftPaneActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<SequenceActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
 
                 AddLeftPaneActiveContentViewModelPropertyChanged();
 
@@ -551,69 +549,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                 else 
                 {
                     LeftPaneActiveContentViewModel.SetSelectedItemByName(parentName);
-                }
-            }
-        }
-
-        private async Task MovePreviousName()
-        {
-            string previousContentItemName = default;
-
-            if (!RightContentActiveContentViewModel.HasActiveItem())
-            {
-                RightContentActiveContentViewModel.SetActiveItemToLast();
-
-                previousContentItemName = RightContentActiveContentViewModel.SelectedContentItem.Name;
-            }
-            else
-            {
-                //previousContentItemName = RightContentActiveContentViewModel.GetActiveContentItemByName();
-
-                //if (RightContentActiveContentViewModel.CanMovePrevious())
-                //{
-                //    RightContentActiveContentViewModel.ExecuteMovePrevious();
-                //    previousContentItemName = RightContentActiveContentViewModel.SelectedContentItem.Name;
-                //}
-            }
-
-            //if (string.IsNullOrEmpty(name))
-            //{
-            //    if (LeftPaneActiveContentViewModel.CanMove)
-            //    {
-            //        LeftPaneActiveContentViewModel.ExecuteMovePrevious();
-            //        var currentActiveContentItem = LeftPaneActiveContentViewModel.ActiveContentItems[LeftPaneActiveContentViewModel.SelectedIndex];
-            //    }
-            //    return;
-            //}
-
-            Debug.Assert(SelectedLeftPaneActiveContentItem== LeftPaneActiveContentViewModel.SelectedContentItem);
-
-           await RecursiveSubActiveContent(LeftPaneActiveContentViewModel.SelectedContentItem);
-
-            async Task RecursiveSubActiveContent(ActiveContentItemViewModel currentActiveContentItem)
-            {
-                var currentMenuSideBarView = currentActiveContentItem.ViewElement as HamburgerMenuSideBarView;
-                var currentMenuSideBarViewModel = currentMenuSideBarView.DataContext as HamburgerMenuSideBarViewModel;
-
-                var currentMenuSideBarItem = currentMenuSideBarViewModel.AllLeafHamburgerMenuSideBarItems.FirstOrDefault(msbi => msbi.Name == previousContentItemName);
-                if (currentMenuSideBarItem is not null)
-                {
-                    if (currentMenuSideBarItem != currentMenuSideBarViewModel.SelectedHamburgerMenuSideBarItem && !currentMenuSideBarViewModel.SelectedHamburgerMenuSideBarItem.HasSubMenu)
-                    {
-                        SelectedHamburgerMenuSideBarItem = currentMenuSideBarItem;
-                        currentMenuSideBarViewModel.SelectedHamburgerMenuSideBarItem = currentMenuSideBarItem;
-                    }
-                }
-                else
-                {
-                    if (LeftPaneActiveContentViewModel.CanMovePrevious())
-                    {
-                       // LeftPaneActiveContentViewModel.SelectedIndex >= 1
-                        //var previousContentItem = LeftPaneActiveContentViewModel.ActiveContentItems[LeftPaneActiveContentViewModel.SelectedIndex - 1];
-                        LeftPaneActiveContentViewModel.ExecuteMovePrevious();
-
-                        await RecursiveSubActiveContent(LeftPaneActiveContentViewModel.SelectedContentItem);
-                    }
                 }
             }
         }

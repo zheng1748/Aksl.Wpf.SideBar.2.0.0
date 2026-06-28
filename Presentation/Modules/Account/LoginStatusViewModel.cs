@@ -39,6 +39,8 @@ namespace Aksl.Modules.Account.ViewModels
 
             RegisterSignInedEvent();
 
+            RegisterPropertyChanged();
+
             Title = "Please Login";
         }
         #endregion
@@ -51,8 +53,8 @@ namespace Aksl.Modules.Account.ViewModels
             set => SetProperty<string>(ref _title, value);
         }
 
-        private string _userName;
-        public string UserName
+        private string? _userName;
+        public string? UserName
         {
             get => _userName;
             set => SetProperty<string>(ref _userName, value);
@@ -64,10 +66,11 @@ namespace Aksl.Modules.Account.ViewModels
             get => _isSignIning;
             set
             {
-                if (SetProperty<bool>(ref _isSignIning, value))
-                {
-                    (SignInCommand as DelegateCommand)?.RaiseCanExecuteChanged();
-                }
+                SetProperty<bool>(ref _isSignIning, value);
+                //if (SetProperty<bool>(ref _isSignIning, value))
+                //{
+                //    (SignInCommand as DelegateCommand)?.RaiseCanExecuteChanged();
+                //}
             }
         }
 
@@ -76,6 +79,22 @@ namespace Aksl.Modules.Account.ViewModels
         {
             get => _isAuthenticated;
             set => SetProperty<bool>(ref _isAuthenticated, value);
+        }
+        #endregion
+
+        #region RegisterPropertyChanged Method
+        private void RegisterPropertyChanged()
+        {
+            this.PropertyChanged += (sender, e) =>
+            {
+                if (sender is LoginStatusViewModel lsvm)
+                {
+                    if (e.PropertyName == nameof(IsSignIning))
+                    {
+                        (SignInCommand as DelegateCommand)?.RaiseCanExecuteChanged();
+                    }
+                }
+            };
         }
         #endregion
 
@@ -104,7 +123,7 @@ namespace Aksl.Modules.Account.ViewModels
         {
             SignInCommand = new DelegateCommand(async () =>
             {
-                await ExecutSignInCommandAsync();
+                await ExecuteSignInCommandAsync();
             },
             () =>
             {
@@ -113,13 +132,14 @@ namespace Aksl.Modules.Account.ViewModels
             });
         }
 
-        private async Task ExecutSignInCommandAsync()
+        private async Task ExecuteSignInCommandAsync()
         {
             IsSignIning = true;
 
             try
             {
-                var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContents.ViewModels.ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+                var shellContentActiveContentViewModel = PrismIocExtensions.GetContainer().
+                                                           Resolve<ActiveContents.ViewModels.ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
                 shellContentActiveContentViewModel.SetSelectedItemByName(nameof(LoginView));
             }
             catch (Exception ex)
@@ -127,7 +147,7 @@ namespace Aksl.Modules.Account.ViewModels
                 await _dialogViewService.AlertAsync($"{ex.Message}", "Sign In Failure:");
             }
 
-             IsSignIning = false;
+            //IsSignIning = false;
         }
 
         private bool CanExecuteSignInCommand()
@@ -137,13 +157,14 @@ namespace Aksl.Modules.Account.ViewModels
         #endregion
 
         #region SignOut Command
+        //AuthenticationService
         public ICommand SignOutCommand { get; private set; }
 
         private void CreateSignOutCommand()
         {
             SignOutCommand = new DelegateCommand(async () =>
             {
-                await ExecutSignOutCommandAsync();
+                await ExecuteSignOutCommandAsync();
             },
             () =>
             {
@@ -152,18 +173,25 @@ namespace Aksl.Modules.Account.ViewModels
             });
         }
 
-        private async Task ExecutSignOutCommandAsync()
+        private async Task ExecuteSignOutCommandAsync()
         {
             IsSignIning = true;
 
             try
             {
-                IsAuthenticated = false;
+                var loginOutResponse = await ServiceExtensions.GetLoginHandler().ExecuteLoginOutAction(UserName);
 
-                Title = null;
+                //if (loginOutResponse.Succeeded)
+                //{
+                IsAuthenticated = false;
+                UserName = null;
                 Title = "Please Login";
 
                 RaisePropertyChanged(nameof(UserName));
+                //}
+                //else
+                //{
+                //}
             }
             catch (Exception ex)
             {

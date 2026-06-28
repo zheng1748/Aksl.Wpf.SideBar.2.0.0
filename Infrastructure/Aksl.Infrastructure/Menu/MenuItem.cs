@@ -12,41 +12,29 @@ namespace Aksl.Infrastructure
 
         #region Properties
         public int Id { get; set; }
-
         public string Name { get; set; }
         public string Title { get; set; }
         public string IconKind { get; set; }
         public MenuItemType ItemType { get; set; }
-
         public bool IsSelectedOnInitialize { get; set; } = false;
-
         public bool IsHome { get; set; } = false;
-
         public bool IsCacheable { get; set; } = false;
-
         public int Level { get; set; }
-
         public string ModuleName { get; set; }
-
         public string ViewName { get; set; }
-
         public MenuItem Parent { get; set; } = null;
-
         /// <summary>
         /// 子节点
         /// </summary>
         public ICollection<MenuItem> SubMenus { get; } = new List<MenuItem>();
-
         public bool IsNexOnNotLeaf { get; set; } = true;
         public bool IsNextNavigation { get; set; } = true;
+        public bool IsNexApplication { get; set; } = false;
         public string NavigationName { get; set; }
-
+        public string ActiveContentName { get; set; }
         public bool CanRun { get; set; }
-
         public bool IsSeparator => ItemType == MenuItemType.Separator;
-
         public string WorkspaceRegionName { get; set; }
-
         public string WorkspaceViewEventName { get; set; }
         #endregion
     }

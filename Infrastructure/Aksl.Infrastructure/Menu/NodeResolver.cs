@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unity;
 
 namespace Aksl.Infrastructure;
 
@@ -20,7 +21,7 @@ public class NodeResolver<T> where T : NodeViewModel
     #region Constructors
     public NodeResolver()
     {
-        _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
+        _menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
     }
     #endregion
 

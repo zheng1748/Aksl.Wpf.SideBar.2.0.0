@@ -13,7 +13,7 @@
              xmlns:behaviors="clr-namespace:Aksl.Xaml.Behaviors;assembly=Aksl.Toolkit"
              xmlns:inf="clr-namespace:Aksl.Infrastructure;assembly=Aksl.Infrastructure"
              xmlns:views="clr-namespace:Aksl.Modules.HamburgerMenuSideBar.Views"
-             xmlns:acview="clr-namespace:Aksl.ActiveContents.Views;assembly=Aksl.Toolkit"
+             xmlns:acview="clr-namespace:Aksl.ActiveContents.Views;assembly=Aksl.ActiveContents"
              x:Name="HamburgerMenuSideBarHubBarer"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
@@ -922,11 +922,11 @@
                 <Grid x:Name="ContentRoot"
                       Grid.ColumnSpan="2">
                     <Border>
-                        <acview:ActiveContentView x:Name="RightContentHamburgerMenuSideBarActiveContentView"
-                                                  DataContext="{Binding Path=RightContentActiveContentViewModel}"
-                                                  HorizontalAlignment="Stretch"
-                                                  VerticalAlignment="Stretch"
-                                                  Margin="0,0,0,0">
+                        <acview:RandomActiveContentView x:Name="RightContentHamburgerMenuSideBarActiveContentView"
+                                                        DataContext="{Binding Path=RightContentActiveContentViewModel}"
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalAlignment="Stretch"
+                                                        Margin="0,0,0,0">
                             <ContentControl.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
@@ -935,7 +935,7 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </ContentControl.RenderTransform>
-                        </acview:ActiveContentView>
+                        </acview:RandomActiveContentView>
                     </Border>
                     <Rectangle x:Name="LightDismissLayer"
                                Fill="Transparent"
@@ -971,7 +971,7 @@
                                         IsEnabled="{Binding Path=CanMove}">
                                 </Button>
                             </StackPanel>
-                            <acview:ActiveContentView x:Name="LeftPaneHamburgerMenuSideBarActiveContentView"
+                            <acview:SequenceActiveContentView x:Name="LeftPaneHamburgerMenuSideBarActiveContentView"
                                                       DataContext="{Binding Path=LeftPaneActiveContentViewModel}"
                                                       HorizontalAlignment="Stretch"
                                                       VerticalAlignment="Stretch"
@@ -985,7 +985,7 @@
                                         <TranslateTransform />
                                     </TransformGroup>
                                 </ContentControl.RenderTransform>
-                            </acview:ActiveContentView>
+                            </acview:SequenceActiveContentView>
                         </DockPanel>
                         <Rectangle x:Name="HCPaneBorder"
                                    Fill="Transparent"

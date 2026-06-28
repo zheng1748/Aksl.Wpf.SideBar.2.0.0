@@ -74,7 +74,8 @@ namespace Aksl.Infrastructure
                 Id = int.Parse(element.Attribute("Id")?.Value),
                 Name = element.Attribute("Name")?.Value,
                 Title = element.Attribute("Title")?.Value,
-                NavigationName = element.Attribute("NavigationName")?.Value
+                NavigationName = element.Attribute("NavigationName")?.Value,
+                ActiveContentName = element.Attribute("ActiveContentName")?.Value,
             };
 
             if (element.Attribute("IconKind")?.Value is not null)
@@ -105,8 +106,7 @@ namespace Aksl.Infrastructure
             // var navServiceName = element.Attribute("navigationServiceName")?.Value;
             menuItem.ModuleName = element.Attribute("ModuleName")?.Value;
             menuItem.ViewName = element.Attribute("ViewName")?.Value;
-           // menuItem.RequrePermissons = element.Attribute("RequrePermissons")?.Value;
-            //  return new MenuItem() { Title = Title, Icon = fontIcon, Level = Level, ViewName = ViewName };
+
             if (element.Attribute("IsHome") is not null)
             {
                 var isHome = element.Attribute("IsHome").Value;
@@ -136,7 +136,11 @@ namespace Aksl.Infrastructure
                 var isNexOnNotLeaf = element.Attribute("IsNexOnNotLeaf").Value;
                 menuItem.IsNexOnNotLeaf = bool.Parse(isNexOnNotLeaf);
             }
-
+            if (element.Attribute("IsNexApplication") is not null)
+            {
+                var isNexApplication = element.Attribute("IsNexApplication").Value;
+                menuItem.IsNexApplication = bool.Parse(isNexApplication);
+            }
             //if (element.Attribute("ElementName") is not null)
             //{
             //    menuItem.ElementName = element.Attribute("ElementName").Value;

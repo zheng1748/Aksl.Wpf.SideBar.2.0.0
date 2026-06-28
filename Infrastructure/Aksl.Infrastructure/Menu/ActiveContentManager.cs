@@ -57,7 +57,8 @@ public class ActiveContentManager
                 navigationParameters = new() { { "CurrentMenuItem", menuItem } };
             }
 
-            NavigationContext navigationContext = new(regionNavigationService, new Uri(viewName, UriKind.RelativeOrAbsolute), navigationParameters);
+            NavigationContext navigationContext = new(regionNavigationService, new Uri(viewName, UriKind.RelativeOrAbsolute));
+            navigationContext.Parameters = navigationParameters;
 
             Action<INavigationAware> action = (n) => n.OnNavigatedTo(navigationContext);
             MvvmHelpers.ViewAndViewModelAction<INavigationAware>(registeredView, action);
@@ -67,6 +68,33 @@ public class ActiveContentManager
         }
 
         return contentInformation;
+    }
+    #endregion
+
+    #region Add View To Random Content Method
+    public async Task AddViewToRandomContentAsync(Infrastructure.MenuItem menuItem, RandomActiveContentViewModel  randomActiveContentViewModel, NavigationParameters navigationParameters = null)
+    {
+        var viewName = menuItem.GetViewTypeName();
+
+        var currentView = randomActiveContentViewModel.GetStoreViewElementByName(menuItem.Name);
+        if (currentView is not null)
+        {
+            if (menuItem.IsCacheable)
+            {
+                // activeContentViewModel.SetContentItem(contentInformation);
+                randomActiveContentViewModel.SetContentItemByName(menuItem.Name);
+            }
+            else
+            {
+                ActiveContents.ContentInformation contentInformation = await CreateContentInformationAsync(menuItem, navigationParameters);
+                randomActiveContentViewModel.RetsetContentItem(contentInformation);
+            }
+        }
+        else
+        {
+            ActiveContents.ContentInformation contentInformation = await CreateContentInformationAsync(menuItem, navigationParameters);
+            randomActiveContentViewModel.Add(contentInformation);
+        }
     }
     #endregion
 
@@ -80,7 +108,7 @@ public class ActiveContentManager
         {
             if (menuItem.IsCacheable)
             {
-               // activeContentViewModel.SetContentItem(contentInformation);
+                // activeContentViewModel.SetContentItem(contentInformation);
                 activeContentViewModel.SetContentItemByName(menuItem.Name);
             }
             else

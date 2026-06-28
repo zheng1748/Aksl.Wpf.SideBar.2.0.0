@@ -1,20 +1,18 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-
+﻿using Aksl.ActiveContents.ViewModels;
+using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Infrastructure.Events;
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Unity;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using Unity;
-
-using Aksl.Dialogs.Services;
-
-using Aksl.Infrastructure;
-using Aksl.Infrastructure.Events;
 
 namespace Aksl.Modules.MenuSub.ViewModels
 {
@@ -33,23 +31,29 @@ namespace Aksl.Modules.MenuSub.ViewModels
         #region Constructors
         public MenuSubHubViewModel()
         {
-            _container = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IUnityContainer>();
-            _regionManager = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IRegionManager>();
-            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+            _container = PrismIocExtensions.GetContainer();
+            _regionManager = PrismUnityExtensions.GetRegionManager();
+            _eventAggregator = PrismUnityExtensions.GetEventAggregator();
 
-            _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
-            _menuService = _container.Resolve<IMenuService>();
+            _dialogViewService = PrismUnityExtensions.GetDialogViewService();
+            _menuService = PrismUnityExtensions.GetMenuService();
         }
         #endregion
 
         #region Properties
-        private string _workspaceRegionName;
-        public string WorkspaceRegionName
+        //private string _workspaceRegionName;
+        //public string WorkspaceRegionName
+        //{
+        //    get => _workspaceRegionName;
+        //    set => SetProperty<string>(ref _workspaceRegionName, value);
+        //}
+        public string ActiveContentName { get; set; }
+        private RandomActiveContentViewModel _randomActiveContentViewModel;
+        public RandomActiveContentViewModel BottomActiveContentViewModel
         {
-            get => _workspaceRegionName;
-            set => SetProperty<string>(ref _workspaceRegionName, value);
+            get => _randomActiveContentViewModel;
+            set => SetProperty<RandomActiveContentViewModel>(ref _randomActiveContentViewModel, value);
         }
-
         public HierarchicalMenusViewModel HierarchicalMenus { get; private set; }
 
         private bool _isLoading;
@@ -57,6 +61,16 @@ namespace Aksl.Modules.MenuSub.ViewModels
         {
             get => _isLoading;
             set => SetProperty(ref _isLoading, value);
+        }
+        #endregion
+
+        #region Register ActiveContent Method
+        private void RegisterActiveContent()
+        {
+            _container.RegisterSingleton(from: typeof(RandomActiveContentViewModel), to: typeof(RandomActiveContentViewModel), name: this.ActiveContentName);
+            var bottomActiveContentViewModel = _container.Resolve<RandomActiveContentViewModel>(name: this.ActiveContentName);
+
+            BottomActiveContentViewModel = bottomActiveContentViewModel;
         }
         #endregion
 
@@ -77,57 +91,44 @@ namespace Aksl.Modules.MenuSub.ViewModels
                     #region LoadView Method
                     async Task LoadViewAsync()
                     {
-                        string viewTypeAssemblyQualifiedName = currentMenuItem.ViewName;
-                        Type viewType = Type.GetType(viewTypeAssemblyQualifiedName);
-                        if (viewType is not null)
+                        if (IsAddViewToBottomContent())
                         {
-                            IRegion region = _regionManager.Regions[WorkspaceRegionName];
-                            var viewName = viewType.Name;
-
-                            _currentView = region.Views.FirstOrDefault(v => v.GetType() == viewType);
-                            if (_currentView is null)
-                            {
-                                _currentView = region.GetView(viewType.FullName);
-                            }
-
-                            if (_currentView is not null)
-                            {
-                                if (currentMenuItem.IsCacheable)
-                                {
-                                    region.Activate(_currentView);
-                                }
-                                else
-                                {
-                                    region.Remove(_currentView);
-
-                                    AddView();
-                                }
-                            }
-                            else
-                            {
-                                AddView();
-                            }
-
-                            void AddView()
-                            {
-                                if (CanAddView())
-                                {
-                                    NavigationParameters navigationParameters = new()
-                                    {
-                                        { "CurrentMenuItem", currentMenuItem }
-                                    };
-
-                                    _regionManager.RequestNavigate(WorkspaceRegionName, viewName, navigationParameters);
-                                }
-                            }
-
-                            bool CanAddView() => !string.IsNullOrEmpty(currentMenuItem.ModuleName);
+                            AddViewToBottomContent();
                         }
-                        else
+
+                        if (IsNavigationToBottomContent())
                         {
-                            await _dialogViewService.AlertAsync(message: $"Unable to find \"{viewTypeAssemblyQualifiedName}\".", title: $"Error:Missing Type");
+                            NavigationToBottomContent();
                         }
                     }
+
+                    void AddViewToBottomContent()
+                    {
+                        ActiveContentManagerExtensions.AddViewToRandomContentAsync(currentMenuItem, this.ActiveContentName).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+                        {
+                            System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+                            {
+                                await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View To BottomContent");
+                            });
+                        });
+                    }
+
+                    void NavigationToBottomContent()
+                    {
+                        ActiveContentManagerExtensions.NavigationToRandomContentAsync(currentMenuItem, this.ActiveContentName, new() { { "CurrentMenuItem", currentMenuItem } }).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+                        {
+                            System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+                            {
+                                await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View To RightContent");
+                            });
+                        });
+                    }
+
+                    bool IsAddViewToBottomContent() =>
+                                        !currentMenuItem.HasNextSubMenu() && currentMenuItem.HasViewName() && !currentMenuItem.IsNexApplication;
+
+                    bool IsNavigationToBottomContent() =>
+                            currentMenuItem.HasNextSubMenu() && currentMenuItem.HasViewName() && currentMenuItem.IsNexApplication;
                     #endregion
                 }
                 catch (Exception ex)
@@ -171,8 +172,11 @@ namespace Aksl.Modules.MenuSub.ViewModels
             var parameters = navigationContext.Parameters;
             if (parameters.TryGetValue("CurrentMenuItem", out MenuItem currentMenuItem))
             {
-                WorkspaceRegionName = currentMenuItem.WorkspaceRegionName;
+              //  WorkspaceRegionName = currentMenuItem.WorkspaceRegionName;
                 _workspaceViewEventName = currentMenuItem.WorkspaceViewEventName;
+
+               ActiveContentName = currentMenuItem.ActiveContentName;
+               RegisterActiveContent();
 
                 RegisterBuildWorkspaceViewEvents();
 

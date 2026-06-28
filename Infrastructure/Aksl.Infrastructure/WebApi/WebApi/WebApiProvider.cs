@@ -29,7 +29,7 @@ public class WebApiProvider
     #endregion
 
     #region Constructors
-    public WebApiProvider(IHttpClientFactory httpClientFactory, ILogger<WebApiProvider> logger)
+    public WebApiProvider(IHttpClientFactory httpClientFactory,ILogger<WebApiProvider> logger)
     {
         _httpClientFactory = httpClientFactory ?? throw new ArgumentException("HttpClientFactory is not null"); 
         _logger = logger?? NullLoggerFactory.Instance.CreateLogger<WebApiProvider>();
@@ -41,8 +41,10 @@ public class WebApiProvider
     #region Properties
     public HeaderProperties HeaderProperties { get; set; }
 
-    public void SetBearer(string accessToken)
+    public void SetBearer(string accessToken, string refreshToken)
     {
+        AccessToken=accessToken;
+        RefreshToken = refreshToken;
         //HeaderProperties.SetString("Authorization", $"Bearer {accessToken}");
         SetHeader("Authorization", $"Bearer {accessToken}");
     }
@@ -51,6 +53,9 @@ public class WebApiProvider
     {
         HeaderProperties.SetString(key, value);
     }
+
+    public string? AccessToken { get; set; }
+    public string? RefreshToken { get; set; }
     #endregion
 
     #region Get Method

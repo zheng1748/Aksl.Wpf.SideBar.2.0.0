@@ -121,16 +121,15 @@ namespace Aksl.Infrastructure.Events
     #endregion
 
     #region MenuSub
-    public class OnBuildIndustryMenuSubWorkspaceViewEvent : OnBuildWorkspaceViewEventbase
+    public class OnBuildRadarsManagerMenuSubWorkspaceViewEvent : OnBuildWorkspaceViewEventbase
     {
         #region Constructors
-        public OnBuildIndustryMenuSubWorkspaceViewEvent()
+        public OnBuildRadarsManagerMenuSubWorkspaceViewEvent()
         {
-            Name = typeof(OnBuildIndustryMenuSubWorkspaceViewEvent).Name;
+            Name = nameof(OnBuildRadarsManagerMenuSubWorkspaceViewEvent);
         }
         #endregion
     }
-
     #endregion
 
     #region HamburgerMenuTreeBar

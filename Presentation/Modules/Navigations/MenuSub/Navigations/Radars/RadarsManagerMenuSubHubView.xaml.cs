@@ -15,9 +15,9 @@ using System.Windows.Shapes;
 
 namespace Aksl.Modules.MenuSub.Views
 {
-    public partial class IndustryMenuSubHubView : UserControl
+    public partial class RadarsManagerMenuSubHubView : UserControl
     {
-        public IndustryMenuSubHubView()
+        public RadarsManagerMenuSubHubView()
         {
             InitializeComponent();
         }

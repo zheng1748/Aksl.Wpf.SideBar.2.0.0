@@ -103,6 +103,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\Aksl.Infrastructure\Aksl.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Toolkits\Aksl.ActiveContents\Aksl.ActiveContents.csproj" />
     <ProjectReference Include="..\..\Toolkits\Aksl.Dialogs\Aksl.Dialogs.csproj" />
     <ProjectReference Include="..\..\Toolkits\Aksl.Toolkit.Controls\Aksl.Toolkit.Controls.csproj" />
     <ProjectReference Include="..\..\Toolkits\Aksl.Toolkit\Aksl.Toolkit.csproj" />

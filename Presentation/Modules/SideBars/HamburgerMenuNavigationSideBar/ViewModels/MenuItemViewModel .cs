@@ -94,7 +94,7 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 
                        //ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
 
-                        ActiveContentManagerExtensions.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+                        ActiveContentManagerExtensions.AddViewToRandomContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
                         {
                             System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
                             {

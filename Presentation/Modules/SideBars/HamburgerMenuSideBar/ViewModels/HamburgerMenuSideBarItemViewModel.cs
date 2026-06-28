@@ -63,39 +63,24 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     //public int Level => _menuItem.Level;
     public string NavigationName => _menuItem.NavigationName;
     public bool IsSelectedOnInitialize => _menuItem.IsSelectedOnInitialize;
-    public bool HasSubMenu
-    {
-        get
-        {
-            return _menuItem.HasNextSubMenu();
-            // return HasSubMenuInternal();
-        }
-    }
 
+    public PackIconKind IconKind =>
+                        _menuItem.GetIconKind();
 
+    public bool HasSubMenu =>
+                       _menuItem.HasNextSubMenu();
 
     public bool HasViewName =>
-        _menuItem.HasViewName();// return HasSubMenuInternal();
+                       _menuItem.HasViewName();
 
-    public PackIconKind IconKind
-    {
-        get
-        {
-            return _menuItem.GetIconKind();
-            //PackIconKind kind = PackIconKind.None;
-
-            //_ = Enum.TryParse(_menuItem.IconKind, out kind);
-
-            //return kind;
-        }
-    }
+    public bool IsSetLeftPaneActiveContentItem =>
+                            IsSelected && _menuItem.HasNextSubMenu() && !_menuItem.IsNexApplication;
 
     public bool IsAddViewToRightContent => 
-           IsSelected && IsLeaf && !HasSubMenu && HasViewName;
+                           IsSelected && IsLeaf && !_menuItem.HasNextSubMenu() && HasViewName && !_menuItem.IsNexApplication;
 
-
-    public bool IsSetLeftPaneActiveContentItem => 
-          IsSelected && HasSubMenu;
+    public bool IsNavigationToRightContent =>
+                           IsSelected && IsLeaf && _menuItem.HasNextSubMenu() && HasViewName && _menuItem.IsNexApplication;
 
     private bool _isSelected = false;
     public bool IsSelected
@@ -108,29 +93,16 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                 if (IsAddViewToRightContent)
                 {
                     AddViewToRightContent();
+                }
 
-                    //ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
-                    //{
-                    //    System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
-                    //    {
-                    //        await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
-                    //    });
-                    //});
+                if (IsNavigationToRightContent)
+                {
+                    NavigationToRightContent();
                 }
 
                 if (IsSetLeftPaneActiveContentItem)
                 {
                     SetLeftPaneActiveContentItem();
-                    //var leftPaneActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
-
-                    //if (leftPaneActiveContentViewModel.ContainItemByName(this.Path))
-                    //{
-                    //    leftPaneActiveContentViewModel.SetContentItemByName(this.Path);
-                    //}
-                    //else
-                    //{
-                    //    HamburgerMenuSideBarHelper.AddViewsToLeftPaneAsync(this).Await();
-                    //}
                 }
 
                 //bool IsAddViewToRightContent()
@@ -166,7 +138,20 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     #region Add View To RightContent Method
     public void AddViewToRightContent()
     {
-        ActiveContentManagerExtensions.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+        ActiveContentManagerExtensions.AddViewToRandomContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+        {
+            System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+            {
+                await _dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View To RightContent");
+            });
+        });
+    }
+    #endregion
+
+    #region Navigation To RightContent Method
+    public void NavigationToRightContent()
+    {
+        ActiveContentManagerExtensions.NavigationToRandomContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuSideBar, new() { { "CurrentMenuItem", _menuItem } }).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
         {
             System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
             {
@@ -179,7 +164,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     #region Set LeftPane Active ContentItem Method
     public void SetLeftPaneActiveContentItem()
     {
-        var leftPaneActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+        var leftPaneActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<SequenceActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
 
         if (leftPaneActiveContentViewModel.ContainItemByName(this.Path))
         {

@@ -11,6 +11,5 @@
 
         public const string LeftPaneHamburgerMenuNavigationSideBar = "LeftPaneHamburgerMenuNavigationSideBarActiveContentViewModel";
         public const string RightContentHamburgerMenuNavigationSideBar = "RightContentHamburgerMenuNavigationSideBarActiveContentViewModel";
-
     }
 }

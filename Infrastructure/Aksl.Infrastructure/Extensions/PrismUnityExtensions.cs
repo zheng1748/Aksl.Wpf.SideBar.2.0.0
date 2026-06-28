@@ -38,5 +38,10 @@ public static class PrismUnityExtensions
     {
         return PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
     }
+
+    public static IMenuService GetMenuService()
+    {
+        return PrismIocExtensions.GetContainer().Resolve<IMenuService>();
+    }
 }
 

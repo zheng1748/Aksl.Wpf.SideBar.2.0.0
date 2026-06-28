@@ -50,7 +50,8 @@ namespace Prism.Regions
         /// Gets the <see cref="NavigationParameters"/> extracted from the URI and the object parameters passed in navigation.
         /// </summary>
         /// <value>The URI query.</value>
-        public NavigationParameters Parameters { get; private set; }
+       //public NavigationParameters Parameters { get; private set; }
+        public NavigationParameters Parameters { get;  set; }
 
         private void GetNavigationParameters(NavigationParameters navigationParameters)
         {

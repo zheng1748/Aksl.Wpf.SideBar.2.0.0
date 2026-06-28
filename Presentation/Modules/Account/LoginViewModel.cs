@@ -143,13 +143,31 @@ namespace Aksl.Modules.Account.ViewModels
             {
                 StatusMessage = "Login.......";
 
-                SetShellActiveItem();
+                var webApiProvider = ServiceExtensions.GetWebApiProvider();
 
-                IsSuccessful = true;
+                var loginResponse = await ServiceExtensions.GetLoginHandler().ExecuteLoginAction(UserName, Password);
+                if (loginResponse.Succeeded)
+                {
+                    //var loginResponse2 = await ServiceExtensions.GetLoginHandler().ExecuteLoginAction(UserName, Password);
 
-                _eventAggregator.GetEvent<OnSignInedEvent>().Publish(new OnSignInedEvent { UserName = this.UserName, IsSuccessful = true });
+                    //var refreshTokenResponse = await ServiceExtensions.GetLoginHandler().
+                    //                            ExecuteRefreshTokenAction(webApiProvider.AccessToken, webApiProvider.RefreshToken);
 
-                await Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false);
+                    //var refreshTokenResponse2 = await ServiceExtensions.GetLoginHandler().
+                    //                              ExecuteRefreshTokenAction(webApiProvider.AccessToken, webApiProvider.RefreshToken);
+
+                    SetShellActiveItem();
+
+                    IsSuccessful = true;
+
+                    _eventAggregator.GetEvent<OnSignInedEvent>().Publish(new OnSignInedEvent { UserName = this.UserName, IsSuccessful = true });
+
+                    await Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false);
+                }
+                else
+                {
+                    await _dialogViewService.AlertAsync($"{loginResponse.ToString()}", "Login In Failure:");
+                }
             }
             catch (Exception ex)
             {
@@ -243,7 +261,7 @@ namespace Aksl.Modules.Account.ViewModels
         #region Set Shell ActiveItem Method
         public void SetShellActiveItem()
         {
-            var shellContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContents.ViewModels.ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+            var shellContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContents.ViewModels.ActiveContentViewModel>(name: ActiveContentNames.ShellContent);
             shellContentActiveContentViewModel.SetSelectedItemByName(ActiveContentNames.HamburgerMenuSideBarName);
         }
         #endregion

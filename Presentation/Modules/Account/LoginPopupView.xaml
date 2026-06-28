@@ -306,7 +306,9 @@
                          ToolTip="{Binding Path=OkToolTip,Mode=OneWay}">
                     <Button.Content>
                         <StackPanel Orientation="Vertical">
-                            <materialDesign:PackIcon Kind="{Binding Path=OkIconKind,Mode=OneWay}"  Width="30" Height="30"
+                            <materialDesign:PackIcon Kind="{Binding Path=OkIconKind,Mode=OneWay}"
+                                                     Width="30"
+                                                     Height="30"
                                                      Background="Transparent"
                                                      HorizontalAlignment="Center"
                                                      VerticalAlignment="Center" />

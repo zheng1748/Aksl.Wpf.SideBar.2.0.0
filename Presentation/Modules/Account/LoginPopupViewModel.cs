@@ -147,14 +147,22 @@ namespace Aksl.Modules.Account.ViewModels
 
                 //var resetLockoutResponse = await ServiceExtensions.GetLoginHandler().ExecuteResetLockoutAsync(UserName);
 
-                var loginResponse = await ServiceExtensions.GetLoginHandler().ExecuteLoginActionAsync(UserName, Password);
+                var loginResponse = await ServiceExtensions.GetLoginHandler().ExecuteLoginAction(UserName, Password);
                 if (loginResponse.Succeeded)
                 {
                     var webApiProvider = ServiceExtensions.GetWebApiProvider();
                     Debug.Assert(webApiProvider.HeaderProperties.GetString("Authorization").Contains("Bearer"));
 
-                    var generateEmailTokenResponse = await ServiceExtensions.GetLoginHandler().
-                                                              ExecuteGetEmailConfirmationTokenActionAsync(new Dictionary<string, string>(){{ "email","13529805@qq.com"}});
+                    //var loginResponse2 = await ServiceExtensions.GetLoginHandler().ExecuteLoginAction(UserName, Password);
+
+                    //var refreshTokenResponse = await ServiceExtensions.GetLoginHandler().
+                    //                            ExecuteRefreshTokenAction(webApiProvider.AccessToken, webApiProvider.RefreshToken);
+
+                    //var refreshTokenResponse2 = await ServiceExtensions.GetLoginHandler().
+                    //                              ExecuteRefreshTokenAction(webApiProvider.AccessToken, webApiProvider.RefreshToken);
+
+                    //var generateEmailTokenResponse = await ServiceExtensions.GetLoginHandler().
+                    //                            ExecuteGetEmailConfirmationTokenAction([new HttpQueryKeyValuePair("email", "13529805@qq.com")]);
 
 
                     IsSuccessful = true;
