@@ -31,8 +31,8 @@ namespace Aksl.Modules.Account.ViewModels
         #region Constructors
         public LoginStatusViewModel()
         {
-            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
-            _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+            _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
+            _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
 
             CreateSignInCommand();
             CreateSignOutCommand();

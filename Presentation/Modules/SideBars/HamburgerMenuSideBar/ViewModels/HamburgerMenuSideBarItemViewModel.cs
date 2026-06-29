@@ -23,6 +23,7 @@ using Aksl.Toolkit.Controls;
 
 using Aksl.Infrastructure;
 using Aksl.Infrastructure.Events;
+
 using Aksl.Modules.HamburgerMenuSideBar.Views;
 
 namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels;
@@ -64,8 +65,10 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     public string NavigationName => _menuItem.NavigationName;
     public bool IsSelectedOnInitialize => _menuItem.IsSelectedOnInitialize;
 
+    //public PackIconKind IconKind =>
+    //                    _menuItem.GetIconKind();
     public PackIconKind IconKind =>
-                        _menuItem.GetIconKind();
+                      _menuItem.IconKind.ToPackIconKind();
 
     public bool HasSubMenu =>
                        _menuItem.HasNextSubMenu();

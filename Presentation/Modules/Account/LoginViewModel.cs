@@ -39,9 +39,9 @@ namespace Aksl.Modules.Account.ViewModels
         #region Constructors
         public LoginViewModel()
         {
-            _regionManager = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IRegionManager>();
-            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
-            _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+            _regionManager = PrismIocExtensions.GetContainer().Resolve<IRegionManager>();
+            _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
+            _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
 
             _errors = new();
 
@@ -55,13 +55,12 @@ namespace Aksl.Modules.Account.ViewModels
         #region Properties
         public string Title { get; private set; } = "Sign In";
 
-        private string _userName;
         [Required(ErrorMessage = "用户名不能为空")]
-        [RegularExpression("^[a-zA-Z]{1}([a-zA-Z0-9]){3,15}$", ErrorMessage = "用户名必须是4到16个字母或者数字,且以字母开头.")]
+        [RegularExpression("^[a-zA-Z]{1}([a-zA-Z0-9]){7,15}$", ErrorMessage = "用户名必须是8到16个字母或者数字,且以字母开头.")]
         public string UserName
         {
-            get => _userName;
-            set => SetProperty<string>(ref _userName, value);
+            get => field;
+            set => SetProperty<string>(ref field, value);
         }
 
         private string _password;

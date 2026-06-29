@@ -231,6 +231,29 @@ namespace Aksl.ActiveContents.ViewModels
             }
         }
 
+        public void RetsetContentItemByName(string name)
+        {
+            var activeContentItem = GetActiveContentItemByName(name);
+            if (activeContentItem is not null)
+            {
+                activeContentItem.ViewElement = null;
+
+                SetActiveContentItem(activeContentItem);
+            }
+            else
+            {
+                var storeContentItem = GetStoreContentItemByName(name);
+                if (storeContentItem is not null)
+                {
+                    storeContentItem.ViewElement = null;
+
+                    ActiveContentItems.Add(storeContentItem);
+
+                    SetActiveContentItem(storeContentItem);
+                }
+            }
+        }
+
         public void SetItemOnClose(ContentInformation contentInformation)
         {
             var activeContentItem = GetActiveContentItemByInfo(contentInformation);

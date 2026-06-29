@@ -1,7 +1,10 @@
-﻿using Aksl.ActiveContents.ViewModels;
+﻿using Aksl.ActiveContents;
+using Aksl.ActiveContents.ViewModels;
 using Aksl.Dialogs.Services;
 using Aksl.Infrastructure;
 using Aksl.Infrastructure.Events;
+using Aksl.Modules.Account.ViewModels;
+using Aksl.Modules.Account.Views;
 using Aksl.Modules.HamburgerMenuSideBar.ViewModels;
 using Aksl.Modules.HamburgerMenuSideBar.Views;
 using Prism;
@@ -43,38 +46,40 @@ namespace Aksl.Modules.Shell.ViewModels
             _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
 
             RegisterSignInedEvent();
+            RegisterAccessTokenExpiredEvent();
+
             RegisterActiveContents().Await(configureAwait:true);
         }
         #endregion
 
         #region Properties
-        private RandomActiveContentViewModel _shellContentActiveContentViewModel;
+        //private RandomActiveContentViewModel _shellContentActiveContentViewModel;
         public RandomActiveContentViewModel ShellContentActiveContentViewModel
         {
-            get => _shellContentActiveContentViewModel;
-            set => SetProperty<RandomActiveContentViewModel>(ref _shellContentActiveContentViewModel, value);
+            get => field ;
+            set => SetProperty<RandomActiveContentViewModel>(ref field, value);
         }
 
        // public RandomActiveContentViewModel ShellContentActiveContentViewModel { get; set; }
 
         //   public ActiveContentViewModel LoginActiveContentViewModel { get; set; }
        // public RandomActiveContentViewModel LoginActiveContentViewModel { get; set; }
-        private RandomActiveContentViewModel _loginActiveContentViewModel;
+       // private RandomActiveContentViewModel _loginActiveContentViewModel;
         public RandomActiveContentViewModel LoginActiveContentViewModel
         {
-            get => _loginActiveContentViewModel;
-            set => SetProperty<RandomActiveContentViewModel>(ref _loginActiveContentViewModel, value);
+            get => field;
+            set => SetProperty<RandomActiveContentViewModel>(ref field, value);
         }
 
-        private bool _isPaneOpen = true;
+       // private bool _isPaneOpen = true;
         public bool IsPaneOpen
         {
-            get => _isPaneOpen;
+            get => field;
             set
             {
-                if (SetProperty<bool>(ref _isPaneOpen, value))
+                if (SetProperty<bool>(ref field, value))
                 {
-                    _eventAggregator.GetEvent<OnHamburgerMenuBarPaneOpenEvent>().Publish(new() { IsPaneOpen = _isPaneOpen });
+                    _eventAggregator.GetEvent<OnHamburgerMenuBarPaneOpenEvent>().Publish(new() { IsPaneOpen = field });
                 }
             }
         }
@@ -87,9 +92,32 @@ namespace Aksl.Modules.Shell.ViewModels
             {
                 if (siet.IsSuccessful) 
                 {
-                    var hamburgerMenuSideBarHubView = ShellContentActiveContentViewModel.GetStoreViewElementByName("HamburgerMenuSideBarHubView") as HamburgerMenuSideBarHubView;
-                    var hamburgerMenuSideBarHubViewModel = hamburgerMenuSideBarHubView.DataContext as HamburgerMenuSideBarHubViewModel;
+                    //var hamburgerMenuSideBarHubView = ShellContentActiveContentViewModel.GetStoreViewElementByName("HamburgerMenuSideBarHubView") as HamburgerMenuSideBarHubView;
+                    //var hamburgerMenuSideBarHubViewModel = hamburgerMenuSideBarHubView.DataContext as HamburgerMenuSideBarHubViewModel;
                     ShellContentActiveContentViewModel.SetContentItemByName("HamburgerMenuSideBarHubView");
+                }
+            }, ThreadOption.UIThread, true);
+        }
+        #endregion
+
+        #region Register AccessTokenExpired Event
+        private void RegisterAccessTokenExpiredEvent()
+        {
+            _eventAggregator.GetEvent<OnAccessTokenExpiredEvent>().Subscribe((atee) =>
+            {
+                if (atee.IsExpired)
+                {
+                    //ShellContentActiveContentViewModel.RetsetContentItem(new ContentInformation
+                    //{
+                    //    Name = "LoginView",
+                    //    Title = "LoginView",
+                    //    ViewName = "Aksl.Modules.Account.Views.LoginView,Aksl.Modules.Account"
+                    //});
+                    ShellContentActiveContentViewModel.RetsetContentItemByName("LoginView");
+
+                    var loginStatusView = LoginActiveContentViewModel.GetStoreViewElementByName("LoginStatusView") as LoginStatusView;
+                    var loginStatusViewModel = loginStatusView.DataContext as LoginStatusViewModel;
+                    loginStatusViewModel.IsSignIning = true;
                 }
             }, ThreadOption.UIThread, true);
         }

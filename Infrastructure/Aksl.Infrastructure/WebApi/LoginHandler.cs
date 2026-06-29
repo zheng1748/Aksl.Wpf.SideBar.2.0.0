@@ -14,6 +14,7 @@ using Prism.Services.Dialogs;
 using Prism.Unity;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -54,6 +55,16 @@ public class LoginHandler
     #endregion
 
     #region Properties
+    public bool IsAccessTokenExpired
+    {
+        get
+        {
+            var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(WebApiProvider.AccessToken);
+
+            return DateTime.UtcNow > jwtToken?.ValidTo;
+        }
+    }
+
     public WebApiProvider WebApiProvider { get; set; }
     public Action<string,string> BindAccessTokenAction { get; set; }
     public Func<string, string, Task<LoginResponse>> ExecuteLoginAction { get; set; }
@@ -78,8 +89,7 @@ public class LoginHandler
     #region Login Method
     public async Task<LoginResponse> LoginAsync(string userName, string password)
     {
-        var loginResponse = await WebApiProvider.
-                        PostAsync<LoginResponse, LoginRequest>(_webApiAddressSettings.LoginUrl, 
+        var loginResponse = await WebApiProvider.PostAsync<LoginResponse, LoginRequest>(_webApiAddressSettings.LoginUrl, 
                                         new LoginRequest() { UserName = userName, Password = password ,RefreshToken=WebApiProvider.RefreshToken });
 
         if (loginResponse.Succeeded && !string.IsNullOrEmpty(loginResponse.AccessToken))
@@ -90,7 +100,7 @@ public class LoginHandler
         }
         else
         {
-            _logger.LogInformation($"Execute Login Method Errors : {loginResponse.ToString()} From {_webApiAddressSettings.LoginUrl}");
+            _logger.LogInformation($"Execute Login Method Failure:{loginResponse.ToString()} From {_webApiAddressSettings.LoginUrl}");
         }
 
         return loginResponse;
@@ -101,7 +111,7 @@ public class LoginHandler
     public async Task<LoginOutResponse> LoginOutAsync(string userName)
     {
         var loginOutResponse = await WebApiProvider.PostAsync<LoginOutResponse, LoginOutRequest>(_webApiAddressSettings.LoginOutUrl,
-                                        new LoginOutRequest() { UserName = userName, AccessToken = WebApiProvider.AccessToken, RefreshToken = WebApiProvider.RefreshToken });
+                              new LoginOutRequest() { UserName = userName, AccessToken = WebApiProvider.AccessToken, RefreshToken = WebApiProvider.RefreshToken });
 
         if (loginOutResponse.Succeeded)
         {
@@ -113,7 +123,7 @@ public class LoginHandler
         {
             BindAccessTokenAction(null, null);
 
-            _logger.LogInformation($"Execute LoginOut Method Succeeded From {_webApiAddressSettings.LoginUrl}");
+            _logger.LogInformation($"Execute Login Method Failure:{loginOutResponse.ToString()} From {_webApiAddressSettings.LoginUrl}");
         }
 
         return loginOutResponse;
@@ -134,6 +144,8 @@ public class LoginHandler
         }
         else
         {
+            BindAccessTokenAction(null, null);
+
             _logger.LogInformation($"Execute RefreshToken Method Errors : {refreshTokenResponse.ToString()} From {_webApiAddressSettings.RefreshTokenUrl}");
         }
 
@@ -146,21 +158,34 @@ public class LoginHandler
     {
         var resetLockoutResponse = await WebApiProvider.PostAsync<ResetLockoutResponse, ResetLockoutRequest>(_webApiAddressSettings.ResetLockoutUrl, new ResetLockoutRequest() { UserName = userName });
 
-        _logger.LogInformation("Execute ResetLock Method");
+        if (resetLockoutResponse.Succeeded)
+        {
+            _logger.LogInformation($"Execute ResetLock Method Succeeded From {_webApiAddressSettings.LoginUrl}");
+        }
+        else
+        {
+            _logger.LogInformation($"Execute ResetLock Method Failure:{resetLockoutResponse.ToString()} From {_webApiAddressSettings.LoginUrl}");
+        }
 
         return resetLockoutResponse;
     }
     #endregion
 
     #region GetEmailConfirmationToken Method
-    //public async Task<GenerateEmailTokenResponse> GetEmailConfirmationTokenAsync(Dictionary<string, string> parameters)
     public async Task<GenerateEmailTokenResponse> GetEmailConfirmationTokenAsync(HttpQueryKeyValuePair[] parameters)
     {
         var getEmailConfirmationTokenUrl = HttpQueryParameter.Query(_webApiAddressSettings.GetEmailConfirmationTokenUrl, parameters).ToString();
 
         var generateEmailTokenResponse = await WebApiProvider.GetAsync<GenerateEmailTokenResponse>(getEmailConfirmationTokenUrl);
 
-        _logger.LogInformation("Execute GetEmailConfirmationToken Method");
+        if (generateEmailTokenResponse.Succeeded)
+        {
+            _logger.LogInformation($"Execute GetEmailConfirmationToken Method Succeeded From {_webApiAddressSettings.LoginUrl}");
+        }
+        else
+        {
+            _logger.LogInformation($"Execute Login Method Failure:{generateEmailTokenResponse.ToString()} From {_webApiAddressSettings.LoginUrl}");
+        }
 
         return generateEmailTokenResponse;
     }

@@ -217,8 +217,7 @@
             <Setter Property="BorderThickness"
                     Value="0 0 0 1" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding Path=Password,Mode=OneWay,
-         Converter={StaticResource stringEmptyToBooleanConverter}}"
+                <DataTrigger Binding="{Binding Path=Password,Mode=OneWay,Converter={StaticResource stringEmptyToBooleanConverter}}"
                              Value="False">
                     <Setter Property="Foreground"
                             Value="Transparent" />
@@ -283,12 +282,12 @@
                         Padding="0,0,1,0"
                         HorizontalAlignment="Right"
                         Margin="2,2,3,2">
-                    <ei:Interaction.Triggers>
+                    <!--<ei:Interaction.Triggers>
                         <ei:EventTrigger EventName="Click">
                             <ei:CallMethodAction TargetObject="{Binding}"
                                                  MethodName="ExecuteClose" />
                         </ei:EventTrigger>
-                    </ei:Interaction.Triggers>
+                    </ei:Interaction.Triggers>-->
                 </Button>
 
                 <Grid Grid.Row="2"

@@ -31,7 +31,7 @@ namespace Aksl.Modules.Account.ViewModels
         #region Constructors
         public LoginPopupViewModel():base()
         {
-            _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+            _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
 
             _errors = new();
 

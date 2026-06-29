@@ -160,13 +160,14 @@ namespace Aksl.Modules.Shell
             try
             {
                 MenuService menuService = new(new List<string> {"pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/AllMenus.xml",
-                                                                 "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Industry.xml",
-                                                                 "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Pipelines.xml",
-                                                                 "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Thermometers.xml",
-                                                                 "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/CoolingTowers.xml",
-                                                                 "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/AirCompressers.xml",
-                                                                 "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Others.xml",
-                                                                 "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Radars.xml"
+                                                                "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Industry.xml",
+                                                                "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Pipelines.xml",
+                                                                "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Thermometers.xml",
+                                                                "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/CoolingTowers.xml",
+                                                                "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/AirCompressers.xml",
+                                                                "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Others.xml",
+                                                                "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Radars.xml",
+                                                                "pack://application:,,,/Aksl.Wpf.SideBar;Component/Data/Accounts.xml"
                                                                  });
 
                 await menuService.CreateMenusAsync();
@@ -274,7 +275,7 @@ namespace Aksl.Modules.Shell
             var refreshTokenDateTime1 = refreshTokenExpirationTicks.ConvertToDateTime();
             //Debug.Assert((refreshTokenDateTime==refreshTokenDateTime1));
 
-            await PrismIocExtensions.GetContainer().Resolve<IDialogViewService>().ShowLoginDialogAsync();
+           // await PrismIocExtensions.GetContainer().Resolve<IDialogViewService>().ShowLoginDialogAsync();
         }
     }
 }

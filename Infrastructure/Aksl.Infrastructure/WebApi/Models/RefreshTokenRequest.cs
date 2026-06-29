@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Aksl.Infrastructure;
 
-public class RefreshTokenRequest 
+public record RefreshTokenRequest 
 {
     [Required]
     public string AccessToken { get; set; }

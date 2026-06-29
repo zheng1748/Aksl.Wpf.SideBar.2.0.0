@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows8.0</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
 	<AssemblyName>Aksl.Wpf.SideBar</AssemblyName>
 	<RootNamespace>Aksl.Modules.Shell</RootNamespace>
@@ -31,6 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Data\Accounts.xml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Data\Radars.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -68,8 +71,8 @@
 	  <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.9" />
 	  <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.9" />
-	  <PackageReference Include="System.Drawing.Common" Version="10.0.9" />
-	  <PackageReference Include="System.Net.Http" Version="4.3.4" />
+	  <!--<PackageReference Include="System.Drawing.Common" Version="10.0.9" />
+	  <PackageReference Include="System.Net.Http" Version="4.3.4" />-->
 	  <PackageReference Include="Unity" Version="5.11.10" />
 	  <PackageReference Include="Unity.Container" Version="5.11.11" />
 	  <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
@@ -90,7 +93,7 @@
 	  <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.9" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.9" />
 
-	  <PackageReference Include="System.ValueTuple" Version="4.6.2" />
+	  <!--<PackageReference Include="System.ValueTuple" Version="4.6.2" />
 
 	  <PackageReference Include="System.Buffers" Version="4.6.1" />
 	  <PackageReference Include="System.Memory" Version="4.6.3" />
@@ -98,7 +101,7 @@
 
 	  <PackageReference Include="System.Threading.Channels" Version="10.0.9" />
 	  <PackageReference Include="System.Threading.Tasks.Dataflow" Version="10.0.9" />
-	  <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
+	  <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />-->
   </ItemGroup>
 
   <ItemGroup>

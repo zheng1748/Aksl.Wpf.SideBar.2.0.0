@@ -44,16 +44,16 @@
 			  NavigationName="Radars">
 	</MenuItem>
 	<MenuItem Id="5"
-			  Name="OthersManager"
-			  Title="Others"
+			  Name="AccountManager"
+			  Title="Accounts"
 			  Level="1"
-			  IconKind="Draw"
+			  IconKind="AccountCowboyHat"
 			  ItemType="Item"
 			  IsCacheable="True"
 			  ModuleName=""
 			  IsNexApplication="False"
 			  IsNexOnNotLeaf="True"
 			  IsNextNavigation="False"
-			  NavigationName="Others">
+			  NavigationName="Accounts">
 	</MenuItem>
 </MenuItem>

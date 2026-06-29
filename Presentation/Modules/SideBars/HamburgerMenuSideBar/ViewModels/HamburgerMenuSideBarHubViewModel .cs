@@ -66,11 +66,11 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         public RandomActiveContentViewModel RightContentActiveContentViewModel { get; set; }
         public HamburgerMenuSideBarViewModel TopHamburgerMenuSideBar { get; set; }
 
-        private ActiveContentItemViewModel _selectedLeftPaneActiveContentItem;
+       // private ActiveContentItemViewModel _selectedLeftPaneActiveContentItem;
         public ActiveContentItemViewModel SelectedLeftPaneActiveContentItem
         {
-            get => _selectedLeftPaneActiveContentItem;
-            set => SetProperty(ref _selectedLeftPaneActiveContentItem, value);
+            get => field;
+            set => SetProperty(ref field, value);
         }
 
         private HamburgerMenuSideBarViewModel _selectedHamburgerMenuSideBar;

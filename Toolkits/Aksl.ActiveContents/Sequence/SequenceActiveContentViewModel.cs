@@ -1,19 +1,9 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
-using System.Windows.Input;
-
-using Prism;
-using Prism.Commands;
-using Prism.Events;
-using Prism.Ioc;
-using Prism.Mvvm;
-using Prism.Unity;
-using Unity;
 
 namespace Aksl.ActiveContents.ViewModels
 {

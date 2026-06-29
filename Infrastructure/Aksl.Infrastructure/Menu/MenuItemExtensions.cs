@@ -97,14 +97,14 @@ namespace Aksl.Infrastructure
         #endregion
 
         #region Get IconKind Method
-        public static PackIconKind GetIconKind(this Infrastructure.MenuItem menuItem)
-        {
-            PackIconKind kind = PackIconKind.None;
+        //public static PackIconKind GetIconKind(this Infrastructure.MenuItem menuItem)
+        //{
+        //    PackIconKind kind = PackIconKind.None;
 
-            _ = Enum.TryParse(menuItem.IconKind, out kind);
+        //    _ = Enum.TryParse(menuItem.IconKind, out kind);
 
-            return kind;
-        }
+        //    return kind;
+        //}
         #endregion
 
         #region Has SubMenu Method

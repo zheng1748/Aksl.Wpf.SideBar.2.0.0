@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Aksl.ActiveContents</AssemblyName>
+    <RootNamespace>Aksl.ActiveContents</RootNamespace>
+    <Authors>zheng ming 13529806</Authors>
+	<Company>Aksl</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Toolkits\Prism Library\Prism.Core\Prism.Core.csproj" />
+  </ItemGroup>
+
+</Project>

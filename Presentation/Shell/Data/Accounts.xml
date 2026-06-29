@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<MenuItem Id="0"
+		  Name="Accounts"
+		  Title="Root"
+		  Level="0" >
+	<MenuItem Id="5"
+			  Name="ResetLockouter"
+			  Title="Reset Lockout"
+			  Level="1"
+			  IsCacheable="True"
+			  IconKind="CheckOutline"
+			  ItemType="Item"
+			  ModuleName="AccountModule"
+		      ViewName="Aksl.Modules.Account.Views.ResetLockoutView,Aksl.Modules.Account"  >
+	</MenuItem>
+</MenuItem>
+
+
