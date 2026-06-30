@@ -54,34 +54,26 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             }
         }
 
-        //private int _selectedIndex;
-        //public int SelectedIndex
-        //{
-        //    get => _selectedIndex; 
-        //    set => SetProperty<int>(ref _selectedIndex, value);
-        //}
-
-        private bool _isPaneOpen = false;
         public bool IsPaneOpen
         {
-            get => _isPaneOpen;
+            get;
             set
             {
-                if (SetProperty<bool>(ref _isPaneOpen, value))
+                if (SetProperty<bool>(ref field, value))
                 {
                     foreach (var hmbi in AllLeafHamburgerMenuSideBarItems)
                     {
-                        hmbi.IsPaneOpen = value;
+                        hmbi.IsPaneOpen = field;
                     }
                 }
             }
-        }
+        } = false;
 
         public bool IsLoading
         {
             get;
             set => SetProperty<bool>(ref field, value);
-        }
+        } = false;
         #endregion
 
         #region SelectionChanged Event
