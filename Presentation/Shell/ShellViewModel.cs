@@ -44,8 +44,6 @@ namespace Aksl.Modules.Shell.ViewModels
             RegisterAccessTokenExpiredEvent();
 
             RegisterActiveContents().Await(configureAwait:true);
-
-            IsPaneOpen=true;
         }
         #endregion
 
@@ -72,7 +70,7 @@ namespace Aksl.Modules.Shell.ViewModels
                     _eventAggregator.GetEvent<OnHamburgerMenuBarPaneOpenEvent>().Publish(new() { IsPaneOpen = field });
                 }
             }
-        }
+        }= true;
         #endregion
 
         #region Register SignIned Event

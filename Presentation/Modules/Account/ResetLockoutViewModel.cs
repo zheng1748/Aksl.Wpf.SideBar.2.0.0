@@ -61,7 +61,7 @@ namespace Aksl.Modules.Account.ViewModels
         {
             get => field;
             set => SetProperty<bool>(ref field, value);
-        }
+        } = false;
 
         public string ResponseMessage
         {
@@ -126,8 +126,19 @@ namespace Aksl.Modules.Account.ViewModels
                     ResponseMessage = $"accessToken {webApiProvider.AccessToken} is expired";
                 }
 
-                var refreshTokenResponse = loginHandler.
+                var refreshTokenResponse =await loginHandler.
                                               ExecuteRefreshTokenAction(webApiProvider.AccessToken, webApiProvider.RefreshToken);
+
+                if (refreshTokenResponse.Succeeded)
+                {
+                    ResponseMessage = "Refresh Token Succeeded";
+
+                    await Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false);
+                }
+                else
+                {
+                    ResponseMessage = $"{refreshTokenResponse.ToString()}";
+                }
 
                 var resetLockoutResponse = await loginHandler.ExecuteResetLockoutAction(UserName);
                 if (resetLockoutResponse.Succeeded)

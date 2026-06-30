@@ -69,7 +69,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     public bool HasViewName =>
                        _menuItem.HasViewName();
     public bool IsSetLeftPaneActiveContentItem =>
-                            IsLeaf && _menuItem.HasNextSubMenu() && !_menuItem.IsNexApplication;
+                             _menuItem.HasNextSubMenu() && !_menuItem.IsNexApplication;
     public bool IsNavigationToRightContent =>
                             IsLeaf && _menuItem.HasNextSubMenu() && _menuItem.HasViewName() && _menuItem.IsNexApplication;
     public bool IsAddViewToRightContent =>
@@ -98,7 +98,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
                 }
             }
         }
-    }
+    } = false;
 
     private bool _isPaneOpen = false;
     public bool IsPaneOpen

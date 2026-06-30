@@ -41,24 +41,20 @@
 
         <Style x:Key="UserNameTextBoxStyle"
                TargetType="{x:Type TextBox}">
-            <Setter Property="Height"
-                    Value="40" />
             <Setter Property="FontSize"
                     Value="16" />
             <Setter Property="TextWrapping"
                     Value="Wrap" />
             <Setter Property="VerticalContentAlignment"
                     Value="Center" />
-            <!--<Setter Property="Margin"
-                  Value="20,2,0,2" />-->
             <Setter Property="Foreground"
                     Value="Black" />
-            <!--<Setter Property="Background"
-                    Value="Transparent" />-->
+            <Setter Property="Background"
+                    Value="Transparent" />
             <Setter Property="BorderBrush"
                     Value="Transparent" />
             <Setter Property="BorderThickness"
-                    Value="2" />
+                    Value="0" />
             <Setter Property="CaretBrush"
                     Value="DimGray" />
             <Style.Triggers>
@@ -67,6 +63,34 @@
                     <Setter Property="ToolTip"
                             Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)[0].ErrorContent}" />
                 </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="UserNameTextBoxWaterStyle"
+               TargetType="{x:Type TextBox}">
+            <Setter Property="FontSize"
+                    Value="16" />
+            <Setter Property="TextWrapping"
+                    Value="Wrap" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center" />
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="BorderBrush"
+                    Value="DimGray" />
+            <Setter Property="BorderThickness"
+                    Value="0,0,0,1" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=UserName,Mode=OneWay,Converter={StaticResource stringEmptyToBooleanConverter}}"
+                             Value="False">
+                    <Setter Property="Foreground"
+                            Value="Transparent" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=UserName,Mode=OneWay,Converter={StaticResource stringEmptyToBooleanConverter}}"
+                             Value="True">
+                    <Setter Property="Foreground"
+                            Value="DimGray" />
+                </DataTrigger>
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
@@ -93,67 +117,68 @@
             </Border.BorderBrush>
             <Grid Visibility="{Binding Path=IsLoading,Converter={StaticResource booleanNegationToVisibilityConverter}}">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="100" />
+                    <RowDefinition Height="120" />
+                    <RowDefinition Height="35" />
                     <RowDefinition Height="120" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="130" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="70" />
+                    <RowDefinition Height="120" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="1"
-                      Margin="50,0,60,0"
+                <Label Grid.Row="0"
+                       Content="Reset Lockout"
+                       FontSize="30"
+                       FontWeight="Bold"
+                       VerticalContentAlignment="Center"
+                       HorizontalContentAlignment="Center"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"></Label>
+                
+                <Grid Grid.Row="2"
+                      Margin="30,0,30,0"
                       FocusManager.FocusedElement="{Binding ElementName=UserNameTextBox}">
                     <Grid.RowDefinitions>
-                        <RowDefinition />
+                        <RowDefinition  />
                     </Grid.RowDefinitions>
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="输入用户名:"
-                               FontSize="22"
-                               FontWeight="Bold"
-                               VerticalContentAlignment="Center"
-                               HorizontalContentAlignment="Center"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Left"
-                               Margin="0,0,0,10"></Label>
-             
-                    <TextBox x:Name="UserNameTextBox"
+                    <TextBox Grid.Row="0"
+                             x:Name="UserNameTextBox"
                              Text="{Binding Path=UserName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                              Style="{StaticResource UserNameTextBoxStyle}"
                              Validation.ErrorTemplate="{StaticResource UserNameRrrorTemplate}"
                              FocusManager.IsFocusScope="True"
                              Panel.ZIndex="2">
-                        <ei:Interaction.Triggers>
-                            <ei:EventTrigger EventName="Loaded">
-                                <behaviors:SetFocusAction Delay="10"
-                                                          UseKeyboardFocus="True"
-                                                          SelectAll="True" />
-                            </ei:EventTrigger>
-                        </ei:Interaction.Triggers>
+                            <ei:Interaction.Behaviors>
+                                <behaviors:SetFocusBehavior Delay="10" />
+                            </ei:Interaction.Behaviors>
                         </TextBox>
-                    </StackPanel>
+                    <TextBox Grid.Row="0"
+                             Text="Username"
+                             Style="{StaticResource UserNameTextBoxWaterStyle}"
+                             FocusManager.IsFocusScope="False" />
                 </Grid>
                 
-                <Button Grid.Row="3"
+                <Button Grid.Row="4"
                         Margin="0,0,0,0"
-                        Width="100"
-                        Height="50"
-                        Content="{materialDesign:PackIcon Kind=CheckOutline,Size=50}"
+                        Width="120"
+                        Height="60"
+                        Content="{materialDesign:PackIcon Kind=ChatWarning,Size=50}"
                         Command="{Binding Path=ResetLockoutCommand}"
                         Background="{Binding Path=(Border.Background),RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Border}}}"
                         FontSize="18"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        ToolTip="Login" />
+                        ToolTip="确定" />
 
-                <TextBlock Grid.Row="5"
+                <TextBlock Grid.Row="6"
                            Text="{Binding Path=ResponseMessage,Mode=OneWay}"
                           FontSize="22"
                            TextDecorations="Underline"
                            TextWrapping="Wrap"
                            HorizontalAlignment="Left" Background="AntiqueWhite"
                            VerticalAlignment="Center"
-                           Margin="50,0,30,0">
+                           Margin="30,0,30,0">
                 </TextBlock>
             </Grid>
         </Border>

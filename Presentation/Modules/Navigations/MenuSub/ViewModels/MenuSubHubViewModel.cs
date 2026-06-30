@@ -20,11 +20,9 @@ namespace Aksl.Modules.MenuSub.ViewModels
     {
         #region Members
         private readonly IUnityContainer _container;
-        private readonly IRegionManager _regionManager;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDialogViewService _dialogViewService;
         private readonly IMenuService _menuService;
-        private object _currentView; 
         private string _workspaceViewEventName;
         #endregion
 
@@ -32,36 +30,26 @@ namespace Aksl.Modules.MenuSub.ViewModels
         public MenuSubHubViewModel()
         {
             _container = PrismUnityContainerExtensions.GetContainer();
-            _regionManager = PrismUnityExtensions.GetRegionManager();
             _eventAggregator = PrismUnityExtensions.GetEventAggregator();
-
             _dialogViewService = PrismUnityExtensions.GetDialogViewService();
             _menuService = PrismUnityExtensions.GetMenuService();
         }
         #endregion
 
         #region Properties
-        //private string _workspaceRegionName;
-        //public string WorkspaceRegionName
-        //{
-        //    get => _workspaceRegionName;
-        //    set => SetProperty<string>(ref _workspaceRegionName, value);
-        //}
         public string ActiveContentName { get; set; }
-        private RandomActiveContentViewModel _randomActiveContentViewModel;
         public RandomActiveContentViewModel BottomActiveContentViewModel
         {
-            get => _randomActiveContentViewModel;
-            set => SetProperty<RandomActiveContentViewModel>(ref _randomActiveContentViewModel, value);
+            get;
+            set => SetProperty<RandomActiveContentViewModel>(ref field, value);
         }
         public HierarchicalMenusViewModel HierarchicalMenus { get; private set; }
 
-        private bool _isLoading;
         public bool IsLoading
         {
-            get => _isLoading;
-            set => SetProperty(ref _isLoading, value);
-        }
+            get => field;
+            set => SetProperty<bool>(ref field, value);
+        } = false;
         #endregion
 
         #region Register ActiveContent Method
@@ -125,7 +113,7 @@ namespace Aksl.Modules.MenuSub.ViewModels
                     }
 
                     bool IsAddViewToBottomContent() =>
-                                        !currentMenuItem.HasNextSubMenu() && currentMenuItem.HasViewName() && !currentMenuItem.IsNexApplication;
+                            !currentMenuItem.HasNextSubMenu() && currentMenuItem.HasViewName() && !currentMenuItem.IsNexApplication;
 
                     bool IsNavigationToBottomContent() =>
                             currentMenuItem.HasNextSubMenu() && currentMenuItem.HasViewName() && currentMenuItem.IsNexApplication;

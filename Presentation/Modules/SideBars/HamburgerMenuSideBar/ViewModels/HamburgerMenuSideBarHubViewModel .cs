@@ -76,21 +76,20 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             set => SetProperty(ref field, value);
         }
 
-        private HamburgerMenuSideBarItemViewModel _selectedHamburgerMenuSideBarItem;
         public HamburgerMenuSideBarItemViewModel SelectedHamburgerMenuSideBarItem
         {
-            get => _selectedHamburgerMenuSideBarItem;
-            set => SetProperty(ref _selectedHamburgerMenuSideBarItem, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public bool IsLoading
         {
             get => field;
             set => SetProperty<bool>(ref field, value);
-        }
+        } = false;
 
         public bool CanMove =>
-            LeftPaneActiveContentViewModel.CanMove;
+                      LeftPaneActiveContentViewModel.CanMove;
 
         public Visibility MoveButtonVisibility
         {

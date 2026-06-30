@@ -134,7 +134,7 @@ public class LoginHandler
     public async Task<RefreshTokenResponse> RefreshTokenAsync(string accessToken, string refreshToken)
     {
         var refreshTokenResponse = await WebApiProvider.
-                 PostAsync<RefreshTokenResponse,RefreshTokenRequest>(_webApiAddressSettings.RefreshTokenUrl, new RefreshTokenRequest() { AccessToken = accessToken, RefreshToken = refreshToken });
+                 PostAsync<RefreshTokenResponse,RefreshTokenRequest>(_webApiAddressSettings.RefreshTokenUrl, new RefreshTokenRequest( accessToken,  refreshToken));
 
         if (refreshTokenResponse.Succeeded && !string.IsNullOrEmpty(refreshTokenResponse.AccessToken))
         {

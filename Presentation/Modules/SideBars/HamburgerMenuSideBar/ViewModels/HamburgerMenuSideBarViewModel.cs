@@ -26,7 +26,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         #region Constructors
         public HamburgerMenuSideBarViewModel()
         {
-            _menuService =PrismUnityContainerExtensions.GetContainer().Resolve<IMenuService>();
+            _menuService = PrismUnityExtensions.GetMenuService();
 
             AllLeafHamburgerMenuSideBarItems = new();
         }
@@ -54,12 +54,12 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             }
         }
 
-        private int _selectedIndex;
-        public int SelectedIndex
-        {
-            get => _selectedIndex; 
-            set => SetProperty<int>(ref _selectedIndex, value);
-        }
+        //private int _selectedIndex;
+        //public int SelectedIndex
+        //{
+        //    get => _selectedIndex; 
+        //    set => SetProperty<int>(ref _selectedIndex, value);
+        //}
 
         private bool _isPaneOpen = false;
         public bool IsPaneOpen

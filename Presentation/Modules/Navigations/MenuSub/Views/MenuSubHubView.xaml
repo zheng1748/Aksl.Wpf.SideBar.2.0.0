@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:acview="clr-namespace:Aksl.ActiveContents.Views;assembly=Aksl.ActiveContents"
              xmlns:inf="clr-namespace:Aksl.Infrastructure;assembly=Aksl.Infrastructure"
              xmlns:views="clr-namespace:Aksl.Modules.MenuSub.Views"
              mc:Ignorable="d"
-             Name="MenuSubContainer"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.RowDefinitions>
@@ -41,19 +41,18 @@
                 BorderThickness="2"
                 CornerRadius="5"
                 BorderBrush="Black">-->
-        <ContentControl Grid.Row="2"
-                        Margin="2"
-                        prism:RegionManager.RegionName="{Binding Path=WorkspaceRegionName,Mode=OneWay}">
-            <!--prism:RegionManager.RegionName="{x:Static inf:RegionNames.MenuSubWorkspaceRegion}">-->
-            <ContentControl.RenderTransform>
+        <acview:RandomActiveContentView Grid.Row="2"
+                                        DataContext="{Binding Path=BottomActiveContentViewModel}"
+                                        Margin="2">
+            <acview:RandomActiveContentView.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform />
                     <SkewTransform />
                     <RotateTransform />
                     <TranslateTransform />
                 </TransformGroup>
-            </ContentControl.RenderTransform>
-        </ContentControl>
+            </acview:RandomActiveContentView.RenderTransform>
+        </acview:RandomActiveContentView>
         <!--</Border>-->
     </Grid>
 

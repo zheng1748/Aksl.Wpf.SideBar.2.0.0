@@ -46,9 +46,6 @@ namespace Aksl.Modules.Account.ViewModels
             CreateCloseCommand();
 
             RegisterPropertyChanged();
-
-            UserName = "zhengming";
-            Password = "zheng@0616";
         }
         #endregion
 
@@ -61,21 +58,21 @@ namespace Aksl.Modules.Account.ViewModels
         {
             get => field;
             set => SetProperty<string>(ref field, value);
-        }
+        }="zhengming";
 
         [Required(ErrorMessage = "密码不能为空")]
         [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*\d)(?=.*[$@$!%#?&])[a-zA-Z\d$@$!%#?&]{8,}$", ErrorMessage = "密码至少8个字符,必须包含一个字母,一个数字,一个特殊字符.")]
         public string Password
         {
-            get => field;
+            get;
             set => SetProperty<string>(ref field, value);
-        }
+        } = "zheng@0616";
 
         public bool IsLoading
         {
             get => field;
             set => SetProperty<bool>(ref field, value);
-        }
+        } = false;
 
         public string StatusMessage
         {

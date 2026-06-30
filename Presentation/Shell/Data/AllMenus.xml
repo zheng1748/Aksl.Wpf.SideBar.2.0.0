@@ -35,7 +35,7 @@
 			  IsCacheable="True"
 			  WorkspaceViewEventName="OnBuildRadarsManagerMenuSubWorkspaceViewEvent"
 		      ModuleName="MenuSubModule"
-			  ViewName="Aksl.Modules.MenuSub.Views.RadarsManagerMenuSubHubView,Aksl.Modules.MenuSub"
+			  ViewName="Aksl.Modules.MenuSub.Views.MenuSubHubView,Aksl.Modules.MenuSub"
 		      ActiveContentName="RadarsMenuSubBottomActiveContent"
 			  IsNexApplication="True" 
 			  IsNexOnNotLeaf="True"
