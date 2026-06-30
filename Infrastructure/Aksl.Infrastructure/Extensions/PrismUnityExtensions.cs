@@ -26,22 +26,22 @@ public static class PrismUnityExtensions
 {
     public static IRegionManager GetRegionManager()
     {
-        return PrismIocExtensions.GetContainer().Resolve<IRegionManager>();
+        return PrismUnityContainerExtensions.GetContainer().Resolve<IRegionManager>();
     }
 
     public static IEventAggregator GetEventAggregator()
     {
-        return PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
+        return PrismUnityContainerExtensions.GetContainer().Resolve<IEventAggregator>();
     }
 
     public static IDialogViewService GetDialogViewService()
     {
-        return PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
+        return PrismUnityContainerExtensions.GetContainer().Resolve<IDialogViewService>();
     }
 
     public static IMenuService GetMenuService()
     {
-        return PrismIocExtensions.GetContainer().Resolve<IMenuService>();
+        return PrismUnityContainerExtensions.GetContainer().Resolve<IMenuService>();
     }
 }
 

@@ -181,7 +181,7 @@ namespace Aksl.ActiveContents.ViewModels
             }
         }
 
-        public void SetContentItemByName(string name)
+        public void SetActiveContentItemByName(string name)
         {
             var activeContentItem = GetActiveContentItemByName(name);
             if (activeContentItem is not null)

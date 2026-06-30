@@ -29,19 +29,16 @@ namespace Aksl.Modules.Account.ViewModels
     public class LoginViewModel : BindableBase, IDataErrorInfo, INavigationAware
     {
         #region Members
-        private readonly IRegionManager _regionManager;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDialogViewService _dialogViewService;
         private readonly Dictionary<string, string> _errors;
-        private object _activeView = default;
         #endregion
 
         #region Constructors
         public LoginViewModel()
         {
-            _regionManager = PrismIocExtensions.GetContainer().Resolve<IRegionManager>();
-            _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
-            _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
+            _eventAggregator = PrismUnityExtensions.GetEventAggregator();
+            _dialogViewService = PrismUnityExtensions.GetDialogViewService();
 
             _errors = new();
 
@@ -49,6 +46,9 @@ namespace Aksl.Modules.Account.ViewModels
             CreateCloseCommand();
 
             RegisterPropertyChanged();
+
+            UserName = "zhengming";
+            Password = "zheng@0616";
         }
         #endregion
 
@@ -63,40 +63,30 @@ namespace Aksl.Modules.Account.ViewModels
             set => SetProperty<string>(ref field, value);
         }
 
-        private string _password;
         [Required(ErrorMessage = "密码不能为空")]
         [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*\d)(?=.*[$@$!%#?&])[a-zA-Z\d$@$!%#?&]{8,}$", ErrorMessage = "密码至少8个字符,必须包含一个字母,一个数字,一个特殊字符.")]
         public string Password
         {
-            get => _password;
-            set => SetProperty<string>(ref _password, value);
+            get => field;
+            set => SetProperty<string>(ref field, value);
         }
 
-        private bool _isLoading = false;
         public bool IsLoading
         {
-            get => _isLoading;
-            set => SetProperty<bool>(ref _isLoading, value);
-            //{
-            //    if (SetProperty<bool>(ref _isLoading, value))
-            //    {
-            //        (LoginCommand as DelegateCommand)?.RaiseCanExecuteChanged();
-            //    }
-            //}
+            get => field;
+            set => SetProperty<bool>(ref field, value);
         }
 
-        private string _statusMessage;
         public string StatusMessage
         {
-            get => _statusMessage;
-            set => SetProperty(ref _statusMessage, value);
+            get => field;
+            set => SetProperty(ref field, value);
         }
 
-        public bool _isSuccessful = false;
         public bool IsSuccessful
         {
-            get => _isSuccessful;
-            set => SetProperty(ref _isSuccessful, value);
+            get => field;
+            set => SetProperty(ref field, value);
         }
 
         public bool HasErrors => _errors.Count > 0;
@@ -258,41 +248,9 @@ namespace Aksl.Modules.Account.ViewModels
         #region Set Shell ActiveItem Method
         public void SetShellActiveItem()
         {
-            var shellContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<ActiveContents.ViewModels.RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+            var shellContentActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().Resolve<ActiveContents.ViewModels.RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
             //shellContentActiveContentViewModel.SetSelectedItemByName(ActiveContentNames.HamburgerMenuSideBarName);
             shellContentActiveContentViewModel.ClearSelectedItem();
-        }
-        #endregion
-
-        #region Remove LoginView Method
-        public void RemoveLoginView()
-        {
-            var contentRegion = _regionManager.Regions[RegionNames.ShellContentRegion];
-
-            Type loginViewType = typeof(LoginView);
-            var loginViewName = typeof(LoginView).Name;
-
-            if (contentRegion is not null)
-            {
-                if (!string.IsNullOrEmpty(loginViewName))
-                {
-                    var logintView = contentRegion.Views.FirstOrDefault(v => v.GetType() == loginViewType);
-                    if (logintView is null)
-                    {
-                        logintView = contentRegion.GetView(loginViewType.FullName);
-                    }
-
-                    if (logintView is not null)
-                    {
-                        contentRegion.Remove(logintView);
-                    }
-                }
-
-                if (_activeView is not null)
-                {
-                    contentRegion.Activate(_activeView);
-                }
-            }
         }
         #endregion
 
@@ -338,7 +296,6 @@ namespace Aksl.Modules.Account.ViewModels
         #region INavigationAware
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            _activeView = navigationContext.Parameters["ActiveView"];
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -348,23 +305,6 @@ namespace Aksl.Modules.Account.ViewModels
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
-            RemoveLoginView();
-
-            _eventAggregator.GetEvent<OnSignInedEvent>().Publish(new OnSignInedEvent { UserName = this.UserName, IsSuccessful = this.IsSuccessful });
-
-            //_eventAggregator.GetEvent<OnTopMenuSelectedEvent>().Publish(new OnTopMenuSelectedEvent
-            //{
-            //    SelectedMenuItem = new Infrastructure.MenuItem
-            //    {
-            //        Title = "主页",
-            //        Level = 2,
-            //        IsHome = true,
-            //        IsSelectedOnInitialize = true,
-            //        ItemType = MenuItemType.Item,
-            //        ModuleName = "HomeModule",
-            //        ViewName = "Aksl.Modules.Home.Views.HomeView,Aksl.Modules.Home"
-            //    }
-            //});
         }
         #endregion
     }

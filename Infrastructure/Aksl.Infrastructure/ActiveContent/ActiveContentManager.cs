@@ -36,7 +36,7 @@ public class ActiveContentManager
     {
         var viewName = menuItem.GetViewTypeName();
 
-        var unityContainer = PrismIocExtensions.GetContainer();
+        var unityContainer = PrismUnityContainerExtensions.GetContainer();
         var regionNavigationService = unityContainer.Resolve<IRegionNavigationService>();
 
         ContentInformation contentInformation = new()
@@ -82,7 +82,7 @@ public class ActiveContentManager
             if (menuItem.IsCacheable)
             {
                 // activeContentViewModel.SetContentItem(contentInformation);
-                randomActiveContentViewModel.SetContentItemByName(menuItem.Name);
+                randomActiveContentViewModel.SetActiveContentItemByName(menuItem.Name);
             }
             else
             {

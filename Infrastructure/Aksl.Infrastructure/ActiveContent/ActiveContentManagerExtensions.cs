@@ -15,7 +15,7 @@ public static class ActiveContentManagerExtensions
     #region Add View To Random Content Method
     public static async Task AddViewToRandomContentAsync(Infrastructure.MenuItem menuItem, string activeContentName, NavigationParameters navigationParameters = null)
     {
-        var randomActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: activeContentName);
+        var randomActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: activeContentName);
 
         if (navigationParameters is null)
         {

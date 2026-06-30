@@ -37,8 +37,8 @@ namespace Aksl.Modules.Account.ViewModels
         #region Constructors
         public ResetLockoutViewModel()
         {
-            _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
-            _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
+            _eventAggregator = PrismUnityExtensions.GetEventAggregator();
+            _dialogViewService = PrismUnityExtensions.GetDialogViewService();
 
             _errors = new();
 
@@ -123,14 +123,13 @@ namespace Aksl.Modules.Account.ViewModels
                 var loginHandler=  ServiceExtensions.GetLoginHandler();
                 if (loginHandler.IsAccessTokenExpired)
                 {
-                    await _dialogViewService.AlertAsync($"accessToken is expired", "AccessToken:");
-                    return;
+                    ResponseMessage = $"accessToken {webApiProvider.AccessToken} is expired";
                 }
 
-                var refreshTokenResponse = await ServiceExtensions.GetLoginHandler().
+                var refreshTokenResponse = loginHandler.
                                               ExecuteRefreshTokenAction(webApiProvider.AccessToken, webApiProvider.RefreshToken);
 
-                var resetLockoutResponse = await ServiceExtensions.GetLoginHandler().ExecuteResetLockoutAction(UserName);
+                var resetLockoutResponse = await loginHandler.ExecuteResetLockoutAction(UserName);
                 if (resetLockoutResponse.Succeeded)
                 {
                     ResponseMessage = "Reset Lockout Succeeded";

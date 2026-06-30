@@ -6,7 +6,6 @@ using Prism;
 using Prism.Commands;
 using Prism.Ioc;
 using Prism.Services.Dialogs;
-using Prism.Unity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,66 +30,62 @@ namespace Aksl.Modules.Account.ViewModels
         #region Constructors
         public LoginPopupViewModel():base()
         {
-            _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
+            _dialogViewService = PrismUnityExtensions.GetDialogViewService();
 
             _errors = new();
 
             RegisterPropertyChanged();
+
+            UserName = "zhengming";
         }
         #endregion
 
         #region Properties
-        private string _userName="zhengming";
+      
         [Required(ErrorMessage = "用户名不能为空")]
-        [RegularExpression("^[a-zA-Z]{1}([a-zA-Z0-9]){3,15}$", ErrorMessage = "用户名必须是4到16个字母或者数字,且以字母开头.")]
+        [RegularExpression("^[a-zA-Z]{1}([a-zA-Z0-9]){7,15}$", ErrorMessage = "用户名必须是4到16个字母或者数字,且以字母开头.")]
         public string UserName
         {
-            get => _userName;
-            set => SetProperty<string>(ref _userName, value);
+            get =>field;
+            set => SetProperty<string>(ref field, value);
         }
 
-        private string _userNameWater = "UserName";
         public string UserNameWater
         {
-            get => _userNameWater;
-            set => SetProperty(ref _userNameWater, value);
+            get => field;
+            set => SetProperty(ref field, value);
         }
 
-        private string _password;
         [Required(ErrorMessage = "密码不能为空")]
         [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*\d)(?=.*[$@$!%#?&])[a-zA-Z\d$@$!%#?&]{8,}$", ErrorMessage = "密码至少8个字符,必须包含一个字母,一个数字,一个特殊字符.")]
         public string Password
         {
-            get => _password;
-            set => SetProperty<string>(ref _password, value);
+            get => field;
+            set => SetProperty<string>(ref field, value);
         }
 
-        private string _passwordWater = "Password";
         public string PasswordWater
         {
-            get => _passwordWater;
-            set => SetProperty(ref _passwordWater, value);
+            get => field;
+            set => SetProperty(ref  field, value);
         }
 
-        private bool _isLoading = false;
         public bool IsLoading
         {
-            get => _isLoading;
-            set => SetProperty<bool>(ref _isLoading, value);
+            get => field;
+            set => SetProperty<bool>(ref field, value);
         }
 
-        private string _statusMessage;
         public string StatusMessage
         {
-            get => _statusMessage;
-            set => SetProperty(ref _statusMessage, value);
+            get => field;
+            set => SetProperty(ref field, value);
         }
 
-        public bool _isSuccessful = false;
         public bool IsSuccessful
         {
-            get => _isSuccessful;
-            set => SetProperty(ref _isSuccessful, value);
+            get => field;
+            set => SetProperty(ref field, value);
         }
 
         public bool HasErrors => _errors.Count > 0;

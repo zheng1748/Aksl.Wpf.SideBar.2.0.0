@@ -263,12 +263,15 @@
                              Validation.ErrorTemplate="{StaticResource userNameRrrorTemplate}"
                              FocusManager.IsFocusScope="True"
                              Panel.ZIndex="2">
-                        <ei:Interaction.Triggers>
+                        <ei:Interaction.Behaviors>
+                            <behaviors:SetFocusBehavior Delay="10" />
+                        </ei:Interaction.Behaviors>
+                        <!--<ei:Interaction.Triggers>
                             <ei:EventTrigger EventName="Loaded">
                                 <behaviors:SetFocusAction Delay="0"  UseKeyboardFocus="True" 
                                                           SelectAll="True" />
                             </ei:EventTrigger>
-                        </ei:Interaction.Triggers>
+                        </ei:Interaction.Triggers>-->
                     </TextBox>
                     <TextBox Grid.Row="0"
                              Text="{Binding Path=UserNameWater,Mode=OneWay}"

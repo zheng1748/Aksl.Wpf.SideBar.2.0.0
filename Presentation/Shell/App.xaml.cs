@@ -254,13 +254,10 @@ namespace Aksl.Modules.Shell
         {
             base.OnInitialized();
 
-           //var regionManager = PrismUnityExtensions.GetRegionManager();
-
-           // var regionManager = Container.Resolve<IRegionManager>();
-            //regionManager.RegisterViewWithRegion("RadarsManagerMenuSubWorkspaceRegion", typeof(Aksl.Modules.MenuSub.Views.RadarsManagerMenuSubHubView));
+           var eventAggregator = PrismUnityExtensions.GetEventAggregator();
 
             #region ILoggerFactory
-            var loggerFactory = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
+            var loggerFactory = PrismUnityContainerExtensions.GetContainer().Resolve<IServiceProvider>()
                                          ?.GetRequiredService<ILoggerFactory>();
             #endregion
             //var distributedCache = ServiceExtensions.GetMemoryDistributedCache();
@@ -275,7 +272,7 @@ namespace Aksl.Modules.Shell
             var refreshTokenDateTime1 = refreshTokenExpirationTicks.ConvertToDateTime();
             //Debug.Assert((refreshTokenDateTime==refreshTokenDateTime1));
 
-           // await PrismIocExtensions.GetContainer().Resolve<IDialogViewService>().ShowLoginDialogAsync();
+           // await PrismUnityExtensions.GetDialogViewService().ShowLoginDialogAsync();
         }
     }
 }

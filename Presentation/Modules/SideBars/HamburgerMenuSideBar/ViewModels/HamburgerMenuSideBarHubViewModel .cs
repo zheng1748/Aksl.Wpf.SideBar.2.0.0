@@ -42,10 +42,9 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         #region Constructors
         public HamburgerMenuSideBarHubViewModel()
         {
-            _container = PrismIocExtensions.GetContainer().Resolve<IUnityContainer>();
-            _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
-            _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
-
+            _container = PrismUnityContainerExtensions.GetContainer();
+            _eventAggregator = _container.Resolve<IEventAggregator>();
+            _dialogViewService = _container.Resolve<IDialogViewService>();
             _menuService = _container.Resolve<IMenuService>();
 
             SelectedDisplayMode = SplitViewDisplayMode.CompactInline;
@@ -62,22 +61,19 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
         #region Properties
         public SequenceActiveContentViewModel LeftPaneActiveContentViewModel { get; set; }
-
         public RandomActiveContentViewModel RightContentActiveContentViewModel { get; set; }
         public HamburgerMenuSideBarViewModel TopHamburgerMenuSideBar { get; set; }
 
-       // private ActiveContentItemViewModel _selectedLeftPaneActiveContentItem;
         public ActiveContentItemViewModel SelectedLeftPaneActiveContentItem
         {
             get => field;
             set => SetProperty(ref field, value);
         }
 
-        private HamburgerMenuSideBarViewModel _selectedHamburgerMenuSideBar;
         public HamburgerMenuSideBarViewModel SelectedHamburgerMenuSideBar
         {
-            get => _selectedHamburgerMenuSideBar;
-            set => SetProperty(ref _selectedHamburgerMenuSideBar, value);
+            get => field;
+            set => SetProperty(ref field, value);
         }
 
         private HamburgerMenuSideBarItemViewModel _selectedHamburgerMenuSideBarItem;
@@ -89,28 +85,22 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
         public bool IsLoading
         {
-            get => _isLoading;
-            set => SetProperty<bool>(ref _isLoading, value);
+            get => field;
+            set => SetProperty<bool>(ref field, value);
         }
 
-        public bool CanMove
-        {
-            get
-            {
-                return LeftPaneActiveContentViewModel.CanMove;
-            }
-        }
+        public bool CanMove =>
+            LeftPaneActiveContentViewModel.CanMove;
 
-        private Visibility _moveButtonVisibility = Visibility.Visible;
         public Visibility MoveButtonVisibility
         {
             get
             {
-                var isAllAddView =  TopHamburgerMenuSideBar.AllLeafHamburgerMenuSideBarItems.All(msi => msi.IsLeaf && !msi.HasSubMenu && msi.HasViewName);
-                _moveButtonVisibility = isAllAddView ? Visibility.Collapsed : Visibility.Visible;
-                return _moveButtonVisibility;
+                var isSetLeftPane = TopHamburgerMenuSideBar.AllLeafHamburgerMenuSideBarItems.Any(msi => msi.IsSetLeftPaneActiveContentItem);
+                field = isSetLeftPane ? Visibility.Visible : Visibility.Collapsed;
+                return field;
             }
-        }
+        } = Visibility.Visible;
         #endregion
 
         #region RegisterPropertyChanged Method
@@ -372,15 +362,11 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             }
         }
 
-        private string _visualState;
         public string VisualState
         {
-            get => _visualState;
-            set => SetProperty<string>(ref _visualState, value);
+            get => field;
+            set => SetProperty<string>(ref field, value);
         }
-
-        private bool _isLoading;
-
         #endregion
 
         #region Get HamburgerMenu State Method
@@ -436,6 +422,23 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         }
         #endregion
 
+        #region Register HamburgerMenuBarPaneOpen Event
+        private void RegisterHamburgerMenuBarPaneOpenEvent()
+        {
+            _eventAggregator.GetEvent<OnHamburgerMenuBarPaneOpenEvent>().Subscribe(async (hmbpoe) =>
+            {
+                try
+                {
+                    IsPaneOpen = hmbpoe.IsPaneOpen;
+                }
+                catch (Exception ex)
+                {
+                    await _dialogViewService.AlertAsync(message: $"Subscribe PaneOpen Event Error.: \"{ex.Message}\"", title: "Error");
+                }
+            }, ThreadOption.UIThread, true);
+        }
+        #endregion
+
         #region Register ActiveContent Method
         private async Task RegisterActiveContentAsync()
         {
@@ -443,7 +446,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             void RegisterRightContentActiveContent()
             {
                 _container.RegisterSingleton(from: typeof(RandomActiveContentViewModel), to: typeof(RandomActiveContentViewModel), name: ActiveContentNames.RightContentHamburgerMenuSideBar);
-                var rightContentActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
+                var rightContentActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().Resolve<RandomActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuSideBar);
 
                 RightContentActiveContentViewModel = rightContentActiveContentViewModel;
             }
@@ -452,11 +455,11 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             async Task RegisterLeftPaneActiveContentAsync()
             {
                 _container.RegisterSingleton(from: typeof(SequenceActiveContentViewModel), to: typeof(SequenceActiveContentViewModel), name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
-                LeftPaneActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<SequenceActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+                LeftPaneActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().Resolve<SequenceActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
 
                 AddLeftPaneActiveContentViewModelPropertyChanged();
 
-                CreateTopHamburgerMenuSideBarViewModelAsync().Await();
+                await CreateTopHamburgerMenuSideBarViewModelAsync();
                 LeftPaneActiveContentViewModel.Add(new()
                 {
                     Name = "Root",
@@ -614,23 +617,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                     }
                 }
             }
-        }
-        #endregion
-
-        #region Register HamburgerMenuBarPaneOpen Event
-        private void RegisterHamburgerMenuBarPaneOpenEvent()
-        {
-            _eventAggregator.GetEvent<OnHamburgerMenuBarPaneOpenEvent>().Subscribe(async (hmbpoe) =>
-            {
-                try
-                {
-                    IsPaneOpen = hmbpoe.IsPaneOpen;
-                }
-                catch (Exception ex)
-                {
-                    await _dialogViewService.AlertAsync(message: $"Subscribe PaneOpen Event Error.: \"{ex.Message}\"", title: "Error");
-                }
-            }, ThreadOption.UIThread, true);
         }
         #endregion
 

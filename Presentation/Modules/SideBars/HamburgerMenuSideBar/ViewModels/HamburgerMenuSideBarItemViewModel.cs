@@ -40,18 +40,18 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     #region Constructors
     public HamburgerMenuSideBarItemViewModel() : base()
     {
-        _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
-        _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
-        _menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
+        _eventAggregator = PrismUnityExtensions.GetEventAggregator();
+        _dialogViewService = PrismUnityExtensions.GetDialogViewService();
+        _menuService = PrismUnityExtensions.GetMenuService();
 
         _menuItem = null;
     }
 
     public HamburgerMenuSideBarItemViewModel(Aksl.Infrastructure.MenuItem menuItem, HamburgerMenuSideBarItemViewModel parent) : base(menuItem.Name, menuItem.Title, parent)
     {
-        _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
-        _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
-        _menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
+        _eventAggregator = PrismUnityExtensions.GetEventAggregator();
+        _dialogViewService = PrismUnityExtensions.GetDialogViewService();
+        _menuService = PrismUnityExtensions.GetMenuService();
 
         _menuItem = menuItem;
     }
@@ -59,65 +59,43 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
 
     #region Properties
     public Aksl.Infrastructure.MenuItem MenuItem => _menuItem;
-  //  public bool HasViewName => !string.IsNullOrEmpty(_menuItem.ViewName);
     public string WorkspaceViewEventName { get; set; }
-    //public int Level => _menuItem.Level;
     public string NavigationName => _menuItem.NavigationName;
     public bool IsSelectedOnInitialize => _menuItem.IsSelectedOnInitialize;
-
-    //public PackIconKind IconKind =>
-    //                    _menuItem.GetIconKind();
     public PackIconKind IconKind =>
                       _menuItem.IconKind.ToPackIconKind();
-
     public bool HasSubMenu =>
                        _menuItem.HasNextSubMenu();
-
     public bool HasViewName =>
                        _menuItem.HasViewName();
-
     public bool IsSetLeftPaneActiveContentItem =>
-                            IsSelected && _menuItem.HasNextSubMenu() && !_menuItem.IsNexApplication;
-
-    public bool IsAddViewToRightContent => 
-                           IsSelected && IsLeaf && !_menuItem.HasNextSubMenu() && HasViewName && !_menuItem.IsNexApplication;
-
+                            IsLeaf && _menuItem.HasNextSubMenu() && !_menuItem.IsNexApplication;
     public bool IsNavigationToRightContent =>
-                           IsSelected && IsLeaf && _menuItem.HasNextSubMenu() && HasViewName && _menuItem.IsNexApplication;
+                            IsLeaf && _menuItem.HasNextSubMenu() && _menuItem.HasViewName() && _menuItem.IsNexApplication;
+    public bool IsAddViewToRightContent =>
+                            IsLeaf && !_menuItem.HasNextSubMenu() && _menuItem.HasViewName() && !_menuItem.IsNexApplication;
 
-    private bool _isSelected = false;
     public bool IsSelected
     {
-        get => _isSelected;
+        get;
         set
         {
-            if (SetProperty<bool>(ref _isSelected, value))
+            if (SetProperty<bool>(ref field, value))
             {
-                if (IsAddViewToRightContent)
+                if (field && IsAddViewToRightContent)
                 {
                     AddViewToRightContent();
                 }
 
-                if (IsNavigationToRightContent)
+                if (field && IsNavigationToRightContent)
                 {
                     NavigationToRightContent();
                 }
 
-                if (IsSetLeftPaneActiveContentItem)
+                if (field && IsSetLeftPaneActiveContentItem)
                 {
                     SetLeftPaneActiveContentItem();
                 }
-
-                //bool IsAddViewToRightContent()
-                //{
-                //    //return !HasSubMenu && IsLeaf && IsSelected && !string.IsNullOrEmpty(_menuItem.ViewName);
-                //    return IsSelected && IsLeaf && !HasSubMenu && HasViewName;
-                //}
-
-                //bool IsSetLeftPaneActiveContentItem()
-                //{
-                //    return IsSelected && HasSubMenu;
-                //}
             }
         }
     }
@@ -167,7 +145,7 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
     #region Set LeftPane Active ContentItem Method
     public void SetLeftPaneActiveContentItem()
     {
-        var leftPaneActiveContentViewModel = PrismIocExtensions.GetContainer().Resolve<SequenceActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
+        var leftPaneActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().Resolve<SequenceActiveContentViewModel>(name: ActiveContentNames.LeftPaneHamburgerMenuSideBar);
 
         if (leftPaneActiveContentViewModel.ContainItemByName(this.Path))
         {

@@ -8,7 +8,7 @@ namespace Aksl.Toolkit.Controls
 {
     public static class PackIconExtensions
     {
-        #region Get IconKind Method
+        #region To IconKind Method
         public static PackIconKind ToPackIconKind(this string iconKind)
         {
             PackIconKind kind = PackIconKind.None;

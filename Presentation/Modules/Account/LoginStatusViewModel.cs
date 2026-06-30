@@ -9,7 +9,6 @@ using Prism.Events;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
-using Prism.Unity;
 using Unity;
 
 using Aksl.Dialogs.Services;
@@ -31,8 +30,8 @@ namespace Aksl.Modules.Account.ViewModels
         #region Constructors
         public LoginStatusViewModel()
         {
-            _eventAggregator = PrismIocExtensions.GetContainer().Resolve<IEventAggregator>();
-            _dialogViewService = PrismIocExtensions.GetContainer().Resolve<IDialogViewService>();
+            _eventAggregator = PrismUnityExtensions.GetEventAggregator();
+            _dialogViewService = PrismUnityExtensions.GetDialogViewService();
 
             CreateSignInCommand();
             CreateSignOutCommand();
@@ -51,36 +50,27 @@ namespace Aksl.Modules.Account.ViewModels
         private string _title;
         public string Title
         {
-            get => _title;
-            set => SetProperty<string>(ref _title, value);
+            get => field;
+            set => SetProperty<string>(ref field, value);
         }
 
-        private string? _userName;
         public string? UserName
         {
-            get => _userName;
-            set => SetProperty<string>(ref _userName, value);
+            get => field;
+            set => SetProperty<string>(ref field, value);
         }
 
-        private bool _isSignIning = false;
         public bool IsSignIning
         {
-            get => _isSignIning;
-            set
-            {
-                SetProperty<bool>(ref _isSignIning, value);
-                //if (SetProperty<bool>(ref _isSignIning, value))
-                //{
-                //    (SignInCommand as DelegateCommand)?.RaiseCanExecuteChanged();
-                //}
-            }
+            get => field;
+            set => SetProperty<bool>(ref field, value);
         }
 
         private bool _isAuthenticated = false;
         public bool IsAuthenticated
         {
-            get => _isAuthenticated;
-            set => SetProperty<bool>(ref _isAuthenticated, value);
+            get => field;
+            set => SetProperty<bool>(ref field, value);
         }
         #endregion
 
@@ -89,7 +79,7 @@ namespace Aksl.Modules.Account.ViewModels
         {
             this.PropertyChanged += (sender, e) =>
             {
-                if (sender is LoginStatusViewModel lsvm)
+                if (sender is LoginStatusViewModel)
                 {
                     if (e.PropertyName == nameof(IsSignIning))
                     {
@@ -140,7 +130,7 @@ namespace Aksl.Modules.Account.ViewModels
 
             try
             {
-                var shellContentActiveContentViewModel = PrismIocExtensions.GetContainer().
+                var shellContentActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().
                                                            Resolve<ActiveContents.ViewModels.RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
                 shellContentActiveContentViewModel.SetSelectedItemByName(nameof(LoginView));
             }
@@ -148,8 +138,6 @@ namespace Aksl.Modules.Account.ViewModels
             {
                 await _dialogViewService.AlertAsync($"{ex.Message}", "Sign In Failure:");
             }
-
-            //IsSignIning = false;
         }
 
         private bool CanExecuteSignInCommand()

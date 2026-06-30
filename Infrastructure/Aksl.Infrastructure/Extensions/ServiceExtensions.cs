@@ -26,7 +26,7 @@ public static class ServiceExtensions
 {
     public static LoginHandler GetLoginHandler()
     {
-        var loginHandler = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
+        var loginHandler = PrismUnityContainerExtensions.GetContainer().Resolve<IServiceProvider>()
                                                              ?.GetRequiredService<LoginHandler>();
 
         return loginHandler;
@@ -34,7 +34,7 @@ public static class ServiceExtensions
 
     public static IOptions<WebApiAddressSettings> GetWebApiAddressSettings()
     {
-        var webApiAddressSettings = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
+        var webApiAddressSettings = PrismUnityContainerExtensions.GetContainer().Resolve<IServiceProvider>()
                                                              ?.GetRequiredService<IOptions<WebApiAddressSettings>>();
 
         return webApiAddressSettings;
@@ -42,7 +42,7 @@ public static class ServiceExtensions
 
     public static IDistributedCache GetMemoryDistributedCache()
     {
-        var distributedCache = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
+        var distributedCache = PrismUnityContainerExtensions.GetContainer().Resolve<IServiceProvider>()
                                                              ?.GetRequiredService<IDistributedCache>();
 
         return distributedCache;
@@ -50,33 +50,10 @@ public static class ServiceExtensions
 
     public static WebApiProvider GetWebApiProvider()
     {
-        var webApiProvider = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
+        var webApiProvider = PrismUnityContainerExtensions.GetContainer().Resolve<IServiceProvider>()
                                                              ?.GetRequiredService<WebApiProvider>();
 
         return webApiProvider;
-    }
-
-    public static JwtTokenProvider GetJwtTokenProvider()
-    {
-        var jwtTokenProvider = PrismIocExtensions.GetContainer().Resolve<IServiceProvider>()
-                                                             ?.GetRequiredService<JwtTokenProvider>();
-
-        return jwtTokenProvider;
-    }
-
-    public static Task<HttpClient> SetBaseAddressAsync(this HttpClient httpClient, string baseAddress)
-    {
-        httpClient.BaseAddress = new Uri(baseAddress);
-
-        return Task.FromResult(httpClient);
-    }
-
-    public static Dictionary<string, string> SetBearer(this HttpClient httpClient, string accessToken)
-    {
-        Dictionary<string, string> header = new Dictionary<string, string>();
-        header.Add("Authorization", string.Format("Bearer {0}", accessToken));
-
-        return header;
     }
 }
 

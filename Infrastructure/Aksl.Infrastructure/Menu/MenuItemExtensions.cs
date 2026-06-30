@@ -72,7 +72,7 @@ namespace Aksl.Infrastructure
         #region Get Next SubMenu Method
         public static async Task<IEnumerable<Infrastructure.MenuItem>> GetNextSubMenuAsync(this Infrastructure.MenuItem menuItem)
         {
-            var menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
+            var menuService = PrismUnityContainerExtensions.GetContainer().Resolve<IMenuService>();
 
             IEnumerable<Infrastructure.MenuItem> subMenuItems = new List<Infrastructure.MenuItem>();
 
@@ -120,7 +120,7 @@ namespace Aksl.Infrastructure
         #region Get LeafMenuItems Method
         public static async Task<IEnumerable<Infrastructure.MenuItem>> GetLeafMenuItems(this Infrastructure.MenuItem menuItem)
         {
-            var menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
+            var menuService = PrismUnityContainerExtensions.GetContainer().Resolve<IMenuService>();
             List<Infrastructure.MenuItem> leafMenuItems = new();
 
             await RecursiveSubMenuItem(menuItem);

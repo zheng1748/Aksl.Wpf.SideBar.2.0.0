@@ -61,7 +61,7 @@ public class LoginHandler
         {
             var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(WebApiProvider.AccessToken);
 
-            return DateTime.UtcNow > jwtToken?.ValidTo;
+            return jwtToken?.ValidTo > DateTime.UtcNow;
         }
     }
 
@@ -201,37 +201,6 @@ public static class LoginHandlerExtensions
         services.AddSingleton<WebApiProvider>();
 
         services.AddSingleton<LoginHandler>();
-
-        //services.AddSingleton<WebApiProvider>((sp) =>
-        //{
-        //    var logFactory = sp.GetRequiredService<ILoggerFactory>();
-        //    var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
-
-        //    WebApiProvider webApiProvider = new(httpClientFactory, logFactory.CreateLogger<WebApiProvider>());
-        //    return webApiProvider;
-        //});
-
-        //services.AddTransient<LoginHandler>((sp) =>
-        //{
-        //    var webApiProvider = sp.GetRequiredService<WebApiProvider>();
-
-        //    LoginHandler loginHandler = new()
-        //    {
-        //        WebApiProvider = webApiProvider
-        //    };
-
-        //    //LoginHandler loginHandler = new()
-        //    //{
-        //    //    WebApiProvider = webApiProvider,
-        //    //    ExecuteAccessTokenAction = (t) => webApiProvider.SetBearer(t),
-        //    //};
-
-        //    //loginHandler.ExecuteLoginActionAsync = loginHandler.LoginAsync;
-        //    //loginHandler.ExecuteResetLockoutAsync = loginHandler.ResetLockoutAsync;
-        //    //loginHandler.ExecuteGetEmailConfirmationTokenActionAsync = loginHandler.GetEmailConfirmationTokenAsync;
-
-        //    return loginHandler;
-        //});
     }
 }
 

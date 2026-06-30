@@ -26,7 +26,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
         #region Constructors
         public HamburgerMenuSideBarViewModel()
         {
-            _menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
+            _menuService =PrismUnityContainerExtensions.GetContainer().Resolve<IMenuService>();
 
             AllLeafHamburgerMenuSideBarItems = new();
         }
@@ -77,11 +77,10 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             }
         }
 
-        private bool _isLoading;
         public bool IsLoading
         {
-            get => _isLoading;
-            set => SetProperty<bool>(ref _isLoading, value);
+            get;
+            set => SetProperty<bool>(ref field, value);
         }
         #endregion
 

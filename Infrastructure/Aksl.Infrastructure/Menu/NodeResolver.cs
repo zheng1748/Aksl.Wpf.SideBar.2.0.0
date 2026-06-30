@@ -21,7 +21,7 @@ public class NodeResolver<T> where T : NodeViewModel
     #region Constructors
     public NodeResolver()
     {
-        _menuService = PrismIocExtensions.GetContainer().Resolve<IMenuService>();
+        _menuService = PrismUnityExtensions.GetMenuService();
     }
     #endregion
 

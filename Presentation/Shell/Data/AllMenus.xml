@@ -23,7 +23,7 @@
 			  ItemType="Item"
 			  IsCacheable="True"
 			  ModuleName=""
-	          IsNextNavigation="False"
+	          IsNextNavigation="True"
 			  NavigationName="Industry">
 	</MenuItem>
 	<MenuItem Id="3"
@@ -33,7 +33,6 @@
 			  IconKind="Radar"
 			  ItemType="Item"
 			  IsCacheable="True"
-			  WorkspaceRegionName=""
 			  WorkspaceViewEventName="OnBuildRadarsManagerMenuSubWorkspaceViewEvent"
 		      ModuleName="MenuSubModule"
 			  ViewName="Aksl.Modules.MenuSub.Views.RadarsManagerMenuSubHubView,Aksl.Modules.MenuSub"
@@ -50,7 +49,7 @@
 			  IconKind="AccountCowboyHat"
 			  ItemType="Item"
 			  IsCacheable="True"
-			  ModuleName=""
+			   ModuleName=""
 			  IsNexApplication="False"
 			  IsNexOnNotLeaf="True"
 			  IsNextNavigation="False"

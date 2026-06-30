@@ -31,7 +31,7 @@ namespace Aksl.Modules.MenuSub.ViewModels
         #region Constructors
         public MenuSubHubViewModel()
         {
-            _container = PrismIocExtensions.GetContainer();
+            _container = PrismUnityContainerExtensions.GetContainer();
             _regionManager = PrismUnityExtensions.GetRegionManager();
             _eventAggregator = PrismUnityExtensions.GetEventAggregator();
 
