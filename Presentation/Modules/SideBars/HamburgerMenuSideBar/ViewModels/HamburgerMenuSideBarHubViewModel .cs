@@ -543,7 +543,6 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
 
                 var parentName = activeContentItemViewModel.Name.Substring(0, lastIndex);
                 //var contentItem = LeftPaneActiveContentViewModel.GetActiveContentItemByName(parentName);
-                //if (contentItem is null)
                 if (!LeftPaneActiveContentViewModel.ContainItemByName(parentName))
                 {
                     RecursiveSubActiveContentItemViewModel(parentName);
