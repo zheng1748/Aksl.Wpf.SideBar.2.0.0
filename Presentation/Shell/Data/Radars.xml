@@ -9,7 +9,6 @@
 			  Level="3"
 			  IsCacheable="False"
 			  IconKind="TrackChanges"
-			  ItemType="Item"
 			  ModuleName="RadarMapModule"
 			  ViewName="Aksl.Modules.RadarMap.Views.RadarMapHubView,Aksl.Modules.RadarMap" >
 	</MenuItem>
@@ -19,7 +18,6 @@
 			  Level="3"
 			  IsCacheable="False"
 			  IconKind="Radiator"
-			  ItemType="Item"
 			  ModuleName="RadarMapModule"
 			  ViewName="Aksl.Modules.RadarMap.Views.RadarHubView,Aksl.Modules.RadarMap" >
 	</MenuItem>

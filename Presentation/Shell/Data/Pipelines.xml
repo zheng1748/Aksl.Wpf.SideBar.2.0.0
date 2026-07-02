@@ -9,7 +9,6 @@
 			  Level="3"
 			  IsCacheable="True"
 			  IconKind="LineScan"
-			  ItemType="Item"
 			  ModuleName="PipelineModule"
 			  ViewName="Aksl.Modules.Pipeline.Views.PipelineHubView,Aksl.Modules.Pipeline"
 			  IsNexOnNotLeaf="False">
@@ -38,7 +37,6 @@
 			  Level="3"
 			  IsCacheable="False"
 			  IconKind="FanAuto"
-			  ItemType="Item"
 			  ModuleName="PipelineModule"
 			  ViewName="Aksl.Modules.Pipeline.Views.CoolingPieHubView,Aksl.Modules.Pipeline">
 	</MenuItem>
@@ -47,7 +45,6 @@
 			  Title="流水管道系统"
 			  Level="3"
 			  IconKind="LinkBox"
-			  ItemType="Item"
 			  IsCacheable="True"
 			  ModuleName="PipelineModule"
 			  ViewName="Aksl.Modules.Pipeline.Views.PipelineSystemHubView,Aksl.Modules.Pipeline"  >

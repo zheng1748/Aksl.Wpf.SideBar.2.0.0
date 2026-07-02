@@ -9,7 +9,6 @@
 			  Level="2"
 			  IsCacheable="True"
 			  IconKind="Compress"
-			  ItemType="Item"
 			  ModuleName="AirCompresserModule"
 			  ViewName="Aksl.Modules.AirCompresser.Views.AirCompresserHubView,Aksl.Modules.AirCompresser">
 	</MenuItem>

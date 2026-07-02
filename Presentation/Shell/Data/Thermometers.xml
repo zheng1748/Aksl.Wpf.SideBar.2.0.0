@@ -9,7 +9,6 @@
 			  Level="2"
 			  IsCacheable="False"
 			  IconKind="ThermometerAlert"
-			  ItemType="Item"
 			  ModuleName="ThermometerModule"
 			  ViewName="Aksl.Modules.Thermometer.Views.ThermometerHubView,Aksl.Modules.Thermometer"> 
 	</MenuItem>

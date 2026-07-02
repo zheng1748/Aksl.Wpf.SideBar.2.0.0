@@ -130,6 +130,16 @@ namespace Aksl.Infrastructure.Events
         }
         #endregion
     }
+
+    public class OnBuildPipelinesMenuSubWorkspaceViewEvent : OnBuildWorkspaceViewEventbase
+    {
+        #region Constructors
+        public OnBuildPipelinesMenuSubWorkspaceViewEvent()
+        {
+            Name = nameof(OnBuildPipelinesMenuSubWorkspaceViewEvent);
+        }
+        #endregion
+    }
     #endregion
 
     #region HamburgerMenuTreeBar

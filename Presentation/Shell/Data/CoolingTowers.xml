@@ -9,7 +9,6 @@
 			  Level="2"
 			  IsCacheable="True"
 			  IconKind="TowerFire"
-			  ItemType="Item"
 			  ModuleName="CoolingTowerModule"
 			  ViewName="Aksl.Modules.CoolingTower.Views.CoolingTowerHubView,Aksl.Modules.CoolingTower" >
 	</MenuItem>

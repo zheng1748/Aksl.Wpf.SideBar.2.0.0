@@ -60,14 +60,14 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         private bool _isPaneOpen = false;
         public bool IsPaneOpen
         {
-            get => _isPaneOpen;
+            get => field;
             set
             {
-                if (SetProperty<bool>(ref _isPaneOpen, value))
+                if (SetProperty<bool>(ref field, value))
                 {
                     foreach (var ngmivm in NoGroupedMenuItems)
                     {
-                        ngmivm.IsPaneOpen = value;
+                        ngmivm.IsPaneOpen = field;
                     }
                 }
             }

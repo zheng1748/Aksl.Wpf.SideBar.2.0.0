@@ -169,7 +169,7 @@ namespace Aksl.Modules.Account.ViewModels
                 IsAuthenticated = false;
                 UserName = null;
                 RaisePropertyChanged(nameof(UserName));
-               await ServiceExtensions.GetLoginHandler().ExecuteLoginAction(null,null);
+                ServiceExtensions.GetLoginHandler().BindAccessTokenAction(null,null);
                 ShellActiveContentExtensions.RetsetActiveContentToLoginView();
             }
             else

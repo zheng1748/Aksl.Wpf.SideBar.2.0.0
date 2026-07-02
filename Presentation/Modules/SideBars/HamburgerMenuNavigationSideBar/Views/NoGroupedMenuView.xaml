@@ -14,7 +14,7 @@
                               Source="{Binding Path=NoGroupedMenuItems}" />
 
         <DataTemplate x:Key="menuDataTemplate"
-                      DataType="{x:Type viewmodels:NoGroupedMenuItemViewModel}">
+                      DataType="{x:Type viewmodels:MenuItemViewModel}">
             <views:NoGroupedMenuItemView/>
         </DataTemplate>
 

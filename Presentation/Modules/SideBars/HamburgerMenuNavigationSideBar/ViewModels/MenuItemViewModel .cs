@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
+﻿using Aksl.Dialogs.Services;
+using Aksl.Infrastructure;
+using Aksl.Infrastructure.Events;
+using Aksl.Toolkit.Controls;
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Unity;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Unity;
-
-using Aksl.Infrastructure;
-using Aksl.Toolkit.Controls;
-using Aksl.Dialogs.Services;
 
 namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
 {
@@ -28,25 +27,27 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         #region Constructors
         public MenuItemViewModel(int groupIndex, int index, MenuItem menuItem)
         {
-            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+            _eventAggregator = PrismUnityExtensions.GetEventAggregator();
             GroupIndex = groupIndex;
             Index = index;
             _menuItem = menuItem;
+           // RegisterHamburgerMenuBarPaneOpenEvent();
         }
 
         public MenuItemViewModel() : base()
         {
-            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+            _eventAggregator = PrismUnityExtensions.GetEventAggregator();
 
             _menuItem = null;
             //Parent = null;
 
             //_children = new();
+            //RegisterHamburgerMenuBarPaneOpenEvent();
         }
 
         public MenuItemViewModel(MenuItem menuItem, MenuItemViewModel parent) : base(menuItem.Name, menuItem.Title, parent)
         {
-            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
+            _eventAggregator = PrismUnityExtensions.GetEventAggregator();
 
             _menuItem = menuItem;
 
@@ -54,6 +55,17 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             //Parent?.Children.Add(this);
 
             //_children = new();
+           // RegisterHamburgerMenuBarPaneOpenEvent();
+        }
+        #endregion
+
+        #region Register HamburgerMenuBarPaneOpen Event
+        private void RegisterHamburgerMenuBarPaneOpenEvent()
+        {
+            _eventAggregator.GetEvent<OnHamburgerMenuBarPaneOpenEvent>().Subscribe(async (hmbpoe) =>
+            {
+                IsPaneOpen = hmbpoe.IsPaneOpen;
+            }, ThreadOption.UIThread, true);
         }
         #endregion
 
@@ -65,71 +77,89 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         private bool IsNextNavigation => _menuItem.IsNextNavigation;
         private bool HasNavigationName => !string.IsNullOrEmpty(_menuItem.NavigationName);
         private bool IsNexOnNotLeaf => _menuItem.IsNexOnNotLeaf;
+        public bool IsNavigationToRightContent =>
+                          IsLeaf && _menuItem.HasNextSubMenu() && _menuItem.HasViewName() && _menuItem.IsNexApplication;
+        public bool IsAddViewToRightContent =>
+                          IsLeaf && !_menuItem.HasNextSubMenu() && _menuItem.HasViewName() && !_menuItem.IsNexApplication;
 
-        private bool _isSelected = false;
         public bool IsSelected
         {
-            get => _isSelected;
+            get => field;
             set
             {
-                if (SetProperty<bool>(ref _isSelected, value))
+                if (SetProperty<bool>(ref field, value))
                 {
-                    if (IsLeaf && _isSelected)
+                    if (field)
                     {
-                        var dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
-                        //var rightContentActiveContentViewModel = (System.Windows.Application.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
-
-                        //// var contentInformation = activeContentManager.CreateContentInformationAsync(_menuItem);
-                        //ActiveContentManager activeContentManager = new();
-
-                        //Action<string> exceptionHandler= (message) =>
-                        //{
-                        //    dialogViewService.AlertAsync(message: $"\"{message}\".", title: $"Error:Add View");
-                        //};
-                        //NavigationParameters navigationParameters = new() { { "CurrentMenuItem", _menuItem } };
-                        //activeContentManager.AddViewToContentAsync(_menuItem, rightContentActiveContentViewModel, navigationParameters, exceptionHandler).Await();
-
-                        //var contentInformation = ActiveContentHelper.CreateContentInformationAsync(_menuItem);
-                        //ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, dialogViewService).Await();
-
-                       //ActiveContentHelper.AddViewToContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await();
-
-                        ActiveContentManagerExtensions.AddViewToRandomContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+                        if (field && IsAddViewToRightContent)
                         {
-                            System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
-                            {
-                                await dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
-                            });
-                        });
+                            AddViewToRightContent();
+                        }
+
+                        if (field && IsNavigationToRightContent)
+                        {
+                            NavigationToRightContent();
+                        }
                     }
                 }
             }
         }
 
-        public PackIconKind IconKind
-        {
-            get
-            {
-                PackIconKind kind = PackIconKind.None;
-
-                _ = Enum.TryParse(_menuItem.IconKind, out kind);
-
-                return kind;
-            }
-        }
-
-        private bool _isPaneOpen = false;
         public bool IsPaneOpen
         {
-            get => _isPaneOpen;
-            set => SetProperty<bool>(ref _isPaneOpen, value);
+            get => field;
+            set => SetProperty<bool>(ref field, value);
         }
 
-        protected bool _isEnabled = true;
+        public PackIconKind IconKind =>
+                    _menuItem.IconKind.ToPackIconKind();
+
+        //public PackIconKind IconKind
+        //{
+        //    get
+        //    {
+        //        PackIconKind kind = PackIconKind.None;
+
+        //        _ = Enum.TryParse(_menuItem.IconKind, out kind);
+
+        //        return kind;
+        //    }
+        //}
+
         public bool IsEnabled
         {
-            get => _isEnabled;
-            set => SetProperty<bool>(ref _isEnabled, value);
+            get => field;
+            set => SetProperty<bool>(ref field, value);
+        }
+        #endregion
+
+        #region Add View To RightContent Method
+        public void AddViewToRightContent()
+        {
+            var dialogViewService = PrismUnityExtensions.GetDialogViewService();
+
+            ActiveContentManagerExtensions.AddViewToSequenceContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+            {
+                System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+                {
+                    await dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View");
+                });
+            });
+        }
+        #endregion
+
+        #region Navigation To RightContent Method
+        public void NavigationToRightContent()
+        {
+            var dialogViewService = PrismUnityExtensions.GetDialogViewService();
+
+            ActiveContentManagerExtensions.AddViewToSequenceContentAsync(_menuItem, ActiveContentNames.RightContentHamburgerMenuNavigationSideBar, new() { { "CurrentMenuItem", _menuItem } }).Await(completedCallback: null, configureAwait: true, errorCallback: (ex) =>
+            {
+                System.Windows.Application.Current?.Dispatcher.Invoke(async () =>
+                {
+                    await dialogViewService.AlertAsync(message: $"{ex.Message} \".", title: $"Error:Add View To RightContent");
+                });
+            });
         }
         #endregion
     }

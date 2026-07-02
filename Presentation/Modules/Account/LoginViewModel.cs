@@ -129,6 +129,11 @@ namespace Aksl.Modules.Account.ViewModels
             {
                 StatusMessage = "Logining.......";
 
+                if (ServiceExtensions.GetWebApiProvider().IsAccessTokenExpired)
+                {
+                    ServiceExtensions.GetLoginHandler().BindAccessTokenAction(null, null);
+                }
+
                 var loginResponse = await ServiceExtensions.GetLoginHandler().ExecuteLoginAction(UserName, Password);
                 if (loginResponse.Succeeded)
                 {
@@ -178,8 +183,6 @@ namespace Aksl.Modules.Account.ViewModels
                     StatusMessage = "Closing.......";
 
                     //RetsetShellActiveItem();
-
-                    //ShellActiveContentExtensions.RetsetActiveContentToLoginView();
 
                     _eventAggregator.GetEvent<OnSignInedEvent>().Publish(new OnSignInedEvent { UserName = "", IsSuccessful = false });
 

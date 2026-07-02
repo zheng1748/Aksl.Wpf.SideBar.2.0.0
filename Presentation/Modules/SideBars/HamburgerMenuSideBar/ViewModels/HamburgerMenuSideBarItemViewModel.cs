@@ -100,12 +100,11 @@ public class HamburgerMenuSideBarItemViewModel : NodeViewModel
         }
     } = false;
 
-    private bool _isPaneOpen = false;
     public bool IsPaneOpen
     {
-        get => _isPaneOpen;
-        set => SetProperty<bool>(ref _isPaneOpen, value);
-    }
+        get =>field;
+        set => SetProperty<bool>(ref field, value);
+    } = true;
 
     protected bool _isEnabled = true;
     public bool IsEnabled

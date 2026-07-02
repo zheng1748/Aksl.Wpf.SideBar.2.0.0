@@ -29,10 +29,10 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         #region Constructors
         public GroupedMenusViewModel()
         {
-            _eventAggregator = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IEventAggregator>();
-            _dialogViewService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IDialogViewService>();
+            _eventAggregator = PrismUnityExtensions.GetEventAggregator();
+            _dialogViewService = PrismUnityExtensions.GetDialogViewService();
 
-            _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
+            _menuService = PrismUnityExtensions.GetMenuService();
 
             GroupedMenus = new();
             NoGroupedMenus = new();
@@ -86,6 +86,11 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             {
                 if (SetProperty<bool>(ref _isPaneOpen, value))
                 {
+                    foreach (var ngmvm in NoGroupedMenus)
+                    {
+                        ngmvm.IsPaneOpen = value;
+                    }
+
                     foreach (var gmvm in GroupedMenus)
                     {
                         gmvm.IsPaneOpen = value;

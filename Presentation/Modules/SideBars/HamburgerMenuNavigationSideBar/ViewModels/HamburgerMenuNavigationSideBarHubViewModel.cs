@@ -45,31 +45,30 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             _menuService = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<IMenuService>();
 
             SelectedDisplayMode = SplitViewDisplayMode.CompactInline;
-            IsPaneOpen = true;
             SelectedPlacement = SplitViewPanePlacement.Left;
 
             CreateGroupedMenusViewModelAsync().Await();
+            IsPaneOpen = true;
 
             RegisterActiveContentAsync().Await();
-           // RegisterPropertyChanged();
+            // RegisterPropertyChanged();
 
             RegisterHamburgerMenuBarPaneOpenEvent();
         }
         #endregion
 
         #region Properties
-        public ActiveContentViewModel RightContentActiveContentViewModel { get; set; }
+        public SequenceActiveContentViewModel RightContentActiveContentViewModel { get; set; }
+
         public GroupedMenusViewModel GroupedMenu { get; private set; }
-
+        //public ObservableCollection<NoGroupedMenuViewModel> NoGroupedMenus { get; }
         public MenuItemViewModel SelectedMenuItem { get;  set; }
-        public ObservableCollection<NoGroupedMenuViewModel> NoGroupedMenus { get; }
 
-        private bool _isLoading;
         public bool IsLoading
         {
-            get => _isLoading;
-            set => SetProperty<bool>(ref _isLoading, value);
-        }
+            get => field;
+            set => SetProperty<bool>(ref field, value);
+        } = false;
         #endregion
 
         #region Register PropertyChanged Method
@@ -122,24 +121,22 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         #endregion
 
         #region HamburgerMenu Properties
-        private Brush _paneBackground = new SolidColorBrush(Colors.White);
         public Brush PaneBackground
         {
-            get => _paneBackground;
-            set => SetProperty<Brush>(ref _paneBackground, value);
-        }
+            get;
+            set => SetProperty<Brush>(ref field, value);
+        } = new SolidColorBrush(Colors.White);
 
         public GridLength OpenPaneGridLength
         {
             get { return new GridLength(OpenPaneLength); }
         }
 
-        private double _openPaneLength = 320d;
         public double OpenPaneLength
         {
-            get => _openPaneLength;
-            set => SetProperty<double>(ref _openPaneLength, value);
-        }
+            get;
+            set => SetProperty<double>(ref field, value);
+        }= 320d;
 
         public GridLength CompactPaneGridLength
         {
@@ -156,10 +153,10 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         private bool _isPaneOpen = false;
         public bool IsPaneOpen
         {
-            get => _isPaneOpen;
+            get => field;
             set
             {
-                if (SetProperty<bool>(ref _isPaneOpen, value))
+                if (SetProperty<bool>(ref field, value))
                 {
                     if (GroupedMenu is not null)
                     {
@@ -207,11 +204,10 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             }
         }
 
-        private string _visualState;
         public string VisualState
         {
-            get => _visualState;
-            set => SetProperty<string>(ref _visualState, value);
+            get;
+            set => SetProperty<string>(ref field, value);
         }
         #endregion
 
@@ -268,34 +264,23 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         }
         #endregion
 
-        #region Register ActiveContents Method
-        private async Task RegisterActiveContentAsync()
-        {
-            RegisterRightContentActiveContent();
-            void RegisterRightContentActiveContent()
-            {
-                _container.RegisterSingleton(from: typeof(ActiveContentViewModel), to: typeof(ActiveContentViewModel), name: ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
-                var rightContentActiveContentViewModel = (PrismApplication.Current as PrismApplicationBase).Container.Resolve<ActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
-
-                RightContentActiveContentViewModel = rightContentActiveContentViewModel;
-            }
-        }
-        #endregion
-
         #region Register HamburgerMenuBarPaneOpen Event
         private void RegisterHamburgerMenuBarPaneOpenEvent()
         {
             _eventAggregator.GetEvent<OnHamburgerMenuBarPaneOpenEvent>().Subscribe(async (hmbpoe) =>
             {
-                try
-                {
-                    IsPaneOpen = hmbpoe.IsPaneOpen;
-                }
-                catch (Exception ex)
-                {
-                    await _dialogViewService.AlertAsync(message: $"Subscribe PaneOpen Event Error.: \"{ex.Message}\"", title: "Error");
-                }
+                IsPaneOpen = hmbpoe.IsPaneOpen;
             }, ThreadOption.UIThread, true);
+        }
+        #endregion
+
+        #region Register ActiveContents Method
+        private async Task RegisterActiveContentAsync()
+        {
+            _container.RegisterSingleton(from: typeof(SequenceActiveContentViewModel), to: typeof(SequenceActiveContentViewModel), name: ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
+            var rightContentActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().Resolve<SequenceActiveContentViewModel>(name: ActiveContentNames.RightContentHamburgerMenuNavigationSideBar);
+
+            RightContentActiveContentViewModel = rightContentActiveContentViewModel;
         }
         #endregion
 
@@ -349,41 +334,8 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             {
                 if (parameters.Count == 0)
                 {
-                    CreateGroupedMenusViewModelAsync().Await();
+                   // CreateGroupedMenusViewModelAsync().Await();
                 }
-                //else
-                //{
-                //    if (isSignIning && parameters.TryGetValue(NavigationParameterNames.NavBackFromSignIn, out object navFromParameter))
-                //    {
-                //        (string UserName, bool IsSuccessful, Infrastructure.MenuItem CurrentMenuItem, object SelectedMenuItem, object PreviewSelectedMenuItem) fromParameter = ((string, bool, Infrastructure.MenuItem, object, object))navFromParameter;
-                //        if (!fromParameter.IsSuccessful)
-                //        {
-                //            isSignIning = false;
-
-                //            if (fromParameter.PreviewSelectedMenuItem is not null)
-                //            {
-                //                var contentRegion = _regionManager.Regions[RegionNames.ShellContentRegion];
-                //                var activeViews = contentRegion.Views;
-                //                var count = activeViews.Count();
-
-                //                //NavigationSideBar.SelectedMenuItem= fromParameter.PreviewSelectedMenuItem as MenuItemViewModel;
-
-                //               var selectedMenuItem = fromParameter.PreviewSelectedMenuItem as MenuItemViewModel;
-                //                NavigationSideBar.ResetSelectedMenuItem(selectedMenuItem);
-                //            }
-                //            else
-                //            {
-                //               // NavigationSideBar.SelectedMenuItem = null;
-                //                NavigationSideBar.ClearSelectedMenuItem();
-                //            }
-                //        }
-                //        else if (fromParameter.IsSuccessful)
-                //        {
-                //            isSignIning = false;
-                //            await LoadViewAsync(fromParameter.CurrentMenuItem);
-                //        }
-                //    }
-                //}
             }
         }
 

@@ -9,7 +9,6 @@
 		  Level="1"
 		  IsCacheable="False"
 		  IconKind="Toaster"
-		  ItemType="Item"
 		  ModuleName="AccountModule"
 		  ViewName="Aksl.Modules.Account.Views.RefreshTokenView,Aksl.Modules.Account"  >
 	</MenuItem>
@@ -19,7 +18,6 @@
 			  Level="1"
 			  IsCacheable="False"
 			  IconKind="CheckOutline"
-			  ItemType="Item"
 			  ModuleName="AccountModule"
 		      ViewName="Aksl.Modules.Account.Views.ResetLockoutView,Aksl.Modules.Account"  >
 	</MenuItem>

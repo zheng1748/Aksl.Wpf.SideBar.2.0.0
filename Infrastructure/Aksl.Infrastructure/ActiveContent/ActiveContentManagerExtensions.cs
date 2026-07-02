@@ -54,4 +54,29 @@ public static class ActiveContentManagerExtensions
         //}
     }
     #endregion
+
+    #region Add View To Sequence Content Method
+    public static async Task AddViewToSequenceContentAsync(Infrastructure.MenuItem menuItem, string activeContentName, NavigationParameters navigationParameters = null)
+    {
+        var randomActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().Resolve<SequenceActiveContentViewModel>(name: activeContentName);
+
+        try
+        {
+            await ActiveContentManager.Instance.AddViewToSequenceContentAsync(menuItem, randomActiveContentViewModel, navigationParameters);
+        }
+        catch (Exception ex)
+        {
+            string msg = !string.IsNullOrEmpty(ex.InnerException?.Message) ? ex.InnerException.Message : ex.Message;
+
+            throw new Exception(msg);
+        }
+    }
+    #endregion
+
+    #region Navigation To Sequence Content Method
+    public static async Task NavigationToSequenceContentAsync(Infrastructure.MenuItem menuItem, string activeContentName, NavigationParameters navigationParameters )
+    {
+        await AddViewToSequenceContentAsync(menuItem, activeContentName, navigationParameters);
+    }
+    #endregion
 }

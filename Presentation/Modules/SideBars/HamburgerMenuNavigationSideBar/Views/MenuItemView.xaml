@@ -23,7 +23,7 @@
             <Setter Property="Fill"
                     Value="Red" />
             <Setter Property="Width"
-                    Value="5" />
+                    Value="4" />
             <Setter Property="HorizontalAlignment"
                     Value="Left" />
         </Style>
@@ -31,7 +31,7 @@
         <Style x:Key="labelStyle"
                TargetType="{x:Type Label}">
             <Setter Property="Margin"
-                    Value="0,0,0,0" />
+                    Value="4,0,0,0" />
             <!--<Setter Property="FontSize"
                     Value="14" />-->
             <Setter Property="IsEnabled"
@@ -45,12 +45,25 @@
                                              VerticalAlignment="Center" />
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsPaneOpen}"
+                             Value="True">
+                    <Setter Property="ToolTip"
+                            Value="{x:Null}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=IsPaneOpen}"
+                             Value="False">
+                    <Setter Property="ToolTip"
+                            Value="{Binding Title}" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
 
     <Grid Height="30">
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="48" />
+            <ColumnDefinition Width="210" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
@@ -76,10 +89,21 @@
         <TextBlock Grid.Column="1"
                    Text="{Binding Path=Title,Mode=OneWay}"
                    IsEnabled="{Binding Path=IsEnabled}"
-                   Margin="10,0,0,0"
+                   Margin="1,0,1,0"
                    VerticalAlignment="Center"
                    TextTrimming="CharacterEllipsis"
                    TextWrapping="NoWrap">
         </TextBlock>
+
+        <materialDesign:PackIcon Grid.Column="2"
+                                 Width="24"
+                                 Height="24"
+                                 Visibility="{Binding Path=IsAddViewToRightContent,Converter={StaticResource booleanNegationToVisibilityConverter}}"
+                                 Kind="ArrowRightThick"
+                                 Foreground="Black"
+                                 Background="Transparent"
+                                 HorizontalAlignment="Right"
+                                 VerticalAlignment="Center"
+                                 Margin="15,1,1,1" />
     </Grid>
 </UserControl>

@@ -35,11 +35,11 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
         public MenuItemHeaderViewModel MenuItemHeader { get; set; }
         public MenuContentViewModel MenuContent { get; private set; }
 
-        private MenuItemViewModel _selectedMenuItem;
+        //private MenuItemViewModel _selectedMenuItem;
         public MenuItemViewModel SelectedMenuItem
         {
-            get => _selectedMenuItem; 
-            set => SetProperty(ref _selectedMenuItem, value);
+            get; 
+            set => SetProperty(ref field, value);
         }
 
         private bool _isPaneOpen = false;
@@ -50,7 +50,7 @@ namespace Aksl.Modules.HamburgerMenuNavigationSideBar.ViewModels
             {
                 if (SetProperty<bool>(ref _isPaneOpen, value))
                 {
-                    MenuContent.IsPaneOpen = value;
+                     MenuContent.IsPaneOpen = value;
                 }
             }
         }

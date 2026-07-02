@@ -198,6 +198,7 @@ namespace Aksl.Modules.Shell
                 //_ = eventAggregator.GetEvent<OnBuildHamburgerMenuPopupSideBarWorkspaceViewEvent>();
 
                 _ = eventAggregator.GetEvent<OnBuildRadarsManagerMenuSubWorkspaceViewEvent>();
+                _ = eventAggregator.GetEvent<OnBuildPipelinesMenuSubWorkspaceViewEvent>();
 
             }
             catch (Exception ex)

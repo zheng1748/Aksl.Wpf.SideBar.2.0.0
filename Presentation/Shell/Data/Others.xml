@@ -9,7 +9,6 @@
 			  Level="2"
 			  IsCacheable="False"
 			  IconKind="OrganicOutline"
-			  ItemType="Item"
 			  ModuleName="OthersModule"
 		      ViewName="Aksl.Modules.Others.OrgChart.Views.OrgChartView,Aksl.Modules.Others"  >
 	</MenuItem>

@@ -99,28 +99,27 @@ public class ActiveContentManager
     #endregion
 
     #region Add View To Content Method
-    public async Task AddViewToContentAsync(Infrastructure.MenuItem menuItem, ActiveContentViewModel activeContentViewModel, NavigationParameters navigationParameters = null)
+    public async Task AddViewToSequenceContentAsync(Infrastructure.MenuItem menuItem, SequenceActiveContentViewModel sequenceActiveContentViewModel, NavigationParameters navigationParameters = null)
     {
         var viewName = menuItem.GetViewTypeName();
 
-        var currentView = activeContentViewModel.GetStoreViewElementByName(menuItem.Name);
+        var currentView = sequenceActiveContentViewModel.GetStoreViewElementByName(menuItem.Name);
         if (currentView is not null)
         {
             if (menuItem.IsCacheable)
             {
-                // activeContentViewModel.SetContentItem(contentInformation);
-                activeContentViewModel.SetContentItemByName(menuItem.Name);
+                sequenceActiveContentViewModel.SetContentItemByName(menuItem.Name);
             }
             else
             {
                 ActiveContents.ContentInformation contentInformation = await CreateContentInformationAsync(menuItem, navigationParameters);
-                activeContentViewModel.RetsetContentItem(contentInformation);
+                sequenceActiveContentViewModel.RetsetContentItem(contentInformation);
             }
         }
         else
         {
             ActiveContents.ContentInformation contentInformation = await CreateContentInformationAsync(menuItem, navigationParameters);
-            activeContentViewModel.Add(contentInformation);
+            sequenceActiveContentViewModel.Add(contentInformation);
         }
     }
     #endregion

@@ -78,13 +78,18 @@ namespace Aksl.Modules.Shell.ViewModels
         {
             _eventAggregator.GetEvent<OnSignInedEvent>().Subscribe((siet) =>
             {
-                if (siet.IsSuccessful) 
+                if (siet.IsSuccessful)
                 {
                     //var hamburgerMenuSideBarHubView = ShellContentActiveContentViewModel.GetStoreViewElementByName("HamburgerMenuSideBarHubView") as HamburgerMenuSideBarHubView;
                     //var hamburgerMenuSideBarHubViewModel = hamburgerMenuSideBarHubView.DataContext as HamburgerMenuSideBarHubViewModel;
-                   
-                    ShellContentActiveContentViewModel.RetsetContentItemByName("LoginView");
-                    ShellContentActiveContentViewModel.SetActiveContentItemByName("HamburgerMenuSideBarHubView");
+
+                   // ShellContentActiveContentViewModel.SetActiveContentItemByName("HamburgerMenuSideBarHubView");
+                    ShellContentActiveContentViewModel.SetActiveContentItemByName("HamburgerMenuNavigationSideBarHubView");
+                }
+                else
+                {
+                    //ShellContentActiveContentViewModel.RetsetContentItemByName("LoginView");
+                    ShellContentActiveContentViewModel.ClearSelectedItem();
                 }
             }, ThreadOption.UIThread, true);
         }
@@ -131,16 +136,16 @@ namespace Aksl.Modules.Shell.ViewModels
                         Name = "HamburgerMenuSideBarHubView",
                         Title = "HamburgerMenuSideBarHubView",
                         ViewName = "Aksl.Modules.HamburgerMenuSideBar.Views.HamburgerMenuSideBarHubView,Aksl.Modules.HamburgerMenuSideBar",
-                        //ViewElement = new HamburgerMenuSideBarHubView()
+                        ViewElement = new HamburgerMenuSideBarHubView()
                     }, false);
 
-                    //ShellContentActiveContentViewModel.Add(new()
-                    //{
-                    //    Name = "HamburgerMenuNavigationSideBarHubView",
-                    //    Title = "NavigationSideBarHubView",
-                    //    ViewName = "Aksl.Modules.HamburgerMenuNavigationSideBar.Views.HamburgerMenuNavigationSideBarHubView,Aksl.Modules.HamburgerMenuNavigationSideBar",
-                    //    //ViewElement = new HamburgerMenuSideBarHubView()
-                    //}, false);
+                    ShellContentActiveContentViewModel.Add(new()
+                    {
+                        Name = "HamburgerMenuNavigationSideBarHubView",
+                        Title = "NavigationSideBarHubView",
+                        ViewName = "Aksl.Modules.HamburgerMenuNavigationSideBar.Views.HamburgerMenuNavigationSideBarHubView,Aksl.Modules.HamburgerMenuNavigationSideBar",
+                        //ViewElement = new HamburgerMenuSideBarHubView()
+                    }, false);
                 }
 
                 RegisterLoginActiveContent();
