@@ -44,27 +44,9 @@ public class LoginHandler
 
         BuildActions();
     }
-
-    //public LoginHandler()
-    //{
-    //    _webApiAddressSettings = ServiceExtensions.GetWebApiAddressSettings().Value;
-    //    WebApiProvider = ServiceExtensions.GetWebApiProvider();
-
-    //    BuildActions();
-    //}
     #endregion
 
     #region Properties
-    public bool IsAccessTokenExpired
-    {
-        get
-        {
-            var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(WebApiProvider.AccessToken);
-
-            return jwtToken?.ValidTo > DateTime.UtcNow;
-        }
-    }
-
     public WebApiProvider WebApiProvider { get; set; }
     public Action<string,string> BindAccessTokenAction { get; set; }
     public Func<string, string, Task<LoginResponse>> ExecuteLoginAction { get; set; }
@@ -94,6 +76,9 @@ public class LoginHandler
 
         if (loginResponse.Succeeded && !string.IsNullOrEmpty(loginResponse.AccessToken))
         {
+            var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(loginResponse.AccessToken);
+            WebApiProvider.AccessTokenExpire = jwtToken.ValidTo.ToUniversalTime();
+
             BindAccessTokenAction(loginResponse.AccessToken, loginResponse.RefreshToken);
 
             _logger.LogInformation($"Execute Login Method AccessToken :{loginResponse.AccessToken} RefreshToken :{loginResponse.RefreshToken} From {_webApiAddressSettings.LoginUrl}");
@@ -138,13 +123,16 @@ public class LoginHandler
 
         if (refreshTokenResponse.Succeeded && !string.IsNullOrEmpty(refreshTokenResponse.AccessToken))
         {
+            var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(refreshTokenResponse.AccessToken);
+            WebApiProvider.AccessTokenExpire = jwtToken.ValidTo.ToUniversalTime();
+
             BindAccessTokenAction(refreshTokenResponse.AccessToken, refreshTokenResponse.RefreshToken);
 
             _logger.LogInformation($"Execute RefreshToken Method AccessToken :{refreshTokenResponse.AccessToken} RefreshToken :{refreshTokenResponse.RefreshToken} From {_webApiAddressSettings.RefreshTokenUrl}");
         }
         else
         {
-            BindAccessTokenAction(null, null);
+            //BindAccessTokenAction(null, null);
 
             _logger.LogInformation($"Execute RefreshToken Method Errors : {refreshTokenResponse.ToString()} From {_webApiAddressSettings.RefreshTokenUrl}");
         }

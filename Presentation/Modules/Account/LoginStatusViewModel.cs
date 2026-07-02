@@ -47,7 +47,6 @@ namespace Aksl.Modules.Account.ViewModels
         #endregion
 
         #region Properties
-        private string _title;
         public string Title
         {
             get => field;
@@ -130,9 +129,7 @@ namespace Aksl.Modules.Account.ViewModels
 
             try
             {
-                var shellContentActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().
-                                                           Resolve<ActiveContents.ViewModels.RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
-                shellContentActiveContentViewModel.SetSelectedItemByName(nameof(LoginView));
+                ShellActiveContentExtensions.RetsetActiveContentToLoginView();
             }
             catch (Exception ex)
             {
@@ -167,28 +164,35 @@ namespace Aksl.Modules.Account.ViewModels
         {
             IsSignIning = true;
 
-            try
+            if (ServiceExtensions.GetWebApiProvider().IsAccessTokenExpired)
             {
-                var loginOutResponse = await ServiceExtensions.GetLoginHandler().ExecuteLoginOutAction(UserName);
-
-                //if (loginOutResponse.Succeeded)
-                //{
                 IsAuthenticated = false;
                 UserName = null;
-                Title = "Please Login";
-
                 RaisePropertyChanged(nameof(UserName));
-                //}
-                //else
-                //{
-                //}
+               await ServiceExtensions.GetLoginHandler().ExecuteLoginAction(null,null);
+                ShellActiveContentExtensions.RetsetActiveContentToLoginView();
             }
-            catch (Exception ex)
+            else
             {
-                await _dialogViewService.AlertAsync($"{ex.Message}", "Sign In Failure:");
-            }
+                try
+                {
+                    var loginOutResponse = await ServiceExtensions.GetLoginHandler().ExecuteLoginOutAction(UserName);
 
-            IsSignIning = false;
+                    IsAuthenticated = false;
+                    UserName = null;
+                    Title = "Please Login";
+                    RaisePropertyChanged(nameof(UserName));
+                }
+                catch (Exception ex)
+                {
+                    await _dialogViewService.AlertAsync($"{ex.Message}", "Sign In Failure:");
+                }
+                finally
+                {
+                    ShellActiveContentExtensions.RetsetActiveContentToLoginView();
+                    IsSignIning = false;
+                }
+            }
         }
 
         private bool CanExecuteSignOutCommand()

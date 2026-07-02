@@ -3,11 +3,21 @@
 		  Name="Accounts"
 		  Title="Root"
 		  Level="0" >
-	<MenuItem Id="5"
+	<MenuItem Id="1"
+		  Name="RefreshTokener"
+		  Title="Refresh Token"
+		  Level="1"
+		  IsCacheable="False"
+		  IconKind="Toaster"
+		  ItemType="Item"
+		  ModuleName="AccountModule"
+		  ViewName="Aksl.Modules.Account.Views.RefreshTokenView,Aksl.Modules.Account"  >
+	</MenuItem>
+	<MenuItem Id="2"
 			  Name="ResetLockouter"
 			  Title="Reset Lockout"
 			  Level="1"
-			  IsCacheable="True"
+			  IsCacheable="False"
 			  IconKind="CheckOutline"
 			  ItemType="Item"
 			  ModuleName="AccountModule"

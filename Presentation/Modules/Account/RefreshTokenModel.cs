@@ -26,34 +26,49 @@ using Aksl.Modules.Account.Views;
 
 namespace Aksl.Modules.Account.ViewModels
 {
-    public class ResetLockoutViewModel : BindableBase, IDataErrorInfo, INavigationAware
+    public class RefreshTokenViewModel : BindableBase, IDataErrorInfo, INavigationAware
     {
         #region Members
         private readonly IEventAggregator _eventAggregator;
         private readonly IDialogViewService _dialogViewService;
+        private readonly WebApiProvider _webApiProvider;
         private readonly Dictionary<string, string> _errors;
         #endregion
 
         #region Constructors
-        public ResetLockoutViewModel()
+        public RefreshTokenViewModel()
         {
+             StatusMessage = "RefreshToken Module Initializeing.......";
+
             _eventAggregator = PrismUnityExtensions.GetEventAggregator();
             _dialogViewService = PrismUnityExtensions.GetDialogViewService();
 
             _errors = new();
 
-            CreateResetLockoutCommand();
+            _webApiProvider = ServiceExtensions.GetWebApiProvider();
+            AccessToken= _webApiProvider.AccessToken;
+            RefreshToken= _webApiProvider.RefreshToken;
+
+            CreateRefreshTokenCommand();
 
             RegisterPropertyChanged();
+
+            StatusMessage = "";
         }
         #endregion
 
         #region Properties
-        [Required(ErrorMessage = "用户名不能为空")]
-        [RegularExpression("^[a-zA-Z]{1}([a-zA-Z0-9]){7,15}$", ErrorMessage = "用户名必须是8到16个字母或者数字,且以字母开头.")]
-        public string UserName
+        [Required(ErrorMessage = "AccessToken不能为空")]
+        public string AccessToken
         {
             get =>field;
+            set => SetProperty<string>(ref field, value);
+        }
+
+        [Required(ErrorMessage = "RefreshToken不能为空")]
+        public string RefreshToken
+        {
+            get => field;
             set => SetProperty<string>(ref field, value);
         }
 
@@ -85,58 +100,77 @@ namespace Aksl.Modules.Account.ViewModels
             {
                 if (sender is ResetLockoutViewModel)
                 {
-                    if (e.PropertyName == nameof(IsLoading) || e.PropertyName == nameof(UserName))
+                    if (e.PropertyName == nameof(IsLoading))
                     {
-                        (ResetLockoutCommand as DelegateCommand).RaiseCanExecuteChanged();
+                        (RefreshTokenCommand as DelegateCommand).RaiseCanExecuteChanged();
                     }
                 }
             };
         }
         #endregion
 
-        #region ResetLockoutCommand  Command
-        public ICommand ResetLockoutCommand { get; private set; }
+        #region RefreshTokenCommand  Command
+        public ICommand RefreshTokenCommand { get; private set; }
 
-        private void CreateResetLockoutCommand()
+        private void CreateRefreshTokenCommand()
         {
-            ResetLockoutCommand = new DelegateCommand(async () =>
+            RefreshTokenCommand = new DelegateCommand(async () =>
             {
-                await ExecuteResetLockoutCommandAsync();
+                await ExecuteRefreshTokenCommandAsync();
             },
             () =>
             {
-                var canExecute = CanExecuteResetLockoutCommand();
+                var canExecute = CanExecuteRefreshTokenCommand();
                 return canExecute;
             });
         }
 
-        private async Task ExecuteResetLockoutCommandAsync()
+        private async Task ExecuteRefreshTokenCommandAsync()
         {
             IsLoading = true;
 
             try
             {
-                StatusMessage = "Reset Lockout.......";
+                StatusMessage = "Refresh ingToken.......";
 
-                var resetLockoutResponse = await ServiceExtensions.GetLoginHandler().ExecuteResetLockoutAction(UserName);
-                if (resetLockoutResponse.Succeeded)
+                if (ServiceExtensions.GetWebApiProvider().IsAccessTokenExpired)
                 {
-                    ResponseMessage = "Reset Lockout Succeeded";
+                    ResponseMessage = $"accessToken {this.AccessToken} is expired";
+                }
 
-                     await Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false);
+                var refreshTokenResponse =await ServiceExtensions.GetLoginHandler().
+                                              ExecuteRefreshTokenAction(this.AccessToken, this.RefreshToken);
+
+                if (refreshTokenResponse.Succeeded)
+                {
+                    ResponseMessage = "Refresh Token Succeeded";
+
+                    AccessToken = refreshTokenResponse.AccessToken;
+                    RefreshToken = refreshTokenResponse.RefreshToken;
+
+                    await Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false);
                 }
                 else
                 {
-                    ResponseMessage = $"{resetLockoutResponse.ToString()}";
+                    if (refreshTokenResponse.ToString().Contains("Refresh Token has expired, user needs to re-login.") ||
+                        refreshTokenResponse.ToString().Contains("Token has expired please re-login") ||
+                        refreshTokenResponse.ToString().Contains("Something went wrong."))
+                    {
+                        _eventAggregator.GetEvent<OnAccessTokenExpiredEvent>().Publish(new() { IsExpired = true });
+                    }
+                    
+                    ResponseMessage = $"{refreshTokenResponse.ToString()}";
                 }
             }
             catch (Exception ex)
             {
+               // var webApiProvider = ServiceExtensions.GetWebApiProvider();
+
                // ServiceExtensions.GetLoginHandler().BindAccessTokenAction(null, null);
 
                 ResponseMessage = $"{ex.Message}";
 
-                _eventAggregator.GetEvent<OnAccessTokenExpiredEvent>().Publish(new() {IsExpired = true});
+               // _eventAggregator.GetEvent<OnAccessTokenExpiredEvent>().Publish(new() {IsExpired = true});
 
               // await _dialogViewService.AlertAsync($"{ex.Message}", "Login In Failure:");
             }
@@ -144,7 +178,7 @@ namespace Aksl.Modules.Account.ViewModels
             IsLoading = false;
         }
 
-        private bool CanExecuteResetLockoutCommand()
+        private bool CanExecuteRefreshTokenCommand()
         {
             return !IsLoading && !HasErrors;
         }

@@ -976,8 +976,8 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
                 return false;
             }
 
-            var isAny = (!string.IsNullOrEmpty(nameOrTitle) && nameOrTitle.Equals(otherNameOrTitle, StringComparison.InvariantCultureIgnoreCase)) ||
-                        (!string.IsNullOrEmpty(otherNameOrTitle) && otherNameOrTitle.Equals(nameOrTitle, StringComparison.InvariantCultureIgnoreCase));
+            var isAny = nameOrTitle.Equals(otherNameOrTitle, StringComparison.InvariantCultureIgnoreCase) ||
+                        otherNameOrTitle.Equals(nameOrTitle, StringComparison.InvariantCultureIgnoreCase);
 
             return isAny;
         }
@@ -991,36 +991,7 @@ namespace Aksl.Modules.HamburgerMenuSideBar.ViewModels
             {
                 if (parameters.Count == 0)
                 {
-                    // CreateHamburgerMenuSideBarViewModelAsync().GetAwaiter().GetResult();
                 }
-                //else
-                //{
-                //    if (isSignIning && parameters.TryGetValue(NavigationParameterNames.NavBackFromSignIn, out object navFromParameter))
-                //    {
-                //        (string UserName, bool IsSuccessful, Infrastructure.MenuItem CurrentMenuItem, object SelectedHamburgerMenuItem, object PreviewSelectedHamburgerMenuItem) fromParameter = ((string, bool, Infrastructure.MenuItem, object, object))navFromParameter;
-                //        if (!fromParameter.IsSuccessful)
-                //        {
-                //            isSignIning = false;
-
-                //            if (fromParameter.PreviewSelectedHamburgerMenuItem is not null)
-                //            {
-                //                var contentRegion = _regionManager.Regions[RegionNames.ShellContentRegion];
-                //                var activeViews = contentRegion.Views;
-                //                var count = activeViews.Count();
-                //                HamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem = fromParameter.PreviewSelectedHamburgerMenuItem as HamburgerMenuSideBarItemViewModel;
-                //            }
-                //            else
-                //            {
-                //                HamburgerMenuSideBar.SelectedHamburgerMenuSideBarItem = null;
-                //            }
-                //        }
-                //        else if (fromParameter.IsSuccessful)
-                //        {
-                //            isSignIning = false;
-                //            await LoadViewAsync(fromParameter.CurrentMenuItem);
-                //        }
-                //    }
-                //}
             }
         }
 

@@ -82,7 +82,8 @@ namespace Aksl.Modules.Shell.ViewModels
                 {
                     //var hamburgerMenuSideBarHubView = ShellContentActiveContentViewModel.GetStoreViewElementByName("HamburgerMenuSideBarHubView") as HamburgerMenuSideBarHubView;
                     //var hamburgerMenuSideBarHubViewModel = hamburgerMenuSideBarHubView.DataContext as HamburgerMenuSideBarHubViewModel;
-
+                   
+                    ShellContentActiveContentViewModel.RetsetContentItemByName("LoginView");
                     ShellContentActiveContentViewModel.SetActiveContentItemByName("HamburgerMenuSideBarHubView");
                 }
             }, ThreadOption.UIThread, true);
@@ -96,12 +97,6 @@ namespace Aksl.Modules.Shell.ViewModels
             {
                 if (atee.IsExpired)
                 {
-                    //ShellContentActiveContentViewModel.RetsetContentItem(new ContentInformation
-                    //{
-                    //    Name = "LoginView",
-                    //    Title = "LoginView",
-                    //    ViewName = "Aksl.Modules.Account.Views.LoginView,Aksl.Modules.Account"
-                    //});
                     ShellContentActiveContentViewModel.RetsetContentItemByName("LoginView");
 
                     var loginStatusView = LoginActiveContentViewModel.GetStoreViewElementByName("LoginStatusView") as LoginStatusView;

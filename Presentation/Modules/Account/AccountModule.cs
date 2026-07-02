@@ -27,6 +27,7 @@ namespace Aksl.Modules.Account
             containerRegistry.RegisterForNavigation<LoginStatusView>();
             containerRegistry.RegisterForNavigation<LoginView>();
             containerRegistry.RegisterForNavigation<ResetLockoutView>();
+            containerRegistry.RegisterForNavigation<RefreshTokenView>();
         }
 
         public void OnInitialized(IContainerProvider containerProvider)
@@ -37,6 +38,8 @@ namespace Aksl.Modules.Account
                                              () => this._container.Resolve<LoginViewModel>());
             ViewModelLocationProvider.Register(typeof(ResetLockoutView).ToString(),
                                           () => this._container.Resolve<ResetLockoutViewModel>());
+            ViewModelLocationProvider.Register(typeof(RefreshTokenView).ToString(),
+                                         () => this._container.Resolve<RefreshTokenViewModel>());
         }
         #endregion
     }

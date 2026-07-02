@@ -127,22 +127,12 @@ namespace Aksl.Modules.Account.ViewModels
 
             try
             {
-                StatusMessage = "Login.......";
-
-                var webApiProvider = ServiceExtensions.GetWebApiProvider();
+                StatusMessage = "Logining.......";
 
                 var loginResponse = await ServiceExtensions.GetLoginHandler().ExecuteLoginAction(UserName, Password);
                 if (loginResponse.Succeeded)
                 {
                     //var loginResponse2 = await ServiceExtensions.GetLoginHandler().ExecuteLoginAction(UserName, Password);
-
-                    //var refreshTokenResponse = await ServiceExtensions.GetLoginHandler().
-                    //                            ExecuteRefreshTokenAction(webApiProvider.AccessToken, webApiProvider.RefreshToken);
-
-                    //var refreshTokenResponse2 = await ServiceExtensions.GetLoginHandler().
-                    //                              ExecuteRefreshTokenAction(webApiProvider.AccessToken, webApiProvider.RefreshToken);
-
-                    SetShellActiveItem();
 
                     IsSuccessful = true;
 
@@ -160,6 +150,7 @@ namespace Aksl.Modules.Account.ViewModels
                 await _dialogViewService.AlertAsync($"{ex.Message}", "Login In Failure:");
             }
 
+            StatusMessage = null;
             IsLoading = false;
         }
 
@@ -186,7 +177,9 @@ namespace Aksl.Modules.Account.ViewModels
                 {
                     StatusMessage = "Closing.......";
 
-                    SetShellActiveItem();
+                    //RetsetShellActiveItem();
+
+                    //ShellActiveContentExtensions.RetsetActiveContentToLoginView();
 
                     _eventAggregator.GetEvent<OnSignInedEvent>().Publish(new OnSignInedEvent { UserName = "", IsSuccessful = false });
 
@@ -200,7 +193,9 @@ namespace Aksl.Modules.Account.ViewModels
                 IsLoading = false;
             }
         }
+        #endregion
 
+        #region Close Command
         public ICommand CloseCommand { get; private set; }
 
         private void CreateCloseCommand()
@@ -227,7 +222,7 @@ namespace Aksl.Modules.Account.ViewModels
 
                 //  RemoveLoginView();
 
-                SetShellActiveItem();
+                ShellActiveContentExtensions.RetsetActiveContentToLoginView();
 
                 _eventAggregator.GetEvent<OnSignInedEvent>().Publish(new OnSignInedEvent { UserName = "", IsSuccessful = false });
 
@@ -242,12 +237,13 @@ namespace Aksl.Modules.Account.ViewModels
         }
         #endregion
 
-        #region Set Shell ActiveItem Method
-        public void SetShellActiveItem()
+        #region Retset Shell ActiveItem Method
+        public void RetsetShellActiveItem()
         {
-            var shellContentActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().Resolve<ActiveContents.ViewModels.RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
+            var shellContentActiveContentViewModel = PrismUnityContainerExtensions.GetContainer().
+                                              Resolve<ActiveContents.ViewModels.RandomActiveContentViewModel>(name: ActiveContentNames.ShellContent);
             //shellContentActiveContentViewModel.SetSelectedItemByName(ActiveContentNames.HamburgerMenuSideBarName);
-            shellContentActiveContentViewModel.ClearSelectedItem();
+            shellContentActiveContentViewModel.RetsetContentItemByName(nameof(LoginView));
         }
         #endregion
 

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -55,7 +56,22 @@ public class WebApiProvider
     }
 
     public string? AccessToken { get; set; }
+    public DateTime? AccessTokenExpire { get; set; }
     public string? RefreshToken { get; set; }
+    public bool IsAccessTokenExpired
+    {
+        get
+        {
+            //if (AccessTokenExpire>0)
+            //{
+            //    var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(AccessToken);
+
+            //    return jwtToken?.ValidTo > DateTime.UtcNow;
+            //}
+
+            return  DateTime.UtcNow > AccessTokenExpire;
+        }
+    }
     #endregion
 
     #region Get Method
